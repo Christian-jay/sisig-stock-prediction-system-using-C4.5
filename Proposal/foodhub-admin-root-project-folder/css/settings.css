@@ -1,0 +1,217 @@
+/* =========================================================
+   FOODHUB ADMIN — SETTINGS PAGE
+   ========================================================= */
+
+:root {
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-light: #e0f2fe;
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--slate-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    margin-left: 260px;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-body {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.page-header-row h2 {
+    font-size: 25px;
+    line-height: 1.25;
+    color: var(--slate-dark);
+    font-weight: 800;
+    letter-spacing: -.6px;
+}
+
+.page-header-row p {
+    font-size: 14px;
+    color: var(--slate-muted);
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+/* SETTINGS SPLIT LAYOUT */
+.settings-layout-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* SIDEBAR MENU CARD */
+.settings-menu-card {
+    padding: 12px;
+}
+
+.settings-menu-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settings-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--slate-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-menu-item:hover {
+    background-color: var(--bg-main);
+    color: var(--slate-dark);
+}
+
+.settings-menu-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+/* CONTENT CARD */
+.card-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+}
+
+.card-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--slate-dark);
+}
+
+.card-header p {
+    font-size: 13px;
+    color: var(--slate-muted);
+    margin-top: 4px;
+}
+
+.form-group-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate-muted);
+}
+
+.form-control {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    background-color: #ffffff;
+    color: var(--slate-text);
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+}
+
+.form-control:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+}
+
+.checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+}
+
+.switch-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--slate-text);
+}
+
+.form-actions {
+    margin-top: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+@media (max-width: 768px) {
+    .settings-layout-grid {
+        grid-template-columns: 1fr;
+    }
+}

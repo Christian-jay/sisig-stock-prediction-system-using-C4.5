@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FOODHUB — Admin Sales Analytics & Reports</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/sales_report.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDEBAR -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- PAGE CONTENT -->
+            <div class="content-body">
+
+                <!-- PAGE HEADER -->
+                <section class="page-header-row">
+
+                    <h2>Sales Analytics & Reports
+                        <p>Review revenue trends, sales performance metrics, and top-selling food items.</p>
+                    </h2>
+
+                    <div class="header-actions">
+
+                        <div class="date-picker-box">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+
+                            <span>Oct 14, 2025 - Oct 20, 2025</span>
+                        </div>
+
+                        <select class="filter-select">
+                            <option>All Products</option>
+                        </select>
+
+                        <button class="btn-primary">
+                            Generate Report
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- DASHBOARD GRID -->
+                <section class="sales-dashboard-grid">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="sales-main-column">
+
+                        <!-- SALES SUMMARY -->
+                        <section class="sales-summary-section">
+
+                            <div class="metrics-cards-grid">
+
+                                <div class="metric-card">
+
+                                    <div class="metric-icon blue">
+                                        ₱
+                                    </div>
+
+                                    <div class="metric-content">
+
+                                        <span class="metric-label">
+                                            TOTAL SALES
+                                        </span>
+
+                                        <h2 class="metric-value">
+                                            ₱24,835.00
+                                        </h2>
+
+                                        <span class="metric-trend positive">
+                                            ↑ 12% vs. previous week
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="metric-card">
+
+                                    <div class="metric-icon green">
+                                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <line x1="4" y1="9" x2="20" y2="9"></line>
+                                            <line x1="4" y1="15" x2="20" y2="15"></line>
+                                            <line x1="10" y1="3" x2="8" y2="21"></line>
+                                            <line x1="16" y1="3" x2="14" y2="21"></line>
+                                        </svg>
+                                    </div>
+
+                                    <div class="metric-content">
+
+                                        <span class="metric-label">
+                                            TOTAL ORDERS
+                                        </span>
+
+                                        <h2 class="metric-value" id="totalOrders">
+                                            28
+                                        </h2>
+
+                                        <span class="metric-trend positive">
+                                            ↑ 8% vs. previous week
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="metric-card">
+
+                                    <div class="metric-icon purple">
+                                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                            <polyline points="17 6 23 6 23 12"></polyline>
+                                        </svg>
+                                    </div>
+
+                                    <div class="metric-content">
+
+                                        <span class="metric-label">
+                                            AVERAGE ORDER VALUE
+                                        </span>
+
+                                        <h2 class="metric-value">
+                                            ₱172.68
+                                        </h2>
+
+                                        <span class="metric-trend positive">
+                                            ↑ 6% vs. previous week
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- SALES TREND -->
+                        <section class="card sales-trend-card">
+
+                            <div class="card-header">
+
+                                <div>
+                                    <h2>Sales Trend</h2>
+                                    <p>Revenue performance over the selected period.</p>
+                                </div>
+
+                                <span class="chart-period">
+                                    Last 7 Days
+                                </span>
+
+                            </div>
+
+                            <!-- JS WILL RENDER GRAPH HERE -->
+                            <div id="salesTrendChart" class="chart-container"></div>
+
+                        </section>
+
+                    </div>
+
+
+                    <!-- RIGHT COLUMN -->
+                    <aside class="sales-sidebar-column">
+
+                        <div class="card top-selling-card">
+
+                            <div class="card-header">
+
+                                <div>
+                                    <h2>Top Selling Items</h2>
+                                    <p>Best performing menu items.</p>
+                                </div>
+
+                            </div>
+
+                            <div id="topSellingList" class="top-items-list">
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </section>
+
+
+                <!-- TABLES -->
+                <section class="sales-tables-grid">
+
+                    <!-- SALES BY MENU -->
+                    <div class="card table-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h2>Sales by Menu Item</h2>
+                                <p>Performance of each menu item.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="data-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Menu Item</th>
+                                        <th>Quantity Sold</th>
+                                        <th>Total Sales</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="salesByMenuTableBody">
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DAILY SALES -->
+                    <div class="card table-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h2>Daily Sales Breakdown</h2>
+                                <p>Daily revenue and order performance.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="data-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Total Sales</th>
+                                        <th>Orders</th>
+                                        <th>Average Order Value</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="dailySalesTableBody">
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script type="module" src="js/controllers/SalesReportController.js">
+    </script>
+
+</body>
+
+</html>

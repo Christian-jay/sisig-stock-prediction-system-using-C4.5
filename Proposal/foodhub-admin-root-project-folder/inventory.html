@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FOODHUB — Admin Inventory & Stock Control</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/inventory.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <div id="sidebar-nav-container"></div>
+
+        <!-- ================= MAIN CONTENT ================= -->
+
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- ================= BODY ================= -->
+
+            <div class="dashboard-body">
+
+                <!-- PAGE HEADER -->
+                <section class="inventory-page-header">
+                    <h2>Inventory & Stock Control
+                        <p>Track stock levels, update product ingredients, and manage food supplies.</p>
+                    </h2>
+                    <button class="action-btn primary" id="addItemBtn">
+                        <span class="add-icon">+</span>
+                        Add Ingredient
+                    </button>
+
+                </section>
+
+
+                <!-- =====================================================
+                                    INVENTORY SUMMARY
+                ===================================================== -->
+
+                <section class="inventory-metrics">
+
+                    <!-- TOTAL -->
+                    <div class="metric-card">
+
+                        <div class="metric-icon blue">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0284c7"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
+                                </path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                <path d="M18.5 4.5 12 8l-6.5-3.5"></path>
+                            </svg>
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span class="metric-label">
+                                TOTAL INGREDIENTS
+                            </span>
+
+                            <strong id="totalItemsCount">
+                                0
+                            </strong>
+
+                            <span class="metric-description">
+                                Registered ingredients
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- IN STOCK -->
+                    <div class="metric-card">
+
+                        <div class="metric-icon green">
+
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span class="metric-label">
+                                IN STOCK
+                            </span>
+
+                            <strong id="inStockCount">
+                                0
+                            </strong>
+
+                            <span class="metric-description positive">
+                                Healthy stock level
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOW STOCK -->
+                    <div class="metric-card">
+
+                        <div class="metric-icon yellow">
+
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                <line x1="12" y1="9" x2="12" y2="13" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                            </svg>
+
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span class="metric-label">
+                                LOW STOCK
+                            </span>
+
+                            <strong id="lowStockCount">
+                                0
+                            </strong>
+
+                            <span class="metric-description warning">
+                                Needs monitoring
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OUT OF STOCK -->
+                    <div class="metric-card">
+
+                        <div class="metric-icon red">
+
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9" />
+                                <line x1="8" y1="8" x2="16" y2="16" />
+                                <line x1="16" y1="8" x2="8" y2="16" />
+                            </svg>
+
+                        </div>
+
+                        <div class="metric-content">
+
+                            <span class="metric-label">
+                                OUT OF STOCK
+                            </span>
+
+                            <strong id="outStockCount">
+                                0
+                            </strong>
+
+                            <span class="metric-description danger">
+                                Immediate action
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =====================================================
+         MAIN INVENTORY SECTION
+         ===================================================== -->
+
+                <section class="inventory-main-grid">
+
+
+                    <!-- INVENTORY TABLE -->
+                    <div class="card inventory-table-card">
+
+                        <div class="card-header inventory-header">
+
+                            <div class="section-title">
+                                <div>
+                                    <h3>All Ingredients</h3>
+
+                                    <p>
+                                        Current inventory levels and stock status
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="table-actions">
+
+                                <select id="statusFilter">
+                                    <option value="all">All Status</option>
+                                    <option value="instock">In Stock</option>
+                                    <option value="lowstock">Low Stock</option>
+                                    <option value="outstock">Out of Stock</option>
+                                </select>
+
+                                <select id="categoryFilter">
+                                    <option value="all">All Categories</option>
+                                    <option value="meat">Meat</option>
+                                    <option value="vegetable">Vegetables</option>
+                                    <option value="sauce">Sauces</option>
+                                    <option value="others">Others</option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="data-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ingredient</th>
+                                        <th>Category</th>
+                                        <th>Current Stock</th>
+                                        <th>Reorder Level</th>
+                                        <th>Daily Usage</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="inventoryTableBody">
+
+                                    <!-- InventoryController.js will populate this -->
+
+                                </tbody>
+
+                            </table>
+
+                            <div class="pagination-footer"
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;">
+                                <button id="prevPageBtn" class="action-btn secondary btn-sm">Previous</button>
+                                <span id="pageInfo"
+                                    style="font-size: 13px; font-weight: 600; color: var(--slate-muted);">Page 1 of
+                                    3</span>
+                                <button id="nextPageBtn" class="action-btn secondary btn-sm">Next</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- =================================================
+                    RIGHT COLUMN
+                    ================================================= -->
+
+                    <aside class="inventory-sidebar">
+
+
+                        <!-- STOCK OVERVIEW -->
+                        <div class="card overview-card">
+
+                            <div class="card-header">
+
+                                <div>
+                                    <h3>Stock Overview</h3>
+
+                                    <p>
+                                        Current inventory distribution
+                                    </p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="stock-overview">
+
+                                <div class="donut-chart-box">
+
+                                    <svg viewBox="0 0 36 36" class="donut-svg">
+
+
+                                        <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#e2e8f0"
+                                            stroke-width="4">
+                                        </circle>
+
+                                        <circle id="inStockSegment" cx="18" cy="18" r="15.915" fill="transparent"
+                                            stroke="#10b981" stroke-width="4" stroke-dasharray="0 100"
+                                            stroke-dashoffset="25">
+                                        </circle>
+
+                                        <circle id="lowStockSegment" cx="18" cy="18" r="15.915" fill="transparent"
+                                            stroke="#f59e0b" stroke-width="4" stroke-dasharray="0 100"
+                                            stroke-dashoffset="25">
+                                        </circle>
+
+                                        <circle id="outStockSegment" cx="18" cy="18" r="15.915" fill="transparent"
+                                            stroke="#f43f5e" stroke-width="4" stroke-dasharray="0 100"
+                                            stroke-dashoffset="25">
+                                        </circle>
+
+                                    </svg>
+
+
+                                    <div class="donut-center-text">
+
+                                        <strong id="chartTotal">
+                                            0
+                                        </strong>
+
+                                        <span>
+                                            Ingredients
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="chart-legend-list">
+
+                                    <div class="legend-item">
+
+                                        <div>
+                                            <span class="dot-indicator green"></span>
+                                            In Stock
+                                        </div>
+
+                                        <strong id="inStockPercentage">
+                                            0%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="legend-item">
+
+                                        <div>
+                                            <span class="dot-indicator yellow"></span>
+                                            Low Stock
+                                        </div>
+
+                                        <strong id="lowStockPercentage">
+                                            0%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="legend-item">
+
+                                        <div>
+                                            <span class="dot-indicator red"></span>
+                                            Out of Stock
+                                        </div>
+
+                                        <strong id="outStockPercentage">
+                                            0%
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- INVENTORY ALERTS -->
+                        <div class="card alert-card">
+
+                            <div class="card-header alert-header">
+
+                                <div>
+
+                                    <h3>Inventory Alerts</h3>
+
+                                    <p>
+                                        Items requiring attention
+                                    </p>
+
+                                </div>
+
+                                <span class="alert-count" id="alertCount">
+                                    0
+                                </span>
+
+                            </div>
+
+
+                            <div id="inventoryAlertList"></div>
+
+                            <div class="pagination-footer"
+                                style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                                <button id="alertPrevPageBtn" class="action-btn secondary btn-sm">
+                                    Previous
+                                </button>
+
+                                <span id="alertPageInfo"
+                                    style="font-size: 13px; font-weight: 600; color: var(--slate-muted);">
+                                    Page 1 of 1
+                                </span>
+
+                                <button id="alertNextPageBtn" class="action-btn secondary btn-sm">
+                                    Next
+                                </button>
+                            </div>
+
+                        </div>
+
+
+                        <!-- C4.5 -->
+                        <div class="card c45-analytics-card">
+
+                            <div class="card-header">
+
+                                <div>
+
+                                    <h3>C4.5 Risk Analysis</h3>
+
+                                    <p>
+                                        Inventory classification
+                                    </p>
+
+                                </div>
+
+                                <span class="badge-c45">
+                                    C4.5
+                                </span>
+
+                            </div>
+
+
+                            <div class="risk-summary">
+
+                                <div class="risk-row high">
+
+                                    <span>
+                                        <i></i>
+                                        High Risk
+                                    </span>
+
+                                    <strong id="highRiskCount">
+                                        5
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="risk-row medium">
+
+                                    <span>
+                                        <i></i>
+                                        Medium Risk
+                                    </span>
+
+                                    <strong id="mediumRiskCount">
+                                        8
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="risk-row low">
+
+                                    <span>
+                                        <i></i>
+                                        Low Risk
+                                    </span>
+
+                                    <strong id="lowRiskCount">
+                                        29
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="c45-recommendation">
+
+                                <div class="recommendation-icon">
+                                    !
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Recommendation
+                                    </strong>
+
+                                    <p id="c45Recommendation">
+                                        5 ingredients require immediate
+                                        restocking based on current stock
+                                        and demand.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </section>
+
+
+                <!-- =====================================================
+         ANALYTICS
+         ===================================================== -->
+
+                <section class="analytics-grid">
+
+
+                    <!-- INVENTORY USAGE -->
+                    <div class="card movement-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <h3>Inventory Usage</h3>
+
+                                <p>
+                                    Ingredient consumption over time
+                                </p>
+
+                            </div>
+
+                            <select class="analytics-select">
+
+                                <option>
+                                    Last 7 Days
+                                </option>
+
+                                <option>
+                                    Last 30 Days
+                                </option>
+
+                                <option>
+                                    Last 3 Months
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="usage-chart">
+
+                            <div class="chart-y-labels">
+                                <span>100</span>
+                                <span>75</span>
+                                <span>50</span>
+                                <span>25</span>
+                                <span>0</span>
+                            </div>
+
+
+                            <div class="chart-grid-lines">
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                            </div>
+
+
+                            <svg viewBox="0 0 700 220" preserveAspectRatio="none">
+
+                                <defs>
+
+                                    <linearGradient id="usageGradient" x1="0" y1="0" x2="0" y2="1">
+
+                                        <stop offset="0%" stop-color="#0284c7" stop-opacity="0.18" />
+
+                                        <stop offset="100%" stop-color="#0284c7" stop-opacity="0" />
+
+                                    </linearGradient>
+
+                                </defs>
+
+
+                                <polygon
+                                    points="0,170 80,140 160,155 240,110 320,130 400,80 480,100 560,65 700,85 700,220 0,220"
+                                    fill="url(#usageGradient)">
+                                </polygon>
+
+
+                                <polyline points="0,170 80,140 160,155 240,110 320,130 400,80 480,100 560,65 700,85"
+                                    fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                </polyline>
+
+                            </svg>
+
+
+                            <div class="chart-x-labels">
+
+                                <span>Mon</span>
+                                <span>Tue</span>
+                                <span>Wed</span>
+                                <span>Thu</span>
+                                <span>Fri</span>
+                                <span>Sat</span>
+                                <span>Sun</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESTOCK PRIORITY -->
+                    <div class="card restock-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <h3>Restock Priority</h3>
+
+                                <p>
+                                    Ingredients needing action
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="priority-list" id="priorityList">
+                            <!-- Generated dynamically from InventoryService -->
+                        </div>
+
+                        <div class="pagination-footer priority-pagination">
+                            <button id="priorityPrevBtn" class="action-btn secondary btn-sm" disabled>
+                                Previous
+                            </button>
+
+                            <span id="priorityPageInfo">Page 1 of 1</span>
+
+                            <button id="priorityNextBtn" class="action-btn secondary btn-sm" disabled>
+                                Next
+                            </button>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script type="module" src="js/controllers/InventoryController.js">
+    </script>
+
+</body>
+
+</html>

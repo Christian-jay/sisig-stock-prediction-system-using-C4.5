@@ -1,0 +1,496 @@
+/* =========================================================
+   FOODHUB — PAYMENT / ORDER SUMMARY STYLING
+   ========================================================= */
+
+:root {
+
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-light: #e0f2fe;
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --success-bg: #dcfce7;
+    --success-text: #16a34a;
+    --warning-bg: #fef9c3;
+    --warning-text: #ca8a04;
+    --processing-bg: #dbeafe;
+    --processing-text: #2563eb;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    background: var(--bg-main);
+
+    color: var(--slate-text);
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.admin-layout {
+
+    display: flex;
+
+    min-height: 100vh;
+
+    width: 100%;
+}
+
+
+.main-content {
+
+    margin-left: 260px;
+
+    flex: 1;
+
+    min-width: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content-body {
+    flex: 1;
+    padding: 20px 26px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+    min-height: 0;
+    height: calc(100vh - 70px);
+    overflow: hidden;
+}
+
+.page-header h1 .header-separator {
+    color: #94a3b8;
+    font-weight: 400;
+    margin: 0 4px;
+}
+
+.page-header h1 {
+    color: var(--navy-dark);
+
+    font-size: 26px;
+    font-weight: 800;
+
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+}
+
+.page-header p {
+    margin-top: 5px;
+
+    color: var(--slate-muted);
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+.order-summary-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.summary-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.summary-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.summary-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #0284c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary-title-group h2 {
+    color: #0b2a63;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.order-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.order-id {
+    color: #475569;
+    font-size: 14px;
+}
+
+.order-id strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.order-timestamp {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+/* Customer Info Bar */
+.customer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.customer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0284c7;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.customer-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-label {
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.customer-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Status Badge */
+.badge-completed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    background: #dcfce7;
+    color: #16a34a;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+/* Siguraduhing may tamang height at scroll ang container */
+.table-responsive {
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+    position: relative;
+    /* Mahalaga para sa sticky positioning */
+}
+
+/* Gawing sticky ang table headers */
+.order-table th {
+    position: sticky;
+    top: 0;
+    background: #f0f7ff;
+    /* Kailangan ng solid background para hindi makita ang mga text sa ilalim */
+    z-index: 10;
+    /* Tinitiyak na laging nasa ibabaw ng mga data rows ang header */
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    /* Opsyonal: nagbibigay ng manipis na shadow bago ang rows */
+}
+
+/* Optional: Custom scrollbar styling matching your POS theme */
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #bfdbfe;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #93c5fd;
+}
+
+/* Table Styling & Alignment */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* Sinisigurong nasusunod ang tinakdang width ng bawat column */
+}
+
+.order-table th {
+    background: #f0f7ff;
+    color: #075a9c;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.order-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+/* Column Widths Allocation */
+.order-table .col-item {
+    width: 45%;
+    text-align: left;
+}
+
+.order-table .col-qty {
+    width: 15%;
+    text-align: center;
+}
+
+.order-table .col-price {
+    width: 20%;
+    text-align: right;
+}
+
+.order-table .col-total {
+    width: 20%;
+    text-align: right;
+}
+
+.order-table .item-name {
+    font-weight: 700;
+    color: #0b2a63;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+/* Payment Breakdown Box */
+.payment-breakdown-box {
+    background: #f8fcff;
+    border: 1px solid #e2ecf8;
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-self: flex-end;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.breakdown-row span:last-child {
+    font-weight: 600;
+    color: #334155;
+}
+
+.breakdown-row.total-row {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px dashed #cbdff2;
+}
+
+.breakdown-row.total-row span:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0b2a63;
+}
+
+.breakdown-row .total-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0284c7;
+}
+
+/* Actions */
+.payment-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid #cfe3f7;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #075a9c;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.btn-pay {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 8px;
+    background: #0284c7;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-pay:hover {
+    background: #0369a1;
+    transform: translateY(-1px);
+}
+
+.customer-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-order-type {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .summary-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .order-meta {
+        align-items: flex-start;
+    }
+
+    .payment-breakdown-box {
+        max-width: 100%;
+    }
+
+    .payment-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .btn-back,
+    .btn-pay {
+        width: 100%;
+        justify-content: center;
+    }
+}

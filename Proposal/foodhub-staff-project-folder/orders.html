@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FOODHUB — Orders</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Global Navigation -->
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+
+    <!-- Orders Page -->
+    <link rel="stylesheet" href="css/orders.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- =========================================
+         SIDEBAR
+         ========================================= -->
+        <div id="sidebar-nav-container"></div>
+
+
+        <!-- =========================================
+         MAIN CONTENT
+         ========================================= -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+
+            <!-- =========================================
+             PAGE CONTENT
+             ========================================= -->
+            <div class="content-body">
+
+                <!-- PAGE HEADER -->
+                <header class="page-header">
+
+                    <div class="page-header-text">
+
+                        <h1>Orders</h1>
+
+                        <p>
+                            Process customer orders and manage your point of sale.
+                        </p>
+
+                    </div>
+
+                </header>
+
+
+                <!-- =====================================
+                 POS LAYOUT
+                 ===================================== -->
+                <section class="pos-container">
+
+
+                    <!-- =================================
+                     CURRENT ORDER
+                     ================================= -->
+                    <section class="card current-order-card">
+
+                        <!-- Card Header -->
+                        <header class="card-header">
+
+                            <div class="card-title">
+
+                                <div class="title-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                        <path d="M16 2v4"></path>
+                                        <path d="M8 2v4"></path>
+                                        <path d="M3 10h18"></path>
+                                        <path d="M8 14h2"></path>
+                                        <path d="M14 14h2"></path>
+                                        <path d="M8 18h2"></path>
+                                        <path d="M14 18h2"></path>
+                                    </svg>
+                                </div>
+
+                                <h2>Current Order</h2>
+
+                            </div>
+
+                        </header>
+
+
+                        <!-- Cart -->
+                        <div class="cart-items-container" id="cartItemsContainer">
+
+                            <!-- Empty state rendered by JS -->
+
+                        </div>
+
+
+                        <!-- Cart Footer -->
+                        <footer class="cart-footer">
+
+                            <div class="cart-footer-top">
+
+                                <!-- Order Type -->
+                                <div class="order-type">
+
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 2h12"></path>
+                                        <path d="M6 2v6"></path>
+                                        <path d="M18 2v6"></path>
+                                        <path d="M5 8h14"></path>
+                                        <path d="M4 8h16"></path>
+                                        <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"></path>
+                                    </svg>
+
+                                    <select id="orderTypeSelect">
+                                        <option value="Takeout">Takeout</option>
+                                        <option value="Dine-in">Dine-in</option>
+                                    </select>
+
+                                    <svg class="select-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+
+                                </div>
+
+
+                                <!-- Summary -->
+                                <div class="cart-summary">
+
+                                    <div class="summary-item">
+                                        <span>Quantity</span>
+                                        <strong id="totalQuantity">0</strong>
+                                    </div>
+
+                                    <div class="summary-divider"></div>
+
+                                    <div class="summary-item total">
+                                        <span>Total</span>
+                                        <strong id="totalAmount">₱0.00</strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Payment -->
+                            <button class="btn-payment" id="btnPayment" disabled>
+
+                                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                                </svg>
+
+                                <span>Payment</span>
+
+                            </button>
+
+                        </footer>
+
+                    </section>
+
+
+                    <!-- =================================
+                     MENU CATALOG
+                     ================================= -->
+                    <section class="card menu-catalog-card">
+
+                        <!-- Catalog Header -->
+                        <header class="catalog-header">
+
+                            <div class="catalog-actions">
+
+                                <!-- Clear -->
+                                <button class="btn-outline" id="btnClearCart" type="button">
+
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                                        <path d="M10 11v6"></path>
+                                        <path d="M14 11v6"></path>
+                                        <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+
+                                    Clear
+
+                                </button>
+
+
+                                <!-- Customer -->
+                                <button class="btn-outline" id="btnSelectCustomer" type="button">
+
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+
+                                    Customer
+
+                                </button>
+
+                            </div>
+
+
+                            <!-- Search -->
+                            <div class="menu-search">
+
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+
+                                <input type="search" id="menuSearchInput" placeholder="Search menu or ingredient..."
+                                    autocomplete="off">
+
+                            </div>
+
+                        </header>
+
+
+                        <!-- Category Tabs -->
+                        <nav class="category-tabs" id="categoryTabs" aria-label="Menu categories">
+
+                            <button class="cat-tab active" type="button" data-category="sisig">
+                                Sisig
+                            </button>
+
+                            <button class="cat-tab" type="button" data-category="extra">
+                                Extra
+                            </button>
+
+                        </nav>
+
+
+                        <!-- Menu -->
+                        <div class="menu-grid" id="menuGridContainer">
+
+                            <!-- Rendered by OrdersController -->
+
+                        </div>
+
+                    </section>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
+    <script type="module" src="js/controllers/OrdersController.js"></script>
+
+</body>
+
+</html>

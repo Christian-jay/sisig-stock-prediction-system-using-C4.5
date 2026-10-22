@@ -1,0 +1,919 @@
+/* =========================================================
+   FOODHUB ADMIN — SALES REPORT
+   ========================================================= */
+
+:root {
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-light: #e0f2fe;
+
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+
+    --bg-main: #f1f5f9;
+    --card-bg: #ffffff;
+
+    --border-color: #e2e8f0;
+    --border-light: #f1f5f9;
+
+    --success-bg: #dcfce7;
+    --success-text: #16a34a;
+
+    --warning-bg: #fef3c7;
+    --warning-text: #d97706;
+
+    --purple-bg: #f3e8ff;
+    --purple-text: #9333ea;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-main);
+    color: var(--slate-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.admin-layout {
+    min-height: 100vh;
+    display: flex;
+}
+
+.main-content {
+    margin-left: 260px;
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.content-body {
+    padding: 28px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.page-header-row h2 {
+    font-size: 25px;
+    line-height: 1.25;
+    color: var(--slate-dark);
+    font-weight: 800;
+    letter-spacing: -.6px;
+}
+
+.page-header-row p {
+    margin-top: 6px;
+    color: var(--slate-muted);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.page-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.page-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+
+    color: var(--primary);
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.2;
+
+    color: var(--navy-dark);
+}
+
+.page-description {
+    margin-top: 2px;
+
+    font-size: 13px;
+    color: var(--slate-muted);
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-picker-box {
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 0 12px;
+
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    color: var(--slate-muted);
+
+    font-size: 12px;
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+.date-picker-box svg {
+    color: var(--slate-muted);
+    flex-shrink: 0;
+}
+
+.filter-select {
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    background: var(--card-bg);
+    color: var(--slate-text);
+
+    font-family: inherit;
+    font-size: 12px;
+
+    outline: none;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    border-color: var(--primary);
+}
+
+.btn-primary {
+    height: 40px;
+
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: var(--primary);
+    color: #fff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DASHBOARD GRID
+   ========================================================= */
+
+.sales-dashboard-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr) 330px;
+
+    gap: 24px;
+
+    align-items: stretch;
+}
+
+.sales-main-column {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.sales-sidebar-column {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+.section-heading {
+    margin-bottom: 12px;
+}
+
+.section-heading h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy-dark);
+}
+
+.section-heading p {
+    margin-top: 3px;
+
+    font-size: 12px;
+    color: var(--slate-muted);
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+    background: var(--card-bg);
+
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+
+    box-shadow: var(--shadow-sm);
+
+    padding: 20px;
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 18px;
+}
+
+.card-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy-dark);
+}
+
+.card-header p {
+    margin-top: 4px;
+
+    font-size: 12px;
+    color: var(--slate-muted);
+}
+
+.chart-period {
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    background: var(--primary-light);
+    color: var(--primary-dark);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+.metrics-cards-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.metric-card {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    min-width: 0;
+
+    padding: 16px;
+
+    background: var(--card-bg);
+
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 30px;
+    /* font-weight: 800; */
+}
+
+.metric-icon.blue {
+     width: 46px;
+    height: 46px;
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.metric-icon.green {
+    width: 46px;
+    height: 46px;
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.metric-icon.purple {
+     width: 46px;
+    height: 46px;
+    background: var(--purple-bg);
+    color: var(--purple-text);
+}
+
+.metric-content {
+    min-width: 0;
+}
+
+.metric-label {
+    display: block;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+
+    color: var(--slate-muted);
+}
+
+.metric-value {
+    margin-top: 5px;
+
+    font-size: 21px;
+    line-height: 1.2;
+    font-weight: 800;
+
+    color: var(--navy-dark);
+}
+
+.metric-trend {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.metric-trend.positive {
+    color: var(--success-text);
+}
+
+
+/* =========================================================
+   FOODHUB ADMIN — MODERN SALES AREA CHART STYLES
+   ========================================================= */
+
+.sales-trend-card {
+    min-width: 0;
+    min-height: 0;
+    padding: 22px;
+    overflow: visible;
+}
+
+.sales-trend-card .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.sales-trend-card .card-header h2 {
+    color: var(--navy-dark);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.sales-trend-card .card-header p {
+    margin-top: 5px;
+    color: var(--slate-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.chart-period {
+    flex-shrink: 0;
+    padding: 7px 11px;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    background: #f0f9ff;
+    color: #0369a1;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Chart viewport */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    min-width: 0;
+    overflow: visible;
+}
+
+/* Main chart layout */
+.trend-chart {
+    display: grid;
+    grid-template-columns: 60px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 30px;
+    column-gap: 12px;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+}
+
+/* Y-axis labels */
+.trend-y-axis {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    color: #8492a6;
+    font-size: 10px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.trend-y-axis span {
+    display: block;
+    white-space: nowrap;
+}
+
+/* Plot area */
+.trend-graph-area {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.trend-graph {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* Horizontal grid lines */
+.trend-grid {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.trend-grid-line {
+    flex: 0 0 1px;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    border-top: 1px dashed #e5ebf2;
+}
+
+/* Vertical grid lines */
+.trend-grid-vertical {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.trend-grid-vertical-line {
+    width: 1px;
+    height: 100%;
+    border-left: 1px dashed #edf1f6;
+}
+
+/* SVG layer */
+.trend-svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 2;
+}
+
+/* Soft area below the sales curve */
+.trend-area {
+    fill: url(#salesAreaGradient);
+    stroke: none;
+}
+
+/* Smooth sales line */
+.trend-line {
+    fill: none;
+    stroke: #0284c7;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+/* Data points */
+.trend-point {
+    fill: #0284c7;
+    stroke: #ffffff;
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+    transition: r 160ms ease;
+}
+
+/* X-axis labels */
+.trend-x-labels {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 150px;
+    width: 100%;
+    min-width: 0;
+    height: 30px;
+    padding-top: 10px;
+    color: #8492a6;
+    font-size: 10px;
+}
+
+.trend-x-labels span {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Tooltip */
+.trend-tooltip {
+    position: absolute;
+    z-index: 10;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+}
+
+.sales-main-column,
+.sales-sidebar-column,
+.sales-dashboard-grid {
+    min-width: 0;
+}
+
+.sales-dashboard-grid {
+    align-items: start;
+}
+
+
+/* =========================================================
+   TOP SELLING
+   ========================================================= */
+
+.top-selling-card {
+    height: 100%;
+    min-height: 350px;
+}
+
+.top-items-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.top-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    /* Tinanggal ang horizontal/box padding at ginawang vertical na lang */
+    background: transparent;
+    /* Ginawang transparent ang background */
+    border: none;
+    /* Tinanggal ang buong border box */
+    border-bottom: 1px solid var(--border-light);
+    /* Naglagay lang ng linya sa ilalim */
+}
+
+.top-item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-item-rank {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-muted, #64748b);
+    min-width: 24px;
+}
+
+.top-item-img {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 6px;
+    background-color: #e2e8f0;
+    /* Fallback background habang nag-a-load ang image */
+}
+
+.top-item-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-main, #1e293b);
+}
+
+.top-item-quantity {
+    font-size: 12px;
+    color: var(--text-muted, #64748b);
+}
+
+.top-item-sales {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-main, #1e293b);
+}
+
+/* =========================================================
+   TABLE GRID
+   ========================================================= */
+
+.sales-tables-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 24px;
+}
+
+.table-card {
+    min-width: 0;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 12px;
+
+    text-align: left;
+}
+
+.data-table th {
+    padding: 0 10px 11px;
+
+    border-bottom:
+        1px solid var(--border-color);
+
+    color: var(--slate-muted);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.data-table th:first-child,
+.data-table td:first-child {
+    padding-left: 0;
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+    padding-right: 0;
+}
+
+.data-table td {
+    padding: 13px 10px;
+
+    border-bottom:
+        1px solid var(--border-light);
+
+    color: var(--slate-text);
+
+    white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   RESPONSIVE & CHART MEDIA QUERIES
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .sales-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-sidebar-column {
+        min-height: 300px;
+    }
+
+    .top-selling-card {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        margin-left: 0;
+    }
+
+    .content-body {
+        padding: 20px;
+    }
+
+    .page-header-row {
+        align-items: flex-end;
+        flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .metrics-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-tables-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .trend-chart {
+        grid-template-columns: 54px minmax(0, 1fr);
+        column-gap: 10px;
+    }
+
+    .trend-y-axis,
+    .trend-x-labels {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 600px) {
+    .content-body {
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-picker-box,
+    .filter-select,
+    .btn-primary {
+        width: 100%;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .sales-trend-card {
+        padding: 16px;
+    }
+
+    .sales-trend-card .card-header {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .sales-trend-card .card-header h2 {
+        font-size: 15px;
+    }
+
+    .chart-container {
+        height: 225px;
+    }
+
+    .trend-chart {
+        grid-template-columns: 44px minmax(0, 1fr);
+        column-gap: 8px;
+    }
+
+    .trend-y-axis,
+    .trend-x-labels {
+        font-size: 8px;
+    }
+
+    .trend-line {
+        stroke-width: 2.5;
+    }
+
+    .trend-point {
+        stroke-width: 2;
+    }
+}

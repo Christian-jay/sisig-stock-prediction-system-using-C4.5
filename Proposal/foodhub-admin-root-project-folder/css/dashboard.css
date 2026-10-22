@@ -1,0 +1,925 @@
+/* =========================================================
+   FOODHUB ADMIN — DASHBOARD PAGE
+   ========================================================= */
+
+:root {
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-light: #e0f2fe;
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --success-bg: #dcfce7;
+    --success-text: #16a34a;
+    --warning-bg: #fef9c3;
+    --warning-text: #ca8a04;
+    --processing-bg: #dbeafe;
+    --processing-text: #2563eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--slate-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Layout Grid */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 260px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.content-body {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.page-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.page-header-row h2 {
+    font-size: 25px;
+    line-height: 1.25;
+    color: var(--slate-dark);
+    font-weight: 800;
+    letter-spacing: -.6px;
+}
+
+.page-header-row p {
+    margin-top: 6px;
+    color: var(--slate-muted);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Cards Base */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--slate-dark);
+}
+
+/* 1. Metrics Grid (4 columns) */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.metric-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* Metric Icons Unified Styling */
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+.metric-icon.blue {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.metric-icon.orange {
+    background: #ffedd5;
+    color: #f97316;
+}
+
+.metric-icon.yellow {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+.metric-icon.green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.metric-data {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.metric-title {
+    font-size: 12px;
+    color: var(--slate-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--slate-dark);
+    margin: 4px 0;
+}
+
+.metric-trend {
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.metric-trend.positive {
+    color: var(--success-text);
+}
+
+.metric-trend.warning {
+    color: var(--warning-text);
+}
+
+/* 2. Charts & Top Items Grid */
+.charts-top-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1.2fr 1.2fr;
+    gap: 20px;
+}
+
+.dropdown-select {
+    padding: 4px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-main);
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--slate-muted);
+}
+
+.top-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.top-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.item-info-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    margin-bottom: 8px;
+}
+
+.item-rank {
+    font-weight: 700;
+    color: var(--slate-muted);
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.item-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--slate-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-percentage {
+    font-weight: 700;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+/* 3. Orders & Revenue Grid */
+.orders-revenue-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.view-all-link {
+    font-size: 13px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Tables */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+}
+
+.data-table th {
+    color: var(--slate-muted);
+    font-weight: 600;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    background: #f8fafc;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--slate-dark);
+    font-weight: 500;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge.completed {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.badge.processing {
+    background: var(--processing-bg);
+    color: var(--processing-text);
+}
+
+.badge.pending {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.badge.lowstock {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.btn-sm {
+    padding: 4px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--slate-text);
+}
+
+.btn-sm:hover {
+    background: var(--bg-main);
+}
+
+/* 4. Footer Widgets Grid */
+.footer-widgets-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 1fr;
+    gap: 20px;
+}
+
+.quick-stats-box h4,
+.quick-actions-box h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--slate-dark);
+    margin-bottom: 16px;
+}
+
+.stats-subgrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.stat-mini {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.mini-icon {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.mini-label {
+    font-size: 11px;
+    color: var(--slate-muted);
+}
+
+.mini-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--slate-dark);
+    margin: 2px 0;
+}
+
+.mini-sub {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.mini-sub.positive {
+    color: var(--success-text);
+}
+
+.actions-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.action-btn.primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+.action-btn.primary:hover {
+    background: var(--primary-dark);
+}
+
+.action-btn.secondary {
+    background: var(--bg-main);
+    color: var(--slate-dark);
+    border: 1px solid var(--border-color);
+}
+
+.action-btn.secondary:hover {
+    background: #e2e8f0;
+}
+
+/* =========================================================
+   SALES CHARTS
+   ========================================================= */
+
+.chart-container {
+    height: 245px;
+    width: 100%;
+    position: relative;
+}
+
+.trend-container {
+    height: 245px;
+    width: 100%;
+    position: relative;
+}
+
+.sales-chart {
+    display: flex;
+    width: 100%;
+    height: 220px;
+}
+
+/* Y Axis */
+.chart-y-axis {
+    width: 58px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-right: 8px;
+    font-size: 11px;
+    color: #1e4f7a;
+    flex-shrink: 0;
+}
+
+.trend-y-axis {
+    height: 180px;
+}
+
+/* Main Chart Area */
+.chart-main {
+    position: relative;
+    flex: 1;
+    height: 220px;
+    border-left: 1px solid #94a3b8;
+    border-bottom: 1px solid #94a3b8;
+}
+
+/* Horizontal Grid */
+.chart-grid {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.chart-grid>span {
+    width: 100%;
+    border-top: 1px solid #dbeafe;
+}
+
+/* Vertical Grid */
+.vertical-grid {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.vertical-grid span {
+    height: 100%;
+    border-left: 1px solid #dbeafe;
+}
+
+/* Bar Chart */
+.bars-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 8px;
+}
+
+.bar-group {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+
+.bar-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.bar {
+    width: 34px;
+    max-width: 70%;
+    background: #416d98;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    z-index: 2;
+    transition: height 0.3s ease, opacity 0.2s ease;
+}
+
+.bar:hover {
+    opacity: 0.85;
+}
+
+.bar-value {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    font-size: 9px;
+    color: #416d98;
+    white-space: nowrap;
+    opacity: 0;
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -20px;
+    font-size: 10px;
+    color: #1e4f7a;
+    white-space: nowrap;
+}
+
+/* Sales Trend */
+.trend-svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 220px;
+    overflow: visible;
+    z-index: 2;
+}
+
+.trend-area {
+    fill: #dbeafe;
+    opacity: 0.75;
+    stroke: none;
+}
+
+.trend-line {
+    fill: none;
+    stroke: #1769c2;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.trend-point {
+    fill: #1769c2;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+}
+
+.trend-x-labels {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #1e4f7a;
+    z-index: 3;
+}
+
+.trend-x-labels span {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FOODHUB ADMIN — LANDSCAPE TABLET RESPONSIVE
+   ========================================================= */
+
+@media (min-width: 901px) and (max-width: 1280px) {
+    .main-content {
+        margin-left: 240px;
+        width: calc(100% - 240px);
+    }
+
+    .content-body {
+        padding: 22px;
+        gap: 20px;
+    }
+
+    .page-header-row {
+        gap: 16px;
+    }
+
+    .page-header-row h2 {
+        font-size: 22px;
+    }
+
+    .page-header-row p {
+        font-size: 13px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .metric-card {
+        padding: 15px;
+        gap: 11px;
+    }
+
+    .metric-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .metric-value {
+        font-size: 18px;
+    }
+
+    .metric-title {
+        font-size: 11px;
+    }
+
+    .dashboard-grid-main {
+        grid-template-columns: minmax(0, 1.7fr) minmax(250px, 1fr);
+        gap: 18px;
+    }
+
+    .dashboard-grid-bottom {
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .card {
+        padding: 17px;
+        border-radius: 11px;
+    }
+
+    .card-header {
+        margin-bottom: 13px;
+    }
+
+    .card-header h4 {
+        font-size: 15px;
+    }
+
+    .data-table {
+        font-size: 12px;
+    }
+
+    .data-table th {
+        padding: 9px 10px;
+        font-size: 11px;
+    }
+
+    .data-table td {
+        padding: 11px 10px;
+    }
+
+    .btn-sm {
+        padding: 4px 9px;
+        font-size: 11px;
+    }
+
+    .top-items-list {
+        gap: 0;
+    }
+
+    .top-item-row {
+        padding: 11px 4px;
+        min-height: 42px;
+    }
+
+    .item-name {
+        font-size: 12px;
+    }
+
+    .item-rank {
+        font-size: 11px;
+    }
+}
+
+
+/* =========================================================
+   MEDIUM LANDSCAPE TABLETS (900px – 1050px)
+   ========================================================= */
+
+@media (min-width: 901px) and (max-width: 1050px) {
+    .main-content {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+
+    .content-body {
+        padding: 18px;
+        gap: 18px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .metric-card {
+        padding: 14px;
+    }
+
+    .dashboard-grid-main {
+        grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr);
+        gap: 16px;
+    }
+
+    .dashboard-grid-bottom {
+        gap: 16px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .data-table {
+        min-width: 500px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+
+/* =========================================================
+   TABLET LANDSCAPE — EXTRA COMPACT (900px – 950px)
+   ========================================================= */
+
+@media (min-width: 901px) and (max-width: 950px) {
+    .main-content {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .content-body {
+        padding: 15px;
+    }
+
+    .dashboard-grid-main {
+        grid-template-columns: 1fr 0.8fr;
+        gap: 14px;
+    }
+
+    .dashboard-grid-bottom {
+        gap: 14px;
+    }
+
+    .metric-card {
+        padding: 12px;
+    }
+
+    .metric-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .metric-value {
+        font-size: 17px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .card-header h4 {
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   TABLET PORTRAIT / SMALL SCREENS (max-width: 900px)
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .content-body {
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .dashboard-grid-main,
+    .dashboard-grid-bottom,
+    .charts-top-grid,
+    .orders-revenue-grid,
+    .footer-widgets-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        min-width: 600px;
+    }
+}
+
+
+/* =========================================================
+   SMALL TABLETS / LARGE PHONES (max-width: 700px)
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .content-body {
+        padding: 16px;
+        gap: 18px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+        padding: 16px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES (max-width: 480px)
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .content-body {
+        padding: 12px;
+    }
+
+    .page-header-row h2 {
+        font-size: 20px;
+    }
+
+    .page-header-row p {
+        font-size: 12px;
+    }
+
+    .card {
+        padding: 13px;
+    }
+
+    .metric-card {
+        padding: 13px;
+    }
+
+    .metric-value {
+        font-size: 18px;
+    }
+
+    .data-table {
+        min-width: 560px;
+    }
+}

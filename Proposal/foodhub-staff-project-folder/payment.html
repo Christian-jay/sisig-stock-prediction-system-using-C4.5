@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FOODHUB — Orders / Payment</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Global Navigation -->
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+
+    <!-- Payment Page CSS -->
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- =========================================
+         SIDEBAR
+         ========================================= -->
+        <div id="sidebar-nav-container"></div>
+
+
+        <!-- =========================================
+         MAIN CONTENT
+         ========================================= -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+
+            <!-- =========================================
+             PAGE CONTENT
+             ========================================= -->
+            <div class="content-body">
+
+                <!-- PAGE HEADER -->
+                <header class="page-header">
+                    <div class="page-header-text">
+                        <h1>Orders <span class="header-separator">/</span> Payment</h1>
+                        <p>Complete the payment for this order.</p>
+                    </div>
+                </header>
+
+                <!-- =====================================
+                 ORDER SUMMARY CARD
+                 ===================================== -->
+                <section class="card order-summary-card">
+
+                    <!-- Card Header -->
+                    <div class="summary-card-header">
+                        <div class="summary-title-group">
+                            <div class="summary-icon-box">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <h2>Order Summary</h2>
+                        </div>
+
+                        <div class="order-meta">
+                            <span class="order-id">Order ID <strong id="orderIdText">#1001</strong></span>
+                            <span class="order-timestamp" id="orderTimestamp">Apr 27, 2025 • 10:24 AM</span>
+                        </div>
+                    </div>
+
+                    <!-- Customer Section & Status Badge -->
+                    <div class="customer-bar">
+                        <div class="customer-info">
+                            <div class="customer-avatar">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="customer-details">
+                                <span class="customer-label">Customer</span>
+                                <span class="customer-name" id="customerName">Juan Dela Cruz</span>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Order Type & Status Badge -->
+                        <div class="customer-bar-right">
+                            <span class="badge badge-order-type" id="orderTypeBadge">Takeout</span>
+                            <span class="badge badge-completed">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Completed
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table class="order-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-item">Item</th>
+                                    <th class="text-center col-qty">Qty</th>
+                                    <th class="text-right col-price">Unit Price</th>
+                                    <th class="text-right col-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentTableBody">
+                                <!-- Dynamically populated by PaymentController -->
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <!-- Payment Totals Breakdown -->
+                    <div class="payment-breakdown-box">
+                        <div class="breakdown-row">
+                            <span>Subtotal</span>
+                            <span id="paymentSubtotal">₱0.00</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Tax (0%)</span>
+                            <span id="paymentTax">₱0.00</span>
+                        </div>
+                        <div class="breakdown-row total-row">
+                            <span>Total Amount</span>
+                            <span class="total-price" id="paymentTotal">₱0.00</span>
+                        </div>
+                    </div>
+
+
+                    <!-- Footer Actions -->
+                    <footer class="payment-actions">
+                        <a href="orders.html" class="btn-back">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                            Back to Orders
+                        </a>
+
+                        <button class="btn-pay" id="btnConfirmPay" type="button">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                <line x1="2" y1="10" x2="22" y2="10"></line>
+                            </svg>
+                            Pay
+                        </button>
+                    </footer>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- JavaScript Controller -->
+    <script type="module" src="js/controllers/PaymentController.js"></script>
+
+</body>
+
+</html>

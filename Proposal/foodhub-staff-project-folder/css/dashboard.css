@@ -1,0 +1,922 @@
+/* =========================================================
+   FOODHUB ADMIN — STAFF DASHBOARD PAGE
+   ========================================================= */
+
+:root {
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-light: #e0f2fe;
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --success-bg: #dcfce7;
+    --success-text: #16a34a;
+    --warning-bg: #fef9c3;
+    --warning-text: #ca8a04;
+    --processing-bg: #dbeafe;
+    --processing-text: #2563eb;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-main);
+    color: var(--slate-text);
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.admin-layout {
+    min-height: 100vh;
+    display: flex;
+}
+
+.main-content {
+    margin-left: 260px;
+
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =========================================================
+   CONTENT BODY
+   ========================================================= */
+
+.content-body {
+    padding: 24px 28px 30px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 58px;
+}
+
+.page-header-row h2 {
+    color: var(--navy-dark);
+
+    font-size: 26px;
+    font-weight: 800;
+
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+}
+
+.page-header-row p {
+    margin-top: 5px;
+
+    color: var(--slate-muted);
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   METRICS GRID
+   ========================================================= */
+
+.metrics-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   METRIC CARD
+   ========================================================= */
+
+.metric-card {
+    min-width: 0;
+
+    min-height: 136px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 15px;
+
+    padding: 17px 18px;
+
+    background: var(--card-bg);
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    box-shadow: var(--shadow-card);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+}
+
+
+/* =========================================================
+   METRIC ICON
+   ========================================================= */
+
+.metric-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 30px;
+}
+
+.metric-icon.blue {
+    background: #dceeff;
+    color: #1769b5;
+}
+
+.metric-icon.green {
+    background: #ddf7ea;
+    color: #0ca678;
+}
+
+.metric-icon.yellow {
+    background: #fff0d5;
+    color: #f08a16;
+}
+
+.metric-icon.red {
+    background: #ffe1e3;
+    color: #ef4444;
+}
+
+
+/* =========================================================
+   METRIC INFORMATION
+   ========================================================= */
+
+.metric-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    padding-top: 5px;
+}
+
+.metric-label {
+    color: #3d5d86;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.metric-value {
+    color: var(--navy-dark);
+
+    font-size: 24px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.02em;
+}
+
+.metric-trend {
+    margin-top: 3px;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.metric-trend.positive {
+    color: var(--success-text);
+}
+
+.metric-trend.warning {
+    color: var(--warning-text);
+}
+
+.metric-trend.danger {
+    color: var(--danger-text);
+}
+
+
+/* =========================================================
+   DASHBOARD MAIN GRID
+   ========================================================= */
+
+.dashboard-grid-main {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.72fr) minmax(320px, 0.98fr);
+
+    gap: 16px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   DASHBOARD BOTTOM GRID
+   ========================================================= */
+
+.dashboard-grid-bottom {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr) minmax(0, 1.45fr);
+
+    gap: 16px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+    min-width: 0;
+
+    background: var(--card-bg);
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    padding: 16px;
+
+    box-shadow: var(--shadow-card);
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.card-header-flex {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 13px;
+}
+
+.card-title-group {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-width: 0;
+
+    color: var(--navy-dark);
+}
+
+.card-title-group svg {
+    flex-shrink: 0;
+}
+
+.card-title-group h3 {
+    color: var(--navy-dark);
+
+    font-size: 16px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+}
+
+.btn-link {
+    flex-shrink: 0;
+
+    color: var(--primary);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    font-size: 12px;
+
+    text-align: left;
+}
+
+
+/* TABLE HEADER */
+
+.data-table thead th {
+    padding: 10px 12px;
+
+    background: #f3f8fd;
+
+    border-bottom: 1px solid var(--border-light);
+
+    color: #52719a;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.data-table thead th:first-child {
+    border-top-left-radius: 7px;
+}
+
+.data-table thead th:last-child {
+    border-top-right-radius: 7px;
+}
+
+
+/* TABLE BODY */
+
+.data-table th {
+    padding: 11px 12px;
+
+    background: #eff6ff;
+
+    color: #45678f;
+
+    border-bottom: 1px solid #cbdcf0;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 12px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #dbe5ef;
+
+    color: #3c5d83;
+
+    white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: 1px solid #dbe5ef;
+}
+
+.data-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.data-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.data-table td strong {
+    color: #264a75;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SMALL VIEW BUTTON
+   ========================================================= */
+
+.btn-sm {
+    min-width: 78px;
+
+    padding: 7px 12px;
+
+    border: 1px solid #cfe3f7;
+    border-radius: 6px;
+
+    background: #f1f8ff;
+    color: var(--primary);
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-sm:hover {
+    background: #e5f2ff;
+    border-color: #b9d8f3;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 70px;
+
+    padding: 6px 11px;
+
+    border-radius: 7px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.badge.completed {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.badge.processing {
+    background: var(--processing-bg);
+    color: var(--processing-text);
+}
+
+.badge.pending {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.badge.low-stock {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+
+/* =========================================================
+   POPULAR MENU ITEMS
+   ========================================================= */
+
+.popular-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.popular-item-row {
+    min-height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 8px 2px;
+
+    border-bottom: 1px solid #dbe5ef;
+
+    font-size: 12px;
+}
+
+.popular-item-row:last-child {
+    border-bottom: 1px solid #dbe5ef;
+}
+
+
+/* ITEM LEFT */
+
+.popular-item-left {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+}
+
+.popular-item-image {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    border: 1px solid #e2e8f0;
+}
+
+.popular-name {
+    min-width: 0;
+
+    color: #294b76;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popular-count {
+    flex-shrink: 0;
+
+    color: #7590ad;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.action-cards-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.action-box {
+    min-width: 0;
+
+    min-height: 132px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 15px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    font-family: inherit;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.action-box:hover {
+    transform: translateY(-2px);
+
+    border-color: #bddaf4;
+
+    box-shadow: var(--shadow-hover);
+}
+
+
+/* PRIMARY ACTION */
+
+.action-box.primary {
+    background: linear-gradient(135deg,
+            #287ed2 0%,
+            #176dc4 100%);
+
+    color: #ffffff;
+
+    border-color: #287ed2;
+}
+
+.action-box.primary:hover {
+    box-shadow:
+        0 7px 18px rgba(22, 119, 210, 0.20);
+}
+
+.action-box.primary .action-icon-circle {
+    background: rgba(255, 255, 255, 0.95);
+    color: #2475c9;
+}
+
+.action-box.primary .action-text strong {
+    color: #ffffff;
+}
+
+.action-box.primary .action-text span {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+
+/* SECONDARY ACTION */
+
+.action-box.secondary {
+    background: #f4f9ff;
+}
+
+.action-box.secondary:hover {
+    background: #eef7ff;
+    border-color: #bddaf4;
+}
+
+
+/* =========================================================
+   ACTION ICON
+   ========================================================= */
+
+.action-icon-circle {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.action-text {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.action-text strong {
+    color: var(--navy-dark);
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.action-text span {
+    color: var(--slate-muted);
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   STOCK TABLE
+   ========================================================= */
+
+.stock-card .data-table tbody td {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.stock-card .data-table th,
+.stock-card .data-table td {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   POPULAR CARD
+   ========================================================= */
+
+.popular-card {
+    min-height: 367px;
+}
+
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.table-card {
+    min-height: 367px;
+}
+
+
+/* =========================================================
+   ACTION CARD
+   ========================================================= */
+
+.actions-card {
+    min-height: 225px;
+}
+
+.stock-card {
+    min-height: 225px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — 1200px
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .metrics-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid-main {
+        grid-template-columns: 1.5fr 1fr;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — 1024px
+   ========================================================= */
+
+@media (max-width: 1024px) {
+
+    .main-content {
+        margin-left: 260px;
+    }
+
+    .dashboard-grid-main,
+    .dashboard-grid-bottom {
+        grid-template-columns: 1fr;
+    }
+
+    .popular-card,
+    .table-card,
+    .actions-card,
+    .stock-card {
+        min-height: auto;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — 900px
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .content-body {
+        padding: 22px 20px 28px;
+    }
+
+    .metrics-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — 600px
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .content-body {
+        padding: 18px 14px 24px;
+
+        gap: 14px;
+    }
+
+    .page-header-row h2 {
+        font-size: 22px;
+    }
+
+    .page-header-row p {
+        font-size: 13px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .metric-card {
+        min-height: 112px;
+
+        padding: 15px;
+    }
+
+    .metric-value {
+        font-size: 22px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .card-title-group h3 {
+        font-size: 14px;
+    }
+
+    .action-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-box {
+        min-height: 105px;
+    }
+
+    .popular-item-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .data-table {
+        min-width: 620px;
+    }
+}

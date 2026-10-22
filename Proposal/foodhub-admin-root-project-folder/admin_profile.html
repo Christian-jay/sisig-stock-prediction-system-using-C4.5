@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Admin Profile</title>
+    <!-- Google Fonts Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Admin Profile Custom Stylesheet -->
+    <link rel="stylesheet" href="css/admin_profile.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDE NAVBAR -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- PROFILE PAGE BODY -->
+            <div class="content-body">
+                <section class="page-header-row">
+                    <div>
+                        <h2>Admin Profile</h2>
+                        <p>Manage your administrator credentials, account details, and security settings.</p>
+                    </div>
+                </section>
+
+                <div class="profile-layout-grid">
+                    <!-- Profile Info Card -->
+                    <div class="card profile-card">
+                        <div class="profile-avatar-large">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0284c7"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h3>Administrator</h3>
+                        <p class="profile-email">admin@foodhub.com</p>
+                        <span class="badge-role">System Admin</span>
+                    </div>
+
+                    <!-- Edit Profile Form Card -->
+                    <div class="card profile-form-card">
+                        <div class="card-header">
+                            <h3>Edit Profile Information</h3>
+                            <p>Update your name, email, or security password.</p>
+                        </div>
+                        <form id="adminProfileForm" class="form-group-container">
+                            <div class="form-group">
+                                <label for="adminName">Full Name</label>
+                                <input type="text" id="adminName" class="form-control" value="Admin">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminEmail">Email Address</label>
+                                <input type="email" id="adminEmail" class="form-control" value="admin@foodhub.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" class="form-control" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password (Optional)</label>
+                                <input type="password" id="newPassword" class="form-control" placeholder="••••••••">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- JavaScript Clean Architecture Entry Point -->
+    <script type="module" src="js/controllers/AdminProfileController.js"></script>
+
+</body>
+
+</html>

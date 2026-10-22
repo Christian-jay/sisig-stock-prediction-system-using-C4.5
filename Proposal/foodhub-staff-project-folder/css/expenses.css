@@ -1,0 +1,50 @@
+/* =========================================================
+   FOODHUB ADMIN — EXPENSES PAGE
+   ========================================================= */
+
+:root {
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
+    --primary-light: #e0f2fe;
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --success-bg: #dcfce7;
+    --success-text: #16a34a;
+    --warning-bg: #fef9c3;
+    --warning-text: #ca8a04;
+    --processing-bg: #dbeafe;
+    --processing-text: #2563eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--slate-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Layout Grid */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 260px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}

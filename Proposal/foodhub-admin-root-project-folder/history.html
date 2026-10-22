@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Admin System & Activity History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <div id="sidebar-nav-container"></div>
+        <main class="main-content">
+            <div id="top-navbar-container"></div>
+            <div class="content-body">
+                <section class="page-header-row">
+                    <div>
+                        <h2>System & Activity History</h2>
+                        <p>Track important actions and changes across FOODHUB.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="action-btn secondary" id="exportHistoryBtn" type="button">Export CSV</button>
+                    </div>
+                </section>
+
+                <section class="history-metrics">
+                    <!-- TOTAL LOGS -->
+                    <article class="metric-card">
+                        <span class="metric-icon blue">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="metric-label">TOTAL LOGS</span>
+                            <strong id="totalLogsCount">0</strong>
+                            <small>Recorded activities</small>
+                        </div>
+                    </article>
+
+                    <!-- ORDERS -->
+                    <article class="metric-card">
+                        <span class="metric-icon green">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                </path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                <line x1="9" y1="12" x2="15" y2="12"></line>
+                                <line x1="9" y1="16" x2="13" y2="16"></line>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="metric-label">ORDERS</span>
+                            <strong id="orderLogsCount">0</strong>
+                            <small>Order-related actions</small>
+                        </div>
+                    </article>
+
+                    <!-- INVENTORY -->
+                    <article class="metric-card">
+                        <span class="metric-icon orange">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
+                                </path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="metric-label">INVENTORY</span>
+                            <strong id="inventoryLogsCount">0</strong>
+                            <small>Stock-related actions</small>
+                        </div>
+                    </article>
+
+                    <!-- SYSTEM -->
+                    <article class="metric-card">
+                        <span class="metric-icon purple">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="metric-label">SYSTEM</span>
+                            <strong id="systemLogsCount">0</strong>
+                            <small>Settings and admin actions</small>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="filter-card">
+                    <div class="orders-tabs" id="historyFilterTabs" role="tablist"
+                        aria-label="History category filters">
+                        <button class="tab-item active" type="button" data-filter="all">All Activity</button>
+                        <button class="tab-item" type="button" data-filter="orders">Orders</button>
+                        <button class="tab-item" type="button" data-filter="inventory">Inventory</button>
+                        <button class="tab-item" type="button" data-filter="menu">Menu / Products</button>
+                        <button class="tab-item" type="button" data-filter="sales">Sales & Reports</button>
+                        <button class="tab-item" type="button" data-filter="settings">Settings</button>
+                        <button class="tab-item" type="button" data-filter="system">System / Admin</button>
+                    </div>
+                    <div class="history-filters">
+                        <label class="search-field"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="#64748b" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg></span><input id="historySearchInput" type="search"
+                                placeholder="Search ID, description, user..." aria-label="Search history"></label>
+                        <label class="date-field"><span>From</span><input type="date" id="historyFromDate"
+                                aria-label="Start date"></label>
+                        <label class="date-field"><span>To</span><input type="date" id="historyToDate"
+                                aria-label="End date"></label>
+                        <button class="action-btn secondary" id="clearHistoryFiltersBtn" type="button">Reset</button>
+                    </div>
+                </section>
+
+                <section class="card history-main-card">
+                    <div class="card-header history-header-flex">
+                        <div>
+                            <h3>Activity Audit Trail</h3>
+                            <p>Newest activities appear first.</p>
+                        </div>
+                        <span class="live-indicator"><i></i> Local activity log</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Reference</th>
+                                    <th>Category</th>
+                                    <th>Action / Details</th>
+                                    <th>User</th>
+                                    <th>Result</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <tr>
+                                    <td colspan="7" class="empty-state">Loading history...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-footer">
+                        <span id="historyPageInfo">No activity recorded</span>
+                        <div class="pagination-buttons"><button class="action-btn secondary btn-sm" id="historyPrevBtn"
+                                type="button" disabled>Previous</button><button class="action-btn secondary btn-sm"
+                                id="historyNextBtn" type="button" disabled>Next</button></div>
+                    </div>
+                    <p class="history-note">History records are stored in this browser's local storage. For shared,
+                        permanent audit logs across devices, connect this service to your backend/database.</p>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="js/controllers/HistoryController.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Admin Orders Management</title>
+    <!-- Google Fonts Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Orders Specific Stylesheet -->
+    <link rel="stylesheet" href="css/orders.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- ORDERS PAGE CONTAINER -->
+            <div class="dashboard-body">
+
+                <section class="page-header-row">
+                    <div>
+                        <h2>Orders Management</h2>
+                        <p>Monitor customer purchases, track fulfillment statuses, and manage order workflows.</p>
+                    </div>
+                </section>
+
+                <div class="orders-layout-grid">
+
+                    <!-- LEFT SIDE: Orders Table Section -->
+                    <div class="card orders-main-card">
+                        <div class="card-header orders-header-flex">
+                            <h3>Orders</h3>
+                            <button class="action-btn primary" id="newOrderBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                New Order
+                            </button>
+                        </div>
+
+                        <!-- Status Filter Tabs -->
+                        <div class="orders-tabs" id="orderFilterTabs">
+                            <a href="#" class="tab-item active" data-filter="all">All</a>
+                            <a href="#" class="tab-item" data-filter="pending">Pending</a>
+                            <a href="#" class="tab-item" data-filter="processing">Processing</a>
+                            <a href="#" class="tab-item" data-filter="completed">Completed</a>
+                            <a href="#" class="tab-item" data-filter="cancelled">Cancelled</a>
+                        </div>
+
+                        <!-- Table Wrapper -->
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Order ID</th>
+                                        <th>Total Orders</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody">
+                                    <!-- Dynamic Data Injected via OrdersController -->
+                                </tbody>
+                            </table>
+                            <div class="pagination-footer" id="ordersPagination">
+                                <span id="ordersPageInfo">Page 1 of 1</span>
+
+                                <div class="pagination-buttons">
+                                    <button type="button" class="action-btn secondary btn-sm" id="ordersPrevBtn"
+                                        disabled>
+                                        Previous
+                                    </button>
+
+                                    <button type="button" class="action-btn secondary btn-sm" id="ordersNextBtn"
+                                        disabled>
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SIDE: Search & Order Statistics Panel -->
+                    <div class="orders-sidebar">
+
+                        <!-- Search Box Card -->
+                        <div class="card search-panel-card">
+                            <div class="search-bar-mini">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" id="orderSearchInput" placeholder="Search by Order ID...">
+                            </div>
+                        </div>
+
+                        <!-- Order Statistics Card -->
+                        <div class="card order-stats-panel">
+                            <div class="card-header-group">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                    </path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                                    <line x1="9" y1="16" x2="13" y2="16"></line>
+                                    <line x1="9" y1="8" x2="11" y2="8"></line>
+                                </svg>
+                                <h4>Order Statistics</h4>
+                            </div>
+
+                            <!-- Total Orders Stat Box -->
+                            <div class="stat-mini-box">
+                                <span class="mini-icon-circle">
+                                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0284c7"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path
+                                            d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z">
+                                        </path>
+                                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                        <path d="M18.5 4.5 12 8l-6.5-3.5"></path>
+                                    </svg>
+                                </span>
+                                <div>
+                                    <strong class="mini-val" id="statTotalOrders">34</strong>
+                                    <span class="mini-label">Total Orders</span>
+                                </div>
+                            </div>
+
+                            <!-- Breakdown Status -->
+                            <div class="stats-breakdown-list" id="orderStatsBreakdown">
+                                <div class="breakdown-item">
+                                    <span><span class="dot-indicator green"></span>Completed</span>
+                                    <strong id="statCompleted">24</strong>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span><span class="dot-indicator blue"></span>Processing</span>
+                                    <strong id="statProcessing">7</strong>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span><span class="dot-indicator yellow"></span>Pending</span>
+                                    <strong id="statPending">3</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- New This Week Card -->
+                        <div class="card weekly-summary-card">
+                            <div class="weekly-content">
+                                <span class="mini-icon-circle small">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7"
+                                        stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </span>
+                                <span class="weekly-text">New This Week</span>
+                            </div>
+                            <strong class="weekly-val" id="statNewThisWeek">6</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Clean Architecture JS Entry Point -->
+    <script type="module" src="js/controllers/OrdersController.js"></script>
+
+</body>
+
+</html>
