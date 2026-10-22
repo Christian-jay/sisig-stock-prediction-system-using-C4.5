@@ -42,16 +42,3 @@ Modern restaurant operations require tight coupling between sales activity and s
 - **Persistence Layer:** Client-side modular storage for seamless cart transfer and multi-page workflow support, with backend REST API readiness
 
 ---
-
-## 🤖 C4.5 Algorithm Implementation Details
-
-The core predictive engine leverages the **C4.5 algorithm**, an extension of Quinlan's ID3 algorithm, to construct decision trees from historical sales datasets.
-
-### Workflow:
-1. **Data Preprocessing:** Aggregates transaction attributes including time of day, day of week, seasonal spikes, item popularity, and order fulfillment method.
-2. **Splitting Criterion:** Evaluates attributes using **Gain Ratio** to prevent bias toward attributes with many distinct values:
-   $$\text{GainRatio}(A) = \frac{\text{Gain}(A)}{\text{SplitInfo}(A)}$$
-3. **Tree Generation:** Recursively splits data into decision nodes representing ingredient usage thresholds.
-4. **Stock Prediction Output:** Outputs actionable inventory recommendations (e.g., *Reorder Pork Belly*, *Maintain Rice Stock*, *Increase Egg Inventory*).
-
----
