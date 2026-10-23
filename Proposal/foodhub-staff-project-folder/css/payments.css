@@ -117,7 +117,7 @@ body {
 }
 
 /* =========================================================
-   4 STAT CARDS GRID
+   4 STAT CARDS GRID (Redesigned & Cleaned)
    ========================================================= */
 
 .stats-grid-4 {
@@ -128,14 +128,21 @@ body {
 }
 
 .stat-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
     border-radius: 12px;
-    padding: 18px 20px;
+    padding: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 14px;
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
 }
 
 .stat-card-top {
@@ -144,15 +151,18 @@ body {
     gap: 10px;
 }
 
+/* Icon / Brand Circle Wrapper */
 .stat-icon-wrapper {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    /* Ginawang medyo square/rounded para mas modern kaysa bilog na bilog */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 30px;
+    font-size: 18px;
+    flex-shrink: 0;
 }
 
 .stat-icon-wrapper.cash {
@@ -179,49 +189,92 @@ body {
     font-size: 30px;
     font-weight: 800;
     color: #0284c7;
+    line-height: 1;
 }
 
 .brand-text {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 800;
     color: #15803d;
     letter-spacing: -0.5px;
+    line-height: 1;
 }
 
 .stat-title {
     font-size: 13px;
     font-weight: 700;
-    color: var(--navy-dark);
+    color: var(--navy-dark, #0b192c);
+    letter-spacing: -0.01em;
 }
 
 .stat-card-mid {
     display: flex;
-    align-items: baseline;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px dashed #f1f5f9;
+    border-bottom: 1px dashed #f1f5f9;
+    padding: 12px 0;
+}
+
+.stat-metric-row {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
 }
 
+.stat-metric-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate-muted, #64748b);
+}
+
 .stat-count {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--navy-dark);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy-dark, #0b192c);
 }
 
 .stat-amount {
     font-size: 16px;
     font-weight: 800;
-    color: var(--navy-dark);
+    color: var(--navy-dark, #0b192c);
 }
 
+.text-right {
+    text-align: right;
+}
+
+/* Bottom Trend Section */
 .stat-card-btm {
     font-size: 11px;
     font-weight: 700;
     display: flex;
     align-items: center;
     gap: 4px;
+    color: var(--slate-muted, #64748b);
 }
 
 .text-success {
     color: #16a34a !important;
+}
+
+/* Responsive para sa mas maliit na screen */
+@media (max-width: 1200px) {
+    .stats-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid-4 {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* =========================================================
