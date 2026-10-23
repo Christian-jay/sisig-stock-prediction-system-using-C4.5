@@ -1,24 +1,23 @@
 /* =========================================================
-   FOODHUB ADMIN — PAYMENTS PAGE
+   FOODHUB STAFF — PAYMENTS PAGE
    ========================================================= */
 
 :root {
     --primary: #0284c7;
     --primary-dark: #0369a1;
     --primary-light: #e0f2fe;
+
     --navy-dark: #0b192c;
     --slate-dark: #0f172a;
     --slate-text: #334155;
     --slate-muted: #64748b;
+
     --bg-main: #f8fafc;
     --card-bg: #ffffff;
     --border-color: #e2e8f0;
+
     --success-bg: #dcfce7;
-    --success-text: #16a34a;
-    --warning-bg: #fef9c3;
-    --warning-text: #ca8a04;
-    --processing-bg: #dbeafe;
-    --processing-text: #2563eb;
+    --success-text: #15803d;
 }
 
 * {
@@ -34,17 +33,499 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Layout Grid */
+/* =========================================================
+   LAYOUT & CONTAINER
+   ========================================================= */
+
 .admin-layout {
     display: flex;
     min-height: 100vh;
 }
 
-/* Main Content Area */
 .main-content {
     margin-left: 260px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
+}
+
+.payments-dashboard-body {
+    width: 100%;
+    padding: 30px;
+}
+
+/* =========================================================
+   PAGE HEADER & DATE FILTER
+   ========================================================= */
+
+.payments-header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    color: var(--navy-dark);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+
+.page-header p {
+    margin-top: 4px;
+    color: var(--slate-muted);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.date-filter-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-date-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy-dark, #0b192c);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-date-filter:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.btn-date-filter svg {
+    color: var(--slate-muted, #64748b);
+    flex-shrink: 0;
+}
+
+.btn-date-filter span {
+    color: var(--slate-text, #334155);
+    font-weight: 600;
+}
+
+/* =========================================================
+   4 STAT CARDS GRID
+   ========================================================= */
+
+.stats-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.stat-card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 30px;
+}
+
+.stat-icon-wrapper.cash {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.stat-icon-wrapper.gcash {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.stat-icon-wrapper.maya {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.stat-icon-wrapper.panda {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.brand-letter {
+    font-size: 30px;
+    font-weight: 800;
+    color: #0284c7;
+}
+
+.brand-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #15803d;
+    letter-spacing: -0.5px;
+}
+
+.stat-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy-dark);
+}
+
+.stat-card-mid {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.stat-count {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--navy-dark);
+}
+
+.stat-amount {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--navy-dark);
+}
+
+.stat-card-btm {
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.text-success {
+    color: #16a34a !important;
+}
+
+/* =========================================================
+   TRANSACTIONS CARD & FILTER BAR
+   ========================================================= */
+
+.transactions-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.transactions-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.section-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy-dark);
+}
+
+.section-title-group h3 {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.transactions-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 280px;
+}
+
+.search-input-wrapper svg {
+    position: absolute;
+    left: 12px;
+    color: var(--slate-muted);
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    background: var(--bg-main);
+    color: var(--slate-text);
+}
+
+.search-input-wrapper input:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+}
+
+.filter-select {
+    padding: 8px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--bg-main);
+    color: var(--slate-text);
+    outline: none;
+    cursor: pointer;
+}
+
+/* =========================================================
+   PAYMENT TRANSACTIONS TABLE STYLING
+   ========================================================= */
+
+.table-responsive {
+    width: 100%;
+    max-height: 480px;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.data-table.payments-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+/* Sticky Light Blue Header */
+.data-table.payments-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f0f7ff;
+    color: #0369a1;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 13px 16px;
+    border-bottom: 2px solid #e0f2fe;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.data-table.payments-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.data-table.payments-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.data-table.payments-table tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--slate-text);
+    font-size: 13px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.data-table.payments-table tbody td:nth-child(2) strong {
+    color: var(--navy-dark);
+    font-weight: 700;
+}
+
+.data-table.payments-table tbody td:nth-child(5) strong {
+    color: var(--navy-dark);
+    font-weight: 800;
+}
+
+/* Method Badges */
+.method-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.method-badge.method-cash {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.method-badge.method-gcash {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+}
+
+.method-badge.method-maya {
+    background: #dcfce7;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.method-badge.method-panda {
+    background: #fce7f3;
+    color: #db2777;
+    border: 1px solid #fbcfe8;
+}
+
+/* Status Paid Badge */
+.status-paid-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Action Button */
+.btn-view-details {
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-view-details:hover {
+    background: var(--primary-light);
+    border-color: #0284c7;
+    color: var(--primary-dark);
+}
+
+.text-right {
+    text-align: center !important;
+}
+
+/* =========================================================
+   PAGINATION FOOTER
+   ========================================================= */
+
+.pagination-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+    font-size: 12px;
+}
+
+.pagination-info {
+    color: var(--slate-muted);
+    font-weight: 500;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-page {
+    padding: 5px 11px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--slate-text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-page:hover:not(:disabled) {
+    background: var(--bg-main);
+    border-color: #cbd5e1;
+}
+
+.btn-page.active-page {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
+
+.btn-page:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .stats-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        margin-left: 0;
+    }
+
+    .payments-dashboard-body {
+        padding: 16px;
+    }
+
+    .payments-header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .transactions-header-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input-wrapper {
+        width: 100%;
+    }
+
+    .stats-grid-4 {
+        grid-template-columns: 1fr;
+    }
 }
