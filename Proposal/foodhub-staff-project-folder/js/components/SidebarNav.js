@@ -7,6 +7,7 @@ export function loadSidebarNav(customTitle = '') {
         'todays_orders.html': { title: "Today's Orders" },
         'payment.html': { title: 'Orders / Payment' },
         'inventory.html': { title: 'Inventory & Stock Control' },
+        'inventory_prediction.html': { title: 'Predictive Stock Alert' },
         'payments.html': { title: 'Daily Transactions' },
         'expenses.html': { title: 'Daily Expenses and Costs Management' },
         'settings.html': { title: 'Staff Settings' },
@@ -21,8 +22,10 @@ export function loadSidebarNav(customTitle = '') {
         pageHeaderTitle.textContent = finalTitle;
     }
 
-    // 1. Isali ang 'payment.html' sa isOrdersRoute check
     const isOrdersRoute = ['orders.html', 'payment.html', 'todays_orders.html'].includes(currentPath);
+
+    // 1. Suriin kung ang kasalukuyang pahina ay nasa inventory routes para bumukas ang dropdown nito
+    const isInventoryRoute = ['inventory.html', 'inventory_prediction.html'].includes(currentPath);
 
     const navHTML = `
         <!-- SIDEBAR NAVIGATION -->
@@ -59,15 +62,12 @@ export function loadSidebarNav(customTitle = '') {
                             </svg>
                             <span>Orders</span>
                         </div>
-                        <!-- Dropdown Arrow Icon -->
                         <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </div>
 
-                    <!-- Sub-menu Dropdown List -->
                     <div class="sub-nav-container">
-                        <!-- 2. Isali ang 'payment.html' sa active-sub condition para umilaw rin ito kapag nandoon ka -->
                         <a href="orders.html" class="sub-nav-item ${currentPath === 'orders.html' || currentPath === 'payment.html' ? 'active-sub' : ''}">
                             Order and Pay
                         </a>
@@ -77,15 +77,31 @@ export function loadSidebarNav(customTitle = '') {
                     </div>
                 </div>
 
-                <!-- Inventory -->
-                <a href="inventory.html" class="nav-item ${currentPath === 'inventory.html' ? 'active' : ''}">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                        <line x1="12" y1="22.08" x2="12" y2="12" />
-                    </svg>
-                    Inventory
-                </a>
+                <!-- 2. Inventory Dropdown Group (Nilagyan ng Sub-menu para sa C4.5) -->
+                <div class="nav-group ${isInventoryRoute ? 'open' : ''}">
+                    <div class="nav-item dropdown-btn ${isInventoryRoute ? 'active' : ''}" id="inventoryDropdownBtn">
+                        <div class="nav-item-content">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                <line x1="12" y1="22.08" x2="12" y2="12" />
+                            </svg>
+                            <span>Inventory</span>
+                        </div>
+                        <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+
+                    <div class="sub-nav-container">
+                        <a href="inventory.html" class="sub-nav-item ${currentPath === 'inventory.html' ? 'active-sub' : ''}">
+                            Stock Control
+                        </a>
+                        <a href="inventory_prediction.html" class="sub-nav-item ${currentPath === 'inventory_prediction.html' ? 'active-sub' : ''}">
+                            C4.5 Predictive Alert
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Payments -->
                 <a href="payments.html" class="nav-item ${currentPath === 'payments.html' ? 'active' : ''}">
@@ -144,11 +160,22 @@ export function loadSidebarNav(customTitle = '') {
     if (container) {
         container.innerHTML = navHTML;
 
-        const dropdownBtn = document.getElementById('ordersDropdownBtn');
-        if (dropdownBtn) {
-            dropdownBtn.addEventListener('click', (e) => {
+        // 3. I-bind ang click event para sa Orders dropdown
+        const ordersDropdownBtn = document.getElementById('ordersDropdownBtn');
+        if (ordersDropdownBtn) {
+            ordersDropdownBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const navGroup = dropdownBtn.closest('.nav-group');
+                const navGroup = ordersDropdownBtn.closest('.nav-group');
+                navGroup.classList.toggle('open');
+            });
+        }
+
+        // 4. I-bind ang click event para sa bagong Inventory dropdown
+        const inventoryDropdownBtn = document.getElementById('inventoryDropdownBtn');
+        if (inventoryDropdownBtn) {
+            inventoryDropdownBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const navGroup = inventoryDropdownBtn.closest('.nav-group');
                 navGroup.classList.toggle('open');
             });
         }
