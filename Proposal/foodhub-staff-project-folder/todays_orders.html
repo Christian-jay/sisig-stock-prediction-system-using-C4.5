@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Today's Orders & History</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Global Navigation -->
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+
+    <!-- Orders Page CSS -->
+    <link rel="stylesheet" href="css/todays_orders.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- =========================================
+             SIDEBAR
+             ========================================= -->
+        <div id="sidebar-nav-container"></div>
+
+
+        <!-- =========================================
+             MAIN CONTENT
+             ========================================= -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- PAGE CONTENT CONTAINER -->
+            <div class="dashboard-container">
+
+                <!-- Page Header & Date Filter Bar -->
+                <div class="page-actions-header">
+                    <div class="header-title-box">
+                        <h1>Orders Records</h1>
+                        <p>Monitor real-time orders for today or check previous transaction history.</p>
+                    </div>
+
+                    <!-- Date Filter Control -->
+                    <div class="date-filter-wrapper">
+                        <label for="orderDateFilter">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Filter Date:
+                        </label>
+                        <input type="date" id="orderDateFilter" class="date-input">
+                        <button id="btnResetDate" class="btn-secondary-sm" title="Reset to Today">Today</button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Summary Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon orders-count">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Orders</span>
+                            <h3 id="statTotalOrders">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon revenue-count">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="5" width="20" height="14" rx="2" />
+                                <line x1="2" y1="10" x2="22" y2="10" />
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Revenue</span>
+                            <h3 id="statTotalRevenue">₱0.00</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Table Section -->
+                <div class="card table-card">
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Time / Date</th>
+                                    <th>Items Breakdown</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Dynamic rows injected by TodaysOrdersController -->
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">Loading transactions...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- =========================================
+         JAVASCRIPT ENTRY POINT
+         ========================================= -->
+    <script type="module" src="js/controllers/TodaysOrdersController.js"></script>
+
+</body>
+
+</html>

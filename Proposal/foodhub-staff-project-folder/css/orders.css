@@ -134,7 +134,7 @@ body {
 
 
 .page-header p {
-  margin-top: 5px;
+    margin-top: 5px;
 
     color: var(--slate-muted);
 
@@ -812,13 +812,13 @@ body {
 
     padding: 0 13px;
 
-    border: 1px solid #cfe3f7;
+    border: 1px solid #dc3545;
 
     border-radius: 8px;
 
-    background: #ffffff;
+    background: #dc3545;
 
-    color: #075a9c;
+    color: white;
 
     font-family: inherit;
 
@@ -833,10 +833,8 @@ body {
 
 
 .btn-outline:hover {
-
-    background: #eff6ff;
-
-    border-color: #93c5fd;
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
 }
 
 
