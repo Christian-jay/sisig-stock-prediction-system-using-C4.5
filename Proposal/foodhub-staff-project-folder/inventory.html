@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>FOODHUB — Staff Inventory & Stock Control</title>
-    <!-- Google Fonts Plus Jakarta Sans -->
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <!-- Dashboard Custom Stylesheet -->
+
     <link rel="stylesheet" href="css/inventory.css">
     <link rel="stylesheet" href="css/sidebar_nav.css">
     <link rel="stylesheet" href="css/topbar_nav.css">
-
 </head>
 
 <body>
@@ -28,13 +28,361 @@
             <!-- TOP NAVBAR -->
             <div id="top-navbar-container"></div>
 
+            <!-- INVENTORY CONTENT WRAPPER -->
+            <div class="inventory-dashboard-body">
+
+                <!-- PAGE HEADER -->
+                <div class="page-header">
+                    <h1>Inventory</h1>
+                    <p>Manage your ingredient stock levels and monitoring.</p>
+                </div>
+
+
+                <!-- =====================================================
+                     5 STATS CARDS
+                     ===================================================== -->
+
+                <div class="stats-grid-5">
+
+                    <!-- TOTAL INGREDIENTS -->
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper blue">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+
+                            </svg>
+                        </div>
+
+                        <div class="stat-info">
+                            <span class="stat-label">Total Ingredients</span>
+                            <h3 id="statTotalIngredients" class="stat-value">7</h3>
+                            <span class="stat-subtext">Total Ingredients</span>
+                        </div>
+                    </div>
+
+
+                    <!-- IN STOCK -->
+                    <div class="stat-card">
+
+                        <div class="stat-icon-wrapper green">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <polyline points="20 6 9 17 4 12"></polyline>
+
+                            </svg>
+                        </div>
+
+                        <div class="stat-info">
+                            <span class="stat-label">In Stock</span>
+
+                            <h3 id="statInStock" class="stat-value text-success">
+                                4
+                            </h3>
+
+                            <span class="stat-subtext text-success">
+                                Optimal levels
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOW STOCK -->
+                    <div class="stat-card">
+
+                        <div class="stat-icon-wrapper yellow">
+
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <circle cx="12" cy="12" r="10"></circle>
+
+                                <polyline points="12 6 12 12 16 14"></polyline>
+
+                            </svg>
+
+                        </div>
+
+                        <div class="stat-info">
+
+                            <span class="stat-label">
+                                Low Stock
+                            </span>
+
+                            <h3 id="statLowStock" class="stat-value text-warning">
+                                3
+                            </h3>
+
+                            <span class="stat-subtext text-warning">
+                                Items below threshold
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OUT OF STOCK -->
+                    <div class="stat-card">
+
+                        <div class="stat-icon-wrapper red">
+
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <circle cx="12" cy="12" r="10"></circle>
+
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+
+                            </svg>
+
+                        </div>
+
+                        <div class="stat-info">
+
+                            <span class="stat-label">
+                                Out of Stock
+                            </span>
+
+                            <h3 id="statOutOfStock" class="stat-value text-danger">
+                                0
+                            </h3>
+
+                            <span class="stat-subtext text-danger">
+                                Needs immediate action
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOTAL STOCK VALUE -->
+                    <div class="stat-card">
+
+                        <div class="stat-icon-wrapper blue-dark">
+
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+
+                            </svg>
+
+                        </div>
+
+                        <div class="stat-info">
+
+                            <span class="stat-label">
+                                Total Stock Value
+                            </span>
+
+                            <h3 id="statTotalValue" class="stat-value text-primary">
+                                ₱3,620.00
+                            </h3>
+
+                            <span class="stat-subtext">
+                                Current inventory cost
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     INVENTORY TABLES
+                     ===================================================== -->
+
+                <div class="inventory-tables-grid">
+
+
+                    <!-- INGREDIENT STOCK TABLE -->
+                    <div class="card-box">
+
+                        <div>
+
+                            <div class="card-header-flex">
+
+                                <svg class="section-icon text-primary" xmlns="http://www.w3.org/2000/svg" width="20"
+                                    height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                    </polygon>
+
+                                </svg>
+
+                                <h3 class="card-title">
+                                    Ingredient Stock
+                                </h3>
+
+                            </div>
+
+
+                            <div class="table-responsive">
+
+                                <table class="data-table">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ingredient</th>
+                                            <th>Category</th>
+                                            <th>Current Stock</th>
+                                            <th>Reorder Level</th>
+                                            <th>Daily Usage</th>
+                                            <th>Status</th>
+                                            <th class="text-right">Action</th>
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="ingredientStockTableBody">
+                                        <!-- Populated via InventoryController.js -->
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PAGINATION -->
+                        <div class="pagination-footer">
+
+                            <span id="stockPaginationInfo" class="pagination-info">
+                                Showing 0-0 of 0
+                            </span>
+
+                            <div class="pagination-buttons">
+
+                                <button id="prevStockBtn" class="btn-page" disabled>
+                                    Prev
+                                </button>
+
+                                <button id="nextStockBtn" class="btn-page">
+                                    Next
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOW STOCK TABLE -->
+                    <div class="card-box">
+
+                        <div>
+
+                            <div class="card-header-flex">
+
+                                <svg class="section-icon text-warning" xmlns="http://www.w3.org/2000/svg" width="20"
+                                    height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+
+                                    <path
+                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                                    </path>
+
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+
+                                </svg>
+
+                                <h3 class="card-title">
+                                    Low Stock Ingredients
+                                </h3>
+
+                            </div>
+
+
+                            <div class="table-responsive">
+
+                                <table class="data-table">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Ingredient</th>
+                                            <th>Category</th>
+                                            <th>Current Stock</th>
+                                            <th>Reorder Level</th>
+                                            <th>Daily Usage</th>
+                                            <th>Status</th>
+                                            <th class="text-right">Action</th>
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="lowStockTableBody">
+                                        <!-- Populated via InventoryController.js -->
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- LOW STOCK PAGINATION -->
+                        <div class="pagination-footer">
+
+                            <span id="lowStockPaginationInfo" class="pagination-info">
+                                Showing 0-0 of 0
+                            </span>
+
+                            <div class="pagination-buttons">
+
+                                <button id="prevLowBtn" class="btn-page" disabled>
+                                    Prev
+                                </button>
+
+                                <button id="nextLowBtn" class="btn-page">
+                                    Next
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </main>
 
     </div>
 
-    <!-- JavaScript Clean Architecture Entry Point -->
-    <script type="module" src="js/controllers/InventoryController.js"></script>
+    <script type="module" src="js/controllers/InventoryController.js">
+    </script>
 
 </body>
 
