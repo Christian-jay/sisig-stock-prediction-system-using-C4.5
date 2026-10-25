@@ -1,7 +1,8 @@
 export class GeneralSettings {
-    constructor(storeName, language) {
+    constructor(storeName, language, themeMode) {
         this.storeName = storeName;
         this.language = language;
+        this.themeMode = themeMode || 'light';
     }
 }
 

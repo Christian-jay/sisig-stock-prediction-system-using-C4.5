@@ -1,12 +1,64 @@
-import { AdminProfile } from '../models/AdminProfileModel.js';
+import {
+    AdminProfileDataModel,
+    AdminProfileModel
+} from '../models/AdminProfileModel.js';
+
 
 export class AdminProfileService {
-    async getProfile() {
-        return new AdminProfile("Admin", "admin@foodhub.com", "Administrator");
+
+    /* =====================================================
+       GET ADMIN PROFILE
+       ===================================================== */
+
+    getAdminProfileData() {
+
+        const profile = {
+
+            fullName: 'Juan Dela Cruz',
+
+            role: 'Administrator',
+
+            email: 'juan.delacruz@foodhub.com'
+
+        };
+
+        return new AdminProfileDataModel({
+            profile: profile
+        });
+
     }
 
-    async updateProfile(profileData) {
-        localStorage.setItem('foodhub_admin_profile', JSON.stringify(profileData));
-        return { success: true, message: "Admin profile updated successfully!" };
+
+    /* =====================================================
+       UPDATE ADMIN PROFILE
+       ===================================================== */
+
+    updateProfile(updatedProfile) {
+
+        console.warn(
+            'Static mode: Administrator profile updated in UI only.'
+        );
+
+        return new AdminProfileModel(updatedProfile);
+
     }
+
+
+    /* =====================================================
+       UPDATE PASSWORD
+       ===================================================== */
+
+    updatePassword(currentPassword, newPassword) {
+
+        console.warn(
+            'Static mode: Administrator password update simulated.'
+        );
+
+        return {
+            success: true,
+            message: 'Administrator password updated successfully.'
+        };
+
+    }
+
 }

@@ -8,8 +8,9 @@ import {
 
 export class SettingsService {
     async getAllSettings() {
+        const savedTheme = localStorage.getItem('foodhub_theme') || 'light';
         return {
-            general: new GeneralSettings("FOODHUB", "English"),
+            general: new GeneralSettings("FOODHUB", "English", savedTheme),
             business: new BusinessInfoSettings("Juan Dela Cruz", "Biñan, Laguna, Philippines", "000-123-456-789", "09:00 AM - 10:00 PM"),
             notification: new NotificationSettings(true, true, false),
             payment: new PaymentSettings(
@@ -21,8 +22,10 @@ export class SettingsService {
     }
 
     async saveSettings(tabKey, data) {
-        // Mock save logic (maaaring i-save sa localStorage)
         localStorage.setItem(`foodhub_${tabKey}_settings`, JSON.stringify(data));
+        if (tabKey === 'general' && data.themeMode) {
+            localStorage.setItem('foodhub_theme', data.themeMode);
+        }
         return { success: true, message: `${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)} settings saved successfully!` };
     }
 }
