@@ -173,14 +173,14 @@ body {
     font-size: 30px;
 }
 
-.metric-icon.blue {
-    background: #dceeff;
-    color: #1769b5;
-}
-
 .metric-icon.green {
     background: #ddf7ea;
     color: #0ca678;
+}
+
+.metric-icon.blue {
+    background: #dceeff;
+    color: #1769b5;
 }
 
 .metric-icon.yellow {

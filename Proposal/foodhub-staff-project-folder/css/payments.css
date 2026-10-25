@@ -153,8 +153,8 @@ body {
 
 /* Icon / Brand Circle Wrapper */
 .stat-icon-wrapper {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 10px;
     /* Ginawang medyo square/rounded para mas modern kaysa bilog na bilog */
     display: flex;

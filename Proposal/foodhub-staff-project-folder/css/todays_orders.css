@@ -102,14 +102,17 @@ body {
 }
 
 .header-title-box h1 {
-    font-size: 24px;
+    color: var(--navy-dark);
+    font-size: 26px;
     font-weight: 800;
-    color: var(--slate-dark);
+    letter-spacing: -0.025em;
 }
 
 .header-title-box p {
-    font-size: 14px;
+      margin-top: 4px;
     color: var(--slate-muted);
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .date-filter-wrapper {

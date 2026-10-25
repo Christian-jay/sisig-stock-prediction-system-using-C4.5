@@ -366,13 +366,6 @@ body {
     /* font-weight: 800; */
 }
 
-.metric-icon.blue {
-     width: 46px;
-    height: 46px;
-    background: var(--primary-light);
-    color: var(--primary);
-}
-
 .metric-icon.green {
     width: 46px;
     height: 46px;
@@ -380,8 +373,15 @@ body {
     color: var(--success-text);
 }
 
+.metric-icon.blue {
+    width: 46px;
+    height: 46px;
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
 .metric-icon.purple {
-     width: 46px;
+    width: 46px;
     height: 46px;
     background: var(--purple-bg);
     color: var(--purple-text);

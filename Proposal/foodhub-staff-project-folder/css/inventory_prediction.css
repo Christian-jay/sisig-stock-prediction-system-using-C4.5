@@ -101,17 +101,17 @@ svg {
 }
 
 .page-header h1 {
-    font-size: 24px;
-    font-weight: 800;
     color: var(--navy-dark);
-    overflow-wrap: anywhere;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
 }
 
 .page-header p {
     margin-top: 4px;
-    font-size: 14px;
     color: var(--slate-muted);
-    line-height: 1.6;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 /* =========================================================

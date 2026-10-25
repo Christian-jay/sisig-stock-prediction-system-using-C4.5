@@ -1,25 +1,25 @@
 /* =========================================================
-   FOODHUB ADMIN — SETTINGS PAGE
+   FOODHUB STAFF — SYSTEM SETTINGS
    ========================================================= */
 
 :root {
     --primary: #0284c7;
     --primary-dark: #0369a1;
     --primary-light: #e0f2fe;
+
     --navy-dark: #0b192c;
     --slate-dark: #0f172a;
     --slate-text: #334155;
     --slate-muted: #64748b;
+
     --bg-main: #f8fafc;
     --card-bg: #ffffff;
     --border-color: #e2e8f0;
-    --success-bg: #dcfce7;
-    --success-text: #16a34a;
-    --warning-bg: #fef9c3;
-    --warning-text: #ca8a04;
-    --processing-bg: #dbeafe;
-    --processing-text: #2563eb;
 }
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
 
 * {
     margin: 0;
@@ -34,17 +34,471 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Layout Grid */
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
 .admin-layout {
     display: flex;
     min-height: 100vh;
 }
 
-/* Main Content Area */
 .main-content {
     margin-left: 260px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
+}
+
+.settings-dashboard-body {
+    padding: 30px;
+}
+
+/* =========================================================
+   PAGE HEADER (Matched with Admin Typography)
+   ========================================================= */
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.6px;
+    color: var(--navy-dark);
+}
+
+.page-header p {
+    margin-top: 4px;
+    color: var(--slate-muted);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   FOODHUB — UNIFIED SETTINGS & PROFILE CARDS
+   (Inilapat ang Admin Settings card design sa Staff Settings)
+   ========================================================= */
+
+/* 2-Column Grid Layout (Pareho sa Admin at Staff) */
+.settings-layout-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Sidebar Menu Card (Eksaktong padding at border tulad ng Admin) */
+.settings-menu-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+/* List Style Inside Sidebar Card */
+.settings-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Menu Items (Pares sa Admin: Hover, Font Size, SVG Spacing) */
+.settings-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--slate-muted);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.settings-menu-item:hover {
+    background-color: var(--bg-main);
+    color: var(--slate-dark);
+}
+
+.settings-menu-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.settings-menu-item svg {
+    flex-shrink: 0;
+}
+
+/* Right Content Area Card (Eksaktong padding at border ng Admin) */
+.card-box,
+.settings-content-card {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+/* Content Header Inside Card */
+.card-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+}
+
+.card-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy-dark);
+}
+
+.card-header p {
+    font-size: 13px;
+    color: var(--slate-muted);
+    margin-top: 4px;
+}
+
+/* Dark Mode Alignment */
+[data-theme="dark"] .settings-menu-card,
+[data-theme="dark"] .settings-content-card,
+[data-theme="dark"] .card-box {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .settings-menu-item {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .settings-menu-item:hover {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .settings-menu-item.active {
+    background-color: #0369a1;
+    color: #ffffff;
+}
+
+/* =========================================================
+   CONTENT CARD
+   ========================================================= */
+
+.settings-content-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* =========================================================
+   TAB CONTENT (Admin Typography Styles)
+   ========================================================= */
+
+.tab-pane h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4;
+
+    color: var(--navy-dark);
+
+    margin-bottom: 4px;
+}
+
+.tab-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+
+    color: var(--slate-muted);
+
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    color: var(--slate-muted);
+
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+
+    padding: 10px 14px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+
+    color: var(--slate-text);
+
+    background-color: var(--card-bg);
+
+    outline: none;
+
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+}
+
+.form-control::placeholder {
+    color: var(--slate-muted);
+}
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    margin-top: 16px;
+}
+
+/* =========================================================
+   TOGGLE ROW
+   ========================================================= */
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid var(--border-color);
+}
+
+.toggle-row:last-child {
+    border-bottom: none;
+}
+
+/* Toggle text (Admin Style) */
+.toggle-row label,
+.toggle-row span {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    color: var(--slate-text);
+}
+
+/* =========================================================
+   SWITCH
+   ========================================================= */
+
+.switch {
+    position: relative;
+
+    display: inline-block;
+
+    width: 44px;
+    height: 24px;
+
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+
+    cursor: pointer;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-color: #cbd5e1;
+
+    transition: 0.3s;
+}
+
+.slider:before {
+    position: absolute;
+
+    content: "";
+
+    width: 18px;
+    height: 18px;
+
+    left: 3px;
+    bottom: 3px;
+
+    background-color: #ffffff;
+
+    transition: 0.3s;
+}
+
+input:checked+.slider {
+    background-color: var(--primary);
+}
+
+input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.form-actions {
+    margin-top: 24px;
+    text-align: left;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: #ffffff;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 10px 20px;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+/* =========================================================
+   UTILITY
+   ========================================================= */
+
+.text-muted {
+    color: var(--slate-muted);
+}
+
+.font-12 {
+    font-size: 12px;
+}
+
+/* =========================================================
+   DARK MODE
+   Matches ADMIN SETTINGS
+   ========================================================= */
+
+[data-theme="dark"] {
+    --bg-main: #0f172a;
+    --card-bg: #1e293b;
+
+    --slate-text: #f1f5f9;
+    --navy-dark: #ffffff;
+    --slate-muted: #94a3b8;
+
+    --border-color: #334155;
+}
+
+[data-theme="dark"] body {
+    background-color: var(--bg-main);
+    color: var(--slate-text);
+}
+
+[data-theme="dark"] .settings-menu-card,
+[data-theme="dark"] .settings-content-card {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .settings-menu-item {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .settings-menu-item:hover {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .settings-menu-item.active {
+    background-color: #0369a1;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .form-control {
+    background-color: #0f172a;
+    color: #f1f5f9;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #64748b;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .settings-layout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-dashboard-body {
+        padding: 20px;
+    }
+
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
 }

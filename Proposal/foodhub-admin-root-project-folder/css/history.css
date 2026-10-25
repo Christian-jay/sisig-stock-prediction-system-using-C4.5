@@ -161,14 +161,15 @@ body {
     font-weight: 800
 }
 
+.metric-icon.green {
+
+    background: var(--success-bg);
+    color: var(--success-text)
+}
+
 .metric-icon.blue {
     background: var(--primary-light);
     color: var(--primary)
-}
-
-.metric-icon.green {
-    background: var(--success-bg);
-    color: var(--success-text)
 }
 
 .metric-icon.orange {
