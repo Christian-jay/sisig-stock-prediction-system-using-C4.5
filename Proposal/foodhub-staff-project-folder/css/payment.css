@@ -394,7 +394,7 @@ input:checked+.slider:before {
 
 .discount-input {
     width: 100%;
-    padding: 8px 24px 8px 12px;
+    padding: 8px 8px 8px 12px;
     font-size: 14px;
     font-weight: 700;
     color: #0f172a;
