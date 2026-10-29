@@ -9,13 +9,19 @@ export class InventoryController {
 
         // Main inventory table
         this.currentStockPage = 1;
-        this.stockRowsPerPage = 5;
+        this.stockRowsPerPage = 10;
 
         // Low-stock table
         this.currentLowPage = 1;
-        this.lowRowsPerPage = 5;
+        this.lowRowsPerPage = 10;
+
+        // Modal elements
+        this.addIngredientModal = null;
+        this.addIngredientForm = null;
+        this.dropdownsLoaded = false;
 
         this.initLayout();
+        this.initModal();
         this.registerGlobalActions();
         this.loadInventoryView();
     }
@@ -30,20 +36,237 @@ export class InventoryController {
     }
 
     /* =========================================================
+       MODAL INITIALIZATION
+       ========================================================= */
+
+    initModal() {
+        this.addIngredientModal = document.getElementById('addIngredientModal');
+        this.addIngredientForm = document.getElementById('addIngredientForm');
+
+        if (!this.addIngredientModal || !this.addIngredientForm) return;
+
+        // Close button
+        const closeBtn = document.getElementById('addIngredientModalCloseBtn');
+        const cancelBtn = document.getElementById('addIngredientCancelBtn');
+
+        const closeModal = () => this.closeAddIngredientModal();
+
+        closeBtn?.addEventListener('click', closeModal);
+        cancelBtn?.addEventListener('click', closeModal);
+
+        // Close on overlay click
+        this.addIngredientModal.addEventListener('click', (e) => {
+            if (e.target === this.addIngredientModal) closeModal();
+        });
+
+        // ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.addIngredientModal?.style.display === 'flex') {
+                closeModal();
+            }
+        });
+
+        // Form submission
+        this.addIngredientForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleAddIngredientSubmit();
+        });
+
+        // Add Ingredient button
+        const addBtn = document.getElementById('btnAddIngredient');
+        addBtn?.addEventListener('click', () => this.openAddIngredientModal());
+    }
+
+    async openAddIngredientModal() {
+        if (!this.addIngredientModal) return;
+
+        // Load dropdown options if not already loaded
+        if (!this.dropdownsLoaded) {
+            await this.loadDropdownOptions();
+            this.dropdownsLoaded = true;
+        }
+
+        // Reset form
+        this.addIngredientForm.reset();
+
+        // Show modal
+        this.addIngredientModal.style.display = 'flex';
+
+        // Focus first input
+        setTimeout(() => {
+            const firstInput = this.addIngredientForm.querySelector('input, select');
+            firstInput?.focus();
+        }, 100);
+    }
+
+    closeAddIngredientModal() {
+        if (this.addIngredientModal) {
+            this.addIngredientModal.style.display = 'none';
+        }
+    }
+
+    async loadDropdownOptions() {
+        try {
+            const [categories, units, dailyUsageLevels] = await Promise.all([
+                this.inventoryService.getCategories(),
+                this.inventoryService.getUnits(),
+                this.inventoryService.getDailyUsageLevels()
+            ]);
+
+            // Populate category dropdown
+            const categorySelect = document.getElementById('addIngredientCategory');
+            if (categorySelect) {
+                categorySelect.innerHTML = '<option value="">Select Category</option>' +
+                    categories.map(c => `<option value="${c.value}">${c.label}</option>`).join('');
+            }
+
+            // Populate unit dropdown
+            const unitSelect = document.getElementById('addIngredientUnit');
+            if (unitSelect) {
+                unitSelect.innerHTML = '<option value="">Select Unit</option>' +
+                    units.map(u => `<option value="${u.value}">${u.label}</option>`).join('');
+            }
+
+            // Populate daily usage dropdown
+            const usageSelect = document.getElementById('addIngredientDailyUsage');
+            if (usageSelect) {
+                usageSelect.innerHTML = '<option value="">Select Usage</option>' +
+                    dailyUsageLevels.map(d => `<option value="${d.value}">${d.label}</option>`).join('');
+            }
+        } catch (error) {
+            console.error('Failed to load dropdown options:', error);
+        }
+    }
+
+    async handleAddIngredientSubmit() {
+        const submitBtn = document.getElementById('addIngredientSubmitBtn');
+        const btnText = submitBtn?.querySelector('.btn-text');
+        const btnLoading = submitBtn?.querySelector('.btn-loading');
+
+        if (!submitBtn) return;
+
+        // Get form data
+        const formData = new FormData(this.addIngredientForm);
+        const data = {
+            name: formData.get('name'),
+            category: formData.get('category'),
+            quantity: parseFloat(formData.get('quantity')) || 0,
+            unit: formData.get('unit'),
+            reorder_level: parseFloat(formData.get('reorder_level')) || 0,
+            unit_price: parseFloat(formData.get('unit_price')) || 0,
+            daily_usage: formData.get('daily_usage'),
+            description: formData.get('description') || '',
+            is_active: true
+        };
+
+        // Validate required fields
+        if (!data.name || !data.category || !data.unit || !data.daily_usage) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoading) btnLoading.style.display = 'inline-flex';
+
+        try {
+            const newIngredient = await this.inventoryService.createIngredient(data);
+            this.closeAddIngredientModal();
+            await this.loadInventoryView();
+        } catch (error) {
+            console.error('Failed to add ingredient:', error);
+            const errorMessage = error.message || 'Failed to add ingredient. Please try again.';
+            alert(errorMessage);
+        } finally {
+            submitBtn.disabled = false;
+            if (btnText) btnText.style.display = 'inline';
+            if (btnLoading) btnLoading.style.display = 'none';
+        }
+    }
+
+    /* =========================================================
        LOAD INVENTORY
        ========================================================= */
 
-    loadInventoryView() {
-        const data = this.inventoryService.getDashboardData();
+    async loadInventoryView() {
+        try {
+            // Show loading state
+            this.showLoadingState();
 
-        this.updateStats(data);
-        this.renderStockTable(data.ingredients);
-        this.renderLowStockTable(data.lowStockIngredients);
+            const data = await this.inventoryService.getDashboardData();
 
-        // I-load ang mock data para sa C4.5 section
-        this.loadC45MockData();
+            this.updateStats(data);
+            this.renderStockTable(data.ingredients);
+            this.renderLowStockTable(data.lowStockIngredients);
+
+            // Load C4.5 mock data (keep local for now)
+            this.loadC45MockData();
+        } catch (error) {
+            console.error('Failed to load inventory view:', error);
+            this.showErrorState('Failed to load inventory data. Please try again.');
+        }
     }
 
+    showLoadingState() {
+        const stockTbody = document.getElementById('ingredientStockTableBody');
+        const lowTbody = document.getElementById('lowStockTableBody');
+
+        if (stockTbody) {
+            stockTbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-table">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <div class="spinner" style="width:20px;height:20px;border:2px solid var(--border-color);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;"></div>
+                            Loading inventory...
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        if (lowTbody) {
+            lowTbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-table">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <div class="spinner" style="width:20px;height:20px;border:2px solid var(--border-color);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;"></div>
+                            Loading low stock...
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    showErrorState(message) {
+        const stockTbody = document.getElementById('ingredientStockTableBody');
+        const lowTbody = document.getElementById('lowStockTableBody');
+
+        if (stockTbody) {
+            stockTbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-table" style="color:var(--danger-text);">
+                        ${message}
+                        <button class="btn-primary-sm" onclick="window.inventoryControllerInstance?.loadInventoryView()" style="margin-left:10px;">Retry</button>
+                    </td>
+                </tr>
+            `;
+        }
+        if (lowTbody) {
+            lowTbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-table" style="color:var(--danger-text);">
+                        ${message}
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+
+    /* =========================================================
+       C4.5 MOCK DATA (Local - for thesis analysis section)
+       ========================================================= */
 
     loadC45MockData() {
         const tbody = document.getElementById(
@@ -57,215 +280,216 @@ export class InventoryController {
         if (!tbody) return;
 
         const analyzeInventory = () => {
-            const ingredients =
-                this.inventoryService.getIngredients();
+            // Use the current ingredients from service
+            this.inventoryService.getIngredients().then(ingredients => {
 
-            const escape = value =>
-                this.escapeHtml(value);
+                const escape = value =>
+                    this.escapeHtml(value);
 
-            const assessments = ingredients.map(item => {
-                const quantity = Number(item.quantity) || 0;
-                const reorderLevel =
-                    Number(item.reorderLevel) || 0;
+                const assessments = ingredients.map(item => {
+                    const quantity = Number(item.quantity) || 0;
+                    const reorderLevel =
+                        Number(item.reorderLevel) || 0;
 
-                const usage = String(
-                    item.dailyUsage || 'Low'
-                ).toLowerCase();
+                    const usage = String(
+                        item.dailyUsage || 'Low'
+                    ).toLowerCase();
 
-                let risk;
-                let reason;
-                let action;
-                let priority;
+                    let risk;
+                    let reason;
+                    let action;
+                    let priority;
 
-                if (quantity <= 0) {
-                    risk = 'Critical';
-                    reason = 'No stock available';
-                    action = 'Restock immediately';
-                    priority = 4;
-                } else if (quantity <= reorderLevel) {
-                    risk = 'High';
-                    reason = 'Stock has reached the reorder level';
-                    action = 'Prepare a replenishment request';
-                    priority = 3;
-                } else if (
-                    usage === 'high' &&
-                    quantity <= reorderLevel * 2
-                ) {
-                    risk = 'High';
-                    reason = 'High daily usage with limited stock buffer';
-                    action = 'Review stock and prioritize replenishment';
-                    priority = 3;
-                } else if (
-                    usage === 'high' ||
-                    (
-                        usage === 'medium' &&
+                    if (quantity <= 0) {
+                        risk = 'Critical';
+                        reason = 'No stock available';
+                        action = 'Restock immediately';
+                        priority = 4;
+                    } else if (quantity <= reorderLevel) {
+                        risk = 'High';
+                        reason = 'Stock has reached the reorder level';
+                        action = 'Prepare a replenishment request';
+                        priority = 3;
+                    } else if (
+                        usage === 'high' &&
                         quantity <= reorderLevel * 2
-                    )
-                ) {
-                    risk = 'Medium';
-                    reason = 'Usage pattern warrants closer monitoring';
-                    action = 'Monitor stock and review usage';
-                    priority = 2;
-                } else {
-                    risk = 'Low';
-                    reason = 'Stock is above the reorder threshold';
-                    action = 'Continue routine monitoring';
-                    priority = 1;
-                }
+                    ) {
+                        risk = 'High';
+                        reason = 'High daily usage with limited stock buffer';
+                        action = 'Review stock and prioritize replenishment';
+                        priority = 3;
+                    } else if (
+                        usage === 'high' ||
+                        (
+                            usage === 'medium' &&
+                            quantity <= reorderLevel * 2
+                        )
+                    ) {
+                        risk = 'Medium';
+                        reason = 'Usage pattern warrants closer monitoring';
+                        action = 'Monitor stock and review usage';
+                        priority = 2;
+                    } else {
+                        risk = 'Low';
+                        reason = 'Stock is above the reorder threshold';
+                        action = 'Continue routine monitoring';
+                        priority = 1;
+                    }
 
-                return {
-                    ...item,
-                    risk,
-                    reason,
-                    action,
-                    priority
-                };
-            });
+                    return {
+                        ...item,
+                        risk,
+                        reason,
+                        action,
+                        priority
+                    };
+                });
 
-            // Most urgent items appear first.
-            assessments.sort((a, b) =>
-                b.priority - a.priority ||
-                a.name.localeCompare(b.name)
-            );
-
-            const criticalCount = assessments.filter(
-                item => item.quantity <= 0
-            ).length;
-
-            const riskCount = assessments.filter(
-                item =>
-                    item.quantity > 0 &&
-                    item.risk === 'High'
-            ).length;
-
-            const criticalEl = document.getElementById(
-                'c45CriticalCount'
-            );
-
-            const riskEl = document.getElementById(
-                'c45RiskCount'
-            );
-
-            const monitoredEl = document.getElementById(
-                'c45MonitoredCount'
-            );
-
-            if (criticalEl) {
-                criticalEl.textContent = criticalCount;
-            }
-
-            if (riskEl) {
-                riskEl.textContent = riskCount;
-            }
-
-            if (monitoredEl) {
-                monitoredEl.textContent = assessments.length;
-            }
-
-            const banner = document.getElementById(
-                'c45AlertBanner'
-            );
-
-            const title = document.getElementById(
-                'c45AlertTitle'
-            );
-
-            const description = document.getElementById(
-                'c45AlertDescription'
-            );
-
-            if (banner && title && description) {
-                banner.classList.remove(
-                    'is-critical',
-                    'is-warning'
+                // Most urgent items appear first.
+                assessments.sort((a, b) =>
+                    b.priority - a.priority ||
+                    a.name.localeCompare(b.name)
                 );
 
-                if (criticalCount > 0) {
-                    banner.classList.add('is-critical');
-                    title.textContent =
-                        `${criticalCount} ingredient(s) are out of stock`;
+                const criticalCount = assessments.filter(
+                    item => item.quantity <= 0
+                ).length;
 
-                    description.textContent =
-                        'Staff should prioritize restocking these items. ' +
-                        'Administrators should review replenishment needs.';
-                } else if (riskCount > 0) {
-                    banner.classList.add('is-warning');
-                    title.textContent =
-                        `${riskCount} ingredient(s) require attention`;
+                const riskCount = assessments.filter(
+                    item =>
+                        item.quantity > 0 &&
+                        item.risk === 'High'
+                ).length;
 
-                    description.textContent =
-                        'Review the high-risk items and prepare replenishment ' +
-                        'before shortages occur.';
-                } else {
-                    title.textContent =
-                        'No critical stock alerts';
+                const criticalEl = document.getElementById(
+                    'c45CriticalCount'
+                );
 
-                    description.textContent =
-                        'No ingredients are currently classified as critical ' +
-                        'or high risk by these inventory rules.';
+                const riskEl = document.getElementById(
+                    'c45RiskCount'
+                );
+
+                const monitoredEl = document.getElementById(
+                    'c45MonitoredCount'
+                );
+
+                if (criticalEl) {
+                    criticalEl.textContent = criticalCount;
                 }
-            }
 
-            if (assessments.length === 0) {
-                tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="empty-table">
-                        No ingredients available for analysis.
-                    </td>
-                </tr>
-            `;
-            } else {
-                tbody.innerHTML = assessments.map(item => {
-                    const riskClass = {
-                        Critical: 'critical',
-                        High: 'high',
-                        Medium: 'medium',
-                        Low: 'low'
-                    }[item.risk];
+                if (riskEl) {
+                    riskEl.textContent = riskCount;
+                }
 
-                    return `
+                if (monitoredEl) {
+                    monitoredEl.textContent = assessments.length;
+                }
+
+                const banner = document.getElementById(
+                    'c45AlertBanner'
+                );
+
+                const title = document.getElementById(
+                    'c45AlertTitle'
+                );
+
+                const description = document.getElementById(
+                    'c45AlertDescription'
+                );
+
+                if (banner && title && description) {
+                    banner.classList.remove(
+                        'is-critical',
+                        'is-warning'
+                    );
+
+                    if (criticalCount > 0) {
+                        banner.classList.add('is-critical');
+                        title.textContent =
+                            `${criticalCount} ingredient(s) are out of stock`;
+
+                        description.textContent =
+                            'Staff should prioritize restocking these items. ' +
+                            'Administrators should review replenishment needs.';
+                    } else if (riskCount > 0) {
+                        banner.classList.add('is-warning');
+                        title.textContent =
+                            `${riskCount} ingredient(s) require attention`;
+
+                        description.textContent =
+                            'Review the high-risk items and prepare replenishment ' +
+                            'before shortages occur.';
+                    } else {
+                        title.textContent =
+                            'No critical stock alerts';
+
+                        description.textContent =
+                            'No ingredients are currently classified as critical ' +
+                            'or high risk by these inventory rules.';
+                    }
+                }
+
+                if (assessments.length === 0) {
+                    tbody.innerHTML = `
                     <tr>
-                        <td>
-                            <strong>${escape(item.name)}</strong>
-                            <small style="display:block;color:#64748b;margin-top:4px">
-                                ${escape(item.category)}
-                            </small>
-                        </td>
-                        <td>
-                            ${this.formatNumber(item.quantity)}
-                            ${escape(item.unit)}
-                        </td>
-                        <td>
-                            ${this.formatNumber(item.reorderLevel)}
-                            ${escape(item.unit)}
-                        </td>
-                        <td>${escape(item.dailyUsage)}</td>
-                        <td>
-                            <span class="c45-risk ${riskClass}">
-                                ${item.risk}
-                            </span>
-                            <small style="display:block;color:#64748b;margin-top:5px;white-space:normal">
-                                ${escape(item.reason)}
-                            </small>
-                        </td>
-                        <td>
-                            <span class="c45-action-text">
-                                ${escape(item.action)}
-                            </span>
+                        <td colspan="6" class="empty-table">
+                            No ingredients available for analysis.
                         </td>
                     </tr>
                 `;
-                }).join('');
-            }
+                } else {
+                    tbody.innerHTML = assessments.map(item => {
+                        const riskClass = {
+                            Critical: 'critical',
+                            High: 'high',
+                            Medium: 'medium',
+                            Low: 'low'
+                        }[item.risk];
 
-            const status = document.getElementById(
-                'c45StatusText'
-            );
+                        return `
+                        <tr>
+                            <td>
+                                <strong>${escape(item.name)}</strong>
+                                <small style="display:block;color:#64748b;margin-top:4px">
+                                    ${escape(item.category)}
+                                </small>
+                            </td>
+                            <td>
+                                ${this.formatNumber(item.quantity)}
+                                ${escape(item.unit)}
+                            </td>
+                            <td>
+                                ${this.formatNumber(item.reorderLevel)}
+                                ${escape(item.unit)}
+                            </td>
+                            <td>${escape(item.dailyUsage)}</td>
+                            <td>
+                                <span class="c45-risk ${riskClass}">
+                                    ${item.risk}
+                                </span>
+                                <small style="display:block;color:#64748b;margin-top:5px;white-space:normal">
+                                    ${escape(item.reason)}
+                                </small>
+                            </td>
+                            <td>
+                                <span class="c45-action-text">
+                                    ${escape(item.action)}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                    }).join('');
+                }
 
-            if (status) {
-                status.textContent =
-                    `Analysis complete · ${assessments.length} ingredients evaluated`;
-            }
+                const status = document.getElementById(
+                    'c45StatusText'
+                );
+
+                if (status) {
+                    status.textContent =
+                        `Analysis complete · ${assessments.length} ingredients evaluated`;
+                }
+            });
         };
 
         analyzeInventory();
@@ -722,13 +946,12 @@ export class InventoryController {
 
                     this.currentLowPage--;
 
-                    const data =
-                        this.inventoryService
-                            .getDashboardData();
-
-                    this.renderLowStockTable(
-                        data.lowStockIngredients
-                    );
+                    this.inventoryService.getDashboardData()
+                        .then(data => {
+                            this.renderLowStockTable(
+                                data.lowStockIngredients
+                            );
+                        });
                 }
             };
         }
@@ -747,13 +970,12 @@ export class InventoryController {
 
                     this.currentLowPage++;
 
-                    const data =
-                        this.inventoryService
-                            .getDashboardData();
-
-                    this.renderLowStockTable(
-                        data.lowStockIngredients
-                    );
+                    this.inventoryService.getDashboardData()
+                        .then(data => {
+                            this.renderLowStockTable(
+                                data.lowStockIngredients
+                            );
+                        });
                 }
             };
         }
@@ -846,7 +1068,7 @@ export class InventoryController {
        SAVE
        ========================================================= */
 
-    saveEdit(id) {
+    async saveEdit(id) {
 
         const input =
             document.getElementById(
@@ -870,32 +1092,42 @@ export class InventoryController {
             return;
         }
 
+        // Disable save button during save
+        const saveButton = document.getElementById(`save-btn-${id}`);
+        const originalText = saveButton.textContent;
+        saveButton.textContent = 'Saving...';
+        saveButton.disabled = true;
+
         const success =
-            this.inventoryService.updateIngredient(
+            await this.inventoryService.updateIngredient(
                 id,
                 newQuantity
             );
 
+        saveButton.textContent = originalText;
+        saveButton.disabled = false;
+
         if (!success) {
 
             alert(
-                'Unable to update the ingredient.'
+                'Unable to update the ingredient. Please check your connection and try again.'
             );
 
             return;
         }
 
-        this.loadInventoryView();
+        // Reload the view to get fresh data from API
+        await this.loadInventoryView();
     }
 
     /* =========================================================
        DELETE
        ========================================================= */
 
-    deleteIngredient(id) {
+    async deleteIngredient(id) {
 
         const ingredients =
-            this.inventoryService.getIngredients();
+            await this.inventoryService.getIngredients();
 
         const ingredient =
             ingredients.find(
@@ -911,13 +1143,25 @@ export class InventoryController {
 
         if (!confirmed) return;
 
+        // Disable delete button during delete
+        const deleteButtons = document.querySelectorAll(`[data-action="delete"][data-id="${id}"]`);
+        deleteButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.textContent = 'Deleting...';
+        });
+
         const success =
-            this.inventoryService.deleteIngredient(id);
+            await this.inventoryService.deleteIngredient(id);
+
+        deleteButtons.forEach(btn => {
+            btn.disabled = false;
+            btn.textContent = 'Delete';
+        });
 
         if (!success) {
 
             alert(
-                'Unable to delete the ingredient.'
+                'Unable to delete the ingredient. Please check your connection and try again.'
             );
 
             return;
@@ -930,7 +1174,7 @@ export class InventoryController {
         this.currentStockPage = 1;
         this.currentLowPage = 1;
 
-        this.loadInventoryView();
+        await this.loadInventoryView();
     }
 
     /* =========================================================
@@ -1000,10 +1244,10 @@ export class InventoryController {
     escapeHtml(value) {
 
         return String(value ?? '')
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
+            .replace(/&/g, '&')
+            .replace(/</g, '<')
+            .replace(/>/g, '>')
+            .replace(/"/g, '"')
             .replace(/'/g, '&#039;');
     }
 }
@@ -1015,6 +1259,6 @@ export class InventoryController {
 document.addEventListener(
     'DOMContentLoaded',
     () => {
-        new InventoryController();
+        window.inventoryControllerInstance = new InventoryController();
     }
 );

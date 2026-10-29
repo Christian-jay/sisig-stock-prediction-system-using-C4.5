@@ -1,56 +1,129 @@
-import { InventoryItem } from '../models/InventoryModel.js';
+import { apiGet, apiPost, apiPatch, apiDelete } from '../utils/api.js';
 
+/**
+ * InventoryService
+ * Handles all inventory-related API communication.
+ * Replaces previous mock data with Django REST API integration.
+ */
 export class InventoryService {
     constructor() {
-        // Expanded to 15 sample items
-        this.items = [
-            new InventoryItem(1, 'Toyo', 5, 'L', 3, 'Medium'),
-            new InventoryItem(2, 'Mayo', 2, 'kg', 5, 'High'),
-            new InventoryItem(3, 'Egg', 20, 'pcs', 10, 'High'),
-            new InventoryItem(4, 'Pork', 3, 'kg', 5, 'High'),
-            new InventoryItem(5, 'Sili green', 1, 'kg', 2, 'Low'),
-            new InventoryItem(6, 'Sibuyas', 2, 'kg', 3, 'Medium'),
-            new InventoryItem(7, 'Kalamansi', 1, 'kg', 3, 'High'),
-            new InventoryItem(8, 'Suka', 8, 'L', 4, 'Medium'),
-            new InventoryItem(9, 'Bawang', 0, 'kg', 2, 'High'),
-            new InventoryItem(10, 'Mantika', 4, 'L', 5, 'High'),
-            new InventoryItem(11, 'Asukal', 10, 'kg', 4, 'Medium'),
-            new InventoryItem(12, 'Paminta', 0.5, 'kg', 1, 'Low'),
-            new InventoryItem(13, 'Patis', 3, 'L', 2, 'Medium'),
-            new InventoryItem(14, 'Hotdog', 15, 'pcs', 10, 'High'),
-            new InventoryItem(15, 'Cheese', 4, 'kg', 5, 'High')
-        ];
+        // Cache for categories/units to avoid repeated fetches
+        this._categoriesCache = null;
+        this._unitsCache = null;
     }
 
     /**
-     * Kukunin ang lahat ng items (kapag kailangan ng C4.5 algorithm o buong analytics/donut chart)
+     * Fetch all ingredients with optional query parameters
+     * @param {Object} params - Query parameters (page, page_size, search, category, status, etc.)
+     * @returns {Promise<Object>} Paginated response with results array
      */
-    getItems() {
-        return this.items;
+    async getIngredients(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        const endpoint = `/inventory/ingredients/${queryString ? `?${queryString}` : ''}`;
+        return apiGet(endpoint);
     }
 
     /**
-     * Kukunin ang items batay sa napiling page at limit para sa Table Pagination
-     * @param {number} page - Current page number (default: 1)
-     * @param {number} limit - Ilang items kada page (default: 5 items bawat pahina)
+     * Fetch inventory summary statistics
+     * @returns {Promise<Object>} Summary with total_items, in_stock, low_stock, out_of_stock, total_value
      */
-    getItemsPaginated(page = 1, limit = 5) {
-        const startIndex = (page - 1) * limit;
-        const endIndex = startIndex + limit;
+    async getSummary() {
+        return apiGet('/inventory/ingredients/summary/');
+    }
 
-        const paginatedItems = this.items.slice(startIndex, endIndex);
-        const totalPages = Math.ceil(this.items.length / limit);
+    /**
+     * Fetch low stock and out of stock ingredients
+     * @returns {Promise<Object>} { out_of_stock: [...], low_stock: [...] }
+     */
+    async getLowStock() {
+        return apiGet('/inventory/ingredients/low_stock/');
+    }
 
-        return {
-            items: paginatedItems,
-            pagination: {
-                currentPage: page,
-                totalPages: totalPages,
-                totalItems: this.items.length,
-                limit: limit,
-                hasNextPage: page < totalPages,
-                hasPrevPage: page > 1
-            }
-        };
+    /**
+     * Fetch available ingredient categories
+     * @returns {Promise<Array>} Array of { value, label } objects
+     */
+    async getCategories() {
+        if (this._categoriesCache) {
+            return this._categoriesCache;
+        }
+        const data = await apiGet('/inventory/ingredients/categories/');
+        this._categoriesCache = data;
+        return data;
+    }
+
+    /**
+     * Fetch available units of measure
+     * @returns {Promise<Array>} Array of { value, label } objects
+     */
+    async getUnits() {
+        if (this._unitsCache) {
+            return this._unitsCache;
+        }
+        const data = await apiGet('/inventory/ingredients/units/');
+        this._unitsCache = data;
+        return data;
+    }
+
+    /**
+     * Clear cached categories/units (call after CRUD operations in future phases)
+     */
+    clearCache() {
+        this._categoriesCache = null;
+        this._unitsCache = null;
+    }
+
+    /**
+     * Create a new ingredient
+     * @param {Object} data - Ingredient data
+     * @returns {Promise<Object>} Created ingredient
+     */
+    async createIngredient(data) {
+        const response = await apiPost('/inventory/ingredients/', data);
+        this.clearCache();
+        return response;
+    }
+
+    /**
+     * Update an existing ingredient
+     * @param {number|string} id - Ingredient ID
+     * @param {Object} data - Ingredient data to update
+     * @returns {Promise<Object>} Updated ingredient
+     */
+    async updateIngredient(id, data) {
+        const response = await apiPatch(`/inventory/ingredients/${id}/`, data);
+        this.clearCache();
+        return response;
+    }
+
+    /**
+     * Delete an ingredient
+     * @param {number|string} id - Ingredient ID
+     * @returns {Promise<void>}
+     */
+    async deleteIngredient(id) {
+        await apiDelete(`/inventory/ingredients/${id}/`);
+        this.clearCache();
+    }
+
+    /**
+     * Adjust stock for an ingredient (uses custom adjust_stock action)
+     * @param {number|string} id - Ingredient ID
+     * @param {Object} data - { quantity_change: number, reason: string, reference_id?: string, notes?: string }
+     * @returns {Promise<Object>} Updated ingredient with movement info
+     */
+    async adjustStock(id, data) {
+        const response = await apiPost(`/inventory/ingredients/${id}/adjust_stock/`, data);
+        this.clearCache();
+        return response;
+    }
+
+    /**
+     * Fetch ingredient usage/consumption history for line chart
+     * @param {number} days - Number of days (7, 30, or 90)
+     * @returns {Promise<Object>} { labels: [...], values: [...], total_consumption: number }
+     */
+    async getUsageHistory(days = 7) {
+        return apiGet(`/inventory/ingredients/usage_history/?days=${days}`);
     }
 }

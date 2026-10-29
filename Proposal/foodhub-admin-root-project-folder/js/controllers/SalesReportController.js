@@ -1,6 +1,7 @@
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { SalesReportService } from '../services/SalesReportService.js';
+import { formatQuantity } from '../utils/format.js';
 
 class SalesReportController {
     constructor() {
@@ -155,7 +156,7 @@ class SalesReportController {
                     <img src="${item.image}" alt="${item.name}" class="top-item-img" onerror="this.src='assets/auth_page_img.jpg'">
                     <div>
                         <div class="top-item-name">${item.name}</div>
-                        <span class="top-item-quantity">${item.quantity} sold</span>
+                        <span class="top-item-quantity">${formatQuantity(item.quantity)} sold</span>
                     </div>
                 </div>
                 <div class="top-item-sales">${item.sales}</div>
@@ -177,7 +178,7 @@ class SalesReportController {
         <tr>
             <td>${item.id}</td>
             <td><strong>${item.name}</strong></td>
-            <td>${item.quantity}</td>
+            <td>${formatQuantity(item.quantity)}</td>
             <td>${item.totalSales}</td>
             <td>${item.percentage}</td>
         </tr>

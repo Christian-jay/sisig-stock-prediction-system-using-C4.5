@@ -90,8 +90,10 @@ class HistoryController {
     }
 
     applyFilters() {
-        const from = this.fromDate ? new Date(`${this.fromDate}T00:00:00`) : null;
-        const to = this.toDate ? new Date(`${this.toDate}T23:59:59.999`) : null;
+        // Parse dates in Manila timezone to match backend
+        const from = this.fromDate ? new Date(new Date(this.fromDate).toLocaleString('en-US', { timeZone: 'Asia/Manila' })) : null;
+        const to = this.toDate ? new Date(new Date(this.toDate).toLocaleString('en-US', { timeZone: 'Asia/Manila' })) : null;
+        if (to) to.setHours(23, 59, 59, 999);
 
         this.filteredLogs = this.allLogs.filter(log => {
             const category = this.normalizeCategory(log.category);
@@ -158,8 +160,9 @@ class HistoryController {
         const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = url;
-        link.download = `foodhub-history-${new Date().toISOString().slice(0, 10)}.csv`;
+        // Use Manila timezone for filename date
+        const manilaDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+        link.download = `foodhub-history-${manilaDate}.csv`;
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -178,7 +181,7 @@ class HistoryController {
     formatDate(value) {
         const date = new Date(value);
         if (!Number.isFinite(date.getTime())) return 'Unknown date';
-        return new Intl.DateTimeFormat('en-PH', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }).format(date);
+        return new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }).format(date);
     }
 
     escape(value) {

@@ -1,17 +1,55 @@
 import { MenuItem } from '../models/OrderModel.js';
+import { apiGet } from '../utils/api.js';
 
 /**
  * FOODHUB
  * Order Service
  *
- * Responsible for retrieving menu data.
+ * Responsible for retrieving menu data from Django API.
  */
 export class OrderService {
 
     /**
-     * Get all menu items.
+     * Get all menu items from Django backend.
      */
     async getMenuItems() {
+        try {
+            const response = await apiGet('/menu/menu-items/');
+
+            // Handle paginated response
+            const items = response.results || response;
+
+            // Map database categories to frontend categories (sisig, extra)
+            const categoryMap = {
+                'Sisig Specials': 'sisig',
+                'Rice Meals': 'sisig',
+                'Appetizers': 'extra',
+                'Beverages': 'extra',
+                'Desserts': 'extra',
+                'sisig': 'sisig',
+                'extra': 'extra'
+            };
+
+            return items.map(item => new MenuItem(
+                item.id,
+                item.name,
+                parseFloat(item.price),
+                categoryMap[item.category_name] || 'sisig',
+                item.image_url || item.image || 'https://images.unsplash.com/photo-1544025162-d76694265947?w=200&auto=format&fit=crop&q=80'
+            ));
+        } catch (error) {
+            console.error('Failed to fetch menu items from API:', error);
+
+            // Fallback to mock data if API fails
+            console.warn('Falling back to mock menu data');
+            return this.getMockMenuItems();
+        }
+    }
+
+    /**
+     * Fallback mock menu items (used when API is unavailable).
+     */
+    getMockMenuItems() {
         return [
             // ==========================================
             // KATEGORYANG: sisig
@@ -59,4 +97,29 @@ export class OrderService {
         ];
     }
 
+    /**
+     * Create a new order via Django API.
+     */
+    async createOrder(orderData) {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/orders/orders/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || 'Failed to create order');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            throw error;
+        }
+    }
 }

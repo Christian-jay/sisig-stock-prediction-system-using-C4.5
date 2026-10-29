@@ -1,139 +1,112 @@
-import { TodaysOrdersModel } from '../models/TodaysOrdersModel.js';
+import { apiGet } from '../utils/api.js';
 
+/**
+ * FOODHUB
+ * Today's Orders Service
+ * Fetches orders from Django API with date filtering and pagination.
+ */
 export class TodaysOrdersService {
 
-    // Kunin ang lahat ng orders bilang static mock data
-    getAllOrders() {
-        const today = '2026-10-23';
-        const yesterday = '2026-10-22';
+    /**
+     * Get orders for a specific date with pagination.
+     * @param {string} dateString - Date in YYYY-MM-DD format
+     * @param {number} page - Page number (1-based)
+     * @param {number} pageSize - Items per page
+     */
+    async getOrdersByDate(dateString, page = 1, pageSize = 20) {
+        try {
+            const response = await apiGet(
+                `/orders/orders/?date_from=${dateString}&date_to=${dateString}&ordering=-created_at&page=${page}&page_size=${pageSize}`
+            );
 
-        const mockRawData = [
-            {
-                id: '#1001',
-                timestamp: `${today}T08:30:00Z`,
-                items: [
-                    { name: 'Sisig Special', qty: 2, price: 150 },
-                    { name: 'Garlic Rice', qty: 2, price: 25 }
-                ],
-                subtotal: 350,
-                tax: 42,
-                discount: 0,
-                total: 392,
-                status: 'completed',
-                paymentMethod: 'gcash',
-                orderType: 'Dine-in'
-            },
-            {
-                id: '#1002',
-                timestamp: `${today}T09:15:00Z`,
-                items: [
-                    { name: 'Pork Sisig Value Meal', qty: 1, price: 180 },
-                    { name: 'Coke Mismo', qty: 1, price: 30 }
-                ],
-                subtotal: 210,
-                tax: 25.2,
-                discount: 0,
-                total: 235.2,
-                status: 'processing',
-                paymentMethod: 'cash',
-                orderType: 'Takeout'
-            },
-            {
-                id: '#1003',
-                timestamp: `${today}T10:00:00Z`,
-                items: [
-                    { name: 'Bangus Sisig', qty: 3, price: 160 }
-                ],
-                subtotal: 480,
-                tax: 57.6,
-                discount: 96,
-                total: 441.6,
-                status: 'pending',
-                paymentMethod: 'foodpanda',
-                orderType: 'Delivery'
-            },
-            {
-                id: '#1004',
-                timestamp: `${today}T11:30:00Z`,
-                items: [
-                    { name: 'Tofu Sisig', qty: 2, price: 140 },
-                    { name: 'Plain Rice', qty: 2, price: 20 }
-                ],
-                subtotal: 320,
-                tax: 38.4,
-                discount: 0,
-                total: 358.4,
-                status: 'completed',
-                paymentMethod: 'gcash',
-                orderType: 'Dine-in'
-            },
-            {
-                id: '#1005',
-                timestamp: `${today}T12:10:00Z`,
-                items: [
-                    { name: 'Sisig Barkada Meal', qty: 1, price: 550 },
-                    { name: 'Iced Tea Pitcher', qty: 1, price: 120 }
-                ],
-                subtotal: 670,
-                tax: 80.4,
-                discount: 0,
-                total: 750.4,
-                status: 'processing',
-                paymentMethod: 'maya',
-                orderType: 'Dine-in'
-            },
-            {
-                id: '#1006',
-                timestamp: `${today}T13:45:00Z`,
-                items: [
-                    { name: 'Chicken Sisig', qty: 2, price: 170 }
-                ],
-                subtotal: 340,
-                tax: 40.8,
-                discount: 0,
-                total: 380.8,
-                status: 'pending',
-                paymentMethod: 'grabfood',
-                orderType: 'Delivery'
-            },
-            {
-                id: '#0999',
-                timestamp: `${yesterday}T16:20:00Z`,
-                items: [
-                    { name: 'Pork Sisig Value Meal', qty: 2, price: 180 }
-                ],
-                subtotal: 360,
-                tax: 43.2,
-                discount: 0,
-                total: 403.2,
-                status: 'completed',
-                paymentMethod: 'cash',
-                orderType: 'Takeout'
-            },
-            {
-                id: '#1000',
-                timestamp: `${yesterday}T14:20:00Z`,
-                items: [
-                    { name: 'Sisig Special', qty: 1, price: 150 }
-                ],
-                subtotal: 150,
-                tax: 18,
-                discount: 0,
-                total: 168,
-                status: 'completed',
-                paymentMethod: 'maya',
-                orderType: 'Dine-in'
-            }
-        ];
+            // Handle paginated response
+            const orders = response.results || response;
+            const pagination = {
+                count: response.count || orders.length,
+                totalPages: response.total_pages || Math.ceil((response.count || orders.length) / pageSize),
+                currentPage: response.current_page || page,
+                pageSize: pageSize
+            };
 
-        return mockRawData.map(data => new TodaysOrdersModel(data));
+            return {
+                orders: orders.map(order => this.transformOrder(order)),
+                pagination
+            };
+        } catch (error) {
+            console.error('Failed to fetch orders from API:', error);
+            return { orders: [], pagination: { count: 0, totalPages: 0, currentPage: 1, pageSize } };
+        }
     }
 
-    getOrdersByDate(dateString) {
-        const allOrders = this.getAllOrders();
-        return allOrders.filter(order => order.getDateOnly() === dateString);
+    /**
+     * Get all orders for stats calculation (no pagination).
+     */
+    async getAllOrders() {
+        try {
+            const response = await apiGet('/orders/orders/?ordering=-created_at&page_size=500');
+            const orders = response.results || response;
+            return orders.map(order => this.transformOrder(order));
+        } catch (error) {
+            console.error('Failed to fetch all orders:', error);
+            return [];
+        }
     }
 
+    /**
+     * Transform Django order to frontend format.
+     */
+    transformOrder(order) {
+        const items = order.items || [];
+        const itemsSummary = items.slice(0, 3).map(item =>
+            `${item.menu_item_name} (x${item.quantity})`
+        ).join(', ');
+
+        // Format timestamp
+        const createdAt = new Date(order.created_at);
+        const formattedTime = createdAt.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+        const formattedDate = createdAt.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        const timestamp = `${formattedDate} ${formattedTime}`;
+
+        // Get date only for filtering (Manila timezone)
+        const dateOnly = createdAt.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+
+        return {
+            id: order.order_number,
+            dbId: order.id,
+            timestamp: timestamp,
+            createdAt: order.created_at,
+            dateOnly: dateOnly,
+            items: items.map(item => ({
+                name: item.menu_item_name,
+                qty: item.quantity,
+                price: parseFloat(item.unit_price)
+            })),
+            subtotal: parseFloat(order.subtotal),
+            tax: parseFloat(order.tax_amount),
+            discount: parseFloat(order.discount_amount),
+            total: parseFloat(order.total_amount),
+            status: order.status,
+            statusDisplay: order.status_display,
+            paymentMethod: order.payment_method,
+            paymentMethodDisplay: order.payment_method_display,
+            orderType: order.order_type,
+            getFormattedTime: () => formattedTime,
+            getDateOnly: () => dateOnly,
+            getItemsSummary: () => itemsSummary || 'No items'
+        };
+    }
+
+    /**
+     * Calculate stats for orders.
+     */
     calculateStats(orders) {
         const count = orders.length;
         const totalRevenue = orders.reduce((sum, order) => {
@@ -147,9 +120,14 @@ export class TodaysOrdersService {
         return { count, totalRevenue };
     }
 
-    // Pansamantalang dummy save method lang kung may tumatawag man nito
-    saveOrder(orderData) {
-        console.warn("Static mode: Order not saved to localStorage. Modify static mock data array instead.");
-        return new TodaysOrdersModel(orderData);
+    /**
+     * Format currency in Philippine Peso format.
+     */
+    static formatCurrency(amount) {
+        return new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+            minimumFractionDigits: 2
+        }).format(amount).replace('PHP', '₱');
     }
 }

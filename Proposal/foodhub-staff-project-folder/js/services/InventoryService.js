@@ -1,415 +1,295 @@
-import {
-    InventoryModel,
-    IngredientModel
-} from '../models/InventoryModel.js';
-
+import { InventoryModel, IngredientModel } from '../models/InventoryModel.js';
+import { apiGet, apiPost, apiPatch, apiDelete } from '../utils/api.js';
 
 export class InventoryService {
 
     constructor() {
-
-        this.storageKey =
-            'foodhub_inventory';
-
-        this.initializeInventory();
+        this.ingredientsCache = null;
+        this.cacheTimestamp = null;
+        this.cacheDuration = 30000; // 30 seconds cache
     }
 
     /* =========================================================
-       INITIAL DATA
+       FETCH INGREDIENTS FROM BACKEND API
        ========================================================= */
 
-    initializeInventory() {
-
-        const existingData =
-            localStorage.getItem(
-                this.storageKey
-            );
-
-        /*
-         * Do not overwrite existing inventory.
-         */
-
-        if (existingData) {
-            return;
-        }
-
-        const rawIngredients = [
-
-            {
-                id: '1',
-                name: 'Toyo (Soy Sauce)',
-                category: 'Condiments',
-                quantity: 0,
-                unit: 'L',
-                reorderLevel: 5,
-                dailyUsage: 'High',
-                unitPrice: 85
-            },
-
-            {
-                id: '2',
-                name: 'Mayo',
-                category: 'Condiments',
-                quantity: 2,
-                unit: 'kg',
-                reorderLevel: 3,
-                dailyUsage: 'Medium',
-                unitPrice: 120
-            },
-
-            {
-                id: '3',
-                name: 'Egg',
-                category: 'Poultry',
-                quantity: 25,
-                unit: 'pcs',
-                reorderLevel: 10,
-                dailyUsage: 'High',
-                unitPrice: 10
-            },
-
-            {
-                id: '4',
-                name: 'Pork Maskara',
-                category: 'Meat',
-                quantity: 15,
-                unit: 'kg',
-                reorderLevel: 5,
-                dailyUsage: 'High',
-                unitPrice: 280
-            },
-
-            {
-                id: '5',
-                name: 'Sili Green',
-                category: 'Vegetables',
-                quantity: 1,
-                unit: 'kg',
-                reorderLevel: 2,
-                dailyUsage: 'Low',
-                unitPrice: 180
-            },
-
-            {
-                id: '6',
-                name: 'Sibuyas (Red Onion)',
-                category: 'Vegetables',
-                quantity: 8,
-                unit: 'kg',
-                reorderLevel: 3,
-                dailyUsage: 'Medium',
-                unitPrice: 150
-            },
-
-            {
-                id: '7',
-                name: 'Kalamansi',
-                category: 'Vegetables',
-                quantity: 4,
-                unit: 'kg',
-                reorderLevel: 2,
-                dailyUsage: 'Low',
-                unitPrice: 100
-            },
-
-            {
-                id: '8',
-                name: 'Calamansi Extract',
-                category: 'Beverages',
-                quantity: 0,
-                unit: 'L',
-                reorderLevel: 2,
-                dailyUsage: 'Medium',
-                unitPrice: 160
-            },
-
-            {
-                id: '9',
-                name: 'Black Pepper',
-                category: 'Spices',
-                quantity: 3,
-                unit: 'kg',
-                reorderLevel: 1,
-                dailyUsage: 'Low',
-                unitPrice: 450
-            },
-
-            {
-                id: '10',
-                name: 'Butter / Margarine',
-                category: 'Dairy',
-                quantity: 6,
-                unit: 'kg',
-                reorderLevel: 2,
-                dailyUsage: 'Medium',
-                unitPrice: 240
-            },
-
-            {
-                id: '11',
-                name: 'Garlic',
-                category: 'Vegetables',
-                quantity: 5,
-                unit: 'kg',
-                reorderLevel: 2,
-                dailyUsage: 'Medium',
-                unitPrice: 220
-            },
-
-            {
-                id: '12',
-                name: 'Liver Spread',
-                category: 'Condiments',
-                quantity: 1,
-                unit: 'cans',
-                reorderLevel: 4,
-                dailyUsage: 'Low',
-                unitPrice: 55
+    async fetchIngredientsFromAPI() {
+        try {
+            // Check cache
+            if (this.ingredientsCache && this.cacheTimestamp &&
+                Date.now() - this.cacheTimestamp < this.cacheDuration) {
+                return this.ingredientsCache;
             }
-        ];
 
-        localStorage.setItem(
-            this.storageKey,
-            JSON.stringify(rawIngredients)
-        );
+            // Fetch all ingredients with large page_size to avoid pagination
+            const response = await apiGet('/inventory/ingredients/?page_size=2000&ordering=-created_at');
+            const ingredients = response.results || response;
+
+            console.log('[InventoryService] Fetched ingredients:', ingredients.length);
+
+            // Transform backend data to frontend model format
+            const transformed = ingredients.map(item => this.transformIngredientFromAPI(item));
+
+            this.ingredientsCache = transformed;
+            this.cacheTimestamp = Date.now();
+            return transformed;
+        } catch (error) {
+            console.error('Failed to fetch ingredients from API:', error);
+            // Return cached data if available, otherwise empty array
+            return this.ingredientsCache || [];
+        }
+    }
+
+    // Normalize status from backend format (IN STOCK, LOW STOCK, OUT OF STOCK)
+    // to frontend format (In Stock, Low Stock, Out of Stock)
+    normalizeStatus(status) {
+        if (!status) return 'Out of Stock';
+        const s = String(status).toUpperCase().trim();
+        if (s === 'IN STOCK') return 'In Stock';
+        if (s === 'LOW STOCK') return 'Low Stock';
+        if (s === 'OUT OF STOCK') return 'Out of Stock';
+        // Already in title case or unknown - return as-is
+        return status;
+    }
+
+    transformIngredientFromAPI(apiItem) {
+        const rawStatus = apiItem.status_display || apiItem.status;
+        return {
+            id: String(apiItem.id),
+            name: apiItem.name,
+            category: apiItem.category_display || apiItem.category,
+            quantity: Number(apiItem.quantity),
+            unit: apiItem.unit_display || apiItem.unit,
+            reorderLevel: Number(apiItem.reorder_level),
+            unitPrice: Number(apiItem.unit_price),
+            dailyUsage: apiItem.daily_usage_display || apiItem.daily_usage,
+            description: apiItem.description,
+            isActive: apiItem.is_active,
+            status: this.normalizeStatus(rawStatus),
+            totalValue: Number(apiItem.total_value || 0),
+            createdAt: apiItem.created_at,
+            updatedAt: apiItem.updated_at,
+            createdBy: apiItem.created_by_name || apiItem.created_by,
+            recentMovements: apiItem.recent_movements || []
+        };
     }
 
     /* =========================================================
        GET ALL INGREDIENTS
        ========================================================= */
 
-    getIngredients() {
-
-        let rawData = [];
-
-        try {
-
-            rawData =
-                JSON.parse(
-                    localStorage.getItem(
-                        this.storageKey
-                    )
-                ) || [];
-
-        } catch (error) {
-
-            console.error(
-                'Unable to read inventory:',
-                error
-            );
-
-            rawData = [];
-        }
-
-        return rawData.map(
-            item =>
-                new IngredientModel(item)
-        );
+    async getIngredients() {
+        return await this.fetchIngredientsFromAPI();
     }
 
     /* =========================================================
        DASHBOARD DATA
        ========================================================= */
 
-    getDashboardData() {
+    async getDashboardData() {
+        try {
+            // Try to get summary from API first
+            const summaryResponse = await apiGet('/inventory/ingredients/summary/');
+            const summary = summaryResponse.data || summaryResponse;
 
-        const ingredients =
-            this.getIngredients();
+            const ingredients = await this.getIngredients();
 
-        const inStockCount =
-            ingredients.filter(
-                item =>
-                    item.status === 'In Stock'
-            ).length;
+            const inStockCount = ingredients.filter(item => item.status === 'In Stock').length;
+            const lowStockCount = ingredients.filter(item => item.status === 'Low Stock').length;
+            const outOfStockCount = ingredients.filter(item => item.status === 'Out of Stock').length;
+            const totalIngredients = ingredients.length;
 
-        const lowStockCount =
-            ingredients.filter(
-                item =>
-                    item.status === 'Low Stock'
-            ).length;
-
-        const outOfStockCount =
-            ingredients.filter(
-                item =>
-                    item.status === 'Out of Stock'
-            ).length;
-
-        const totalIngredients =
-            ingredients.length;
-
-        /*
-         * Low-stock monitoring includes:
-         *
-         * Low Stock
-         * Out of Stock
-         */
-
-        const lowStockIngredients =
-            ingredients.filter(
-                item =>
-                    item.status === 'Low Stock' ||
-                    item.status === 'Out of Stock'
+            const lowStockIngredients = ingredients.filter(
+                item => item.status === 'Low Stock' || item.status === 'Out of Stock'
             );
 
-        /*
-         * Calculate actual inventory value.
-         *
-         * quantity × unitPrice
-         */
-
-        const totalStockValue =
-            ingredients.reduce(
-                (sum, item) => {
-
-                    const unitPrice =
-                        Number(item.unitPrice) || 0;
-
-                    return (
-                        sum +
-                        (
-                            item.quantity *
-                            unitPrice
-                        )
-                    );
-
-                },
-                0
+            const totalStockValue = ingredients.reduce(
+                (sum, item) => sum + (item.quantity * item.unitPrice), 0
             );
 
-        return new InventoryModel({
+            return new InventoryModel({
+                totalIngredients,
+                inStockCount,
+                lowStockCount,
+                outOfStockCount,
+                totalStockValue,
+                ingredients,
+                lowStockIngredients
+            });
+        } catch (error) {
+            console.error('Failed to fetch dashboard data, falling back to computed:', error);
 
-            totalIngredients,
+            // Fallback to computing from ingredients list
+            const ingredients = await this.getIngredients();
 
-            inStockCount,
+            const inStockCount = ingredients.filter(item => item.status === 'In Stock').length;
+            const lowStockCount = ingredients.filter(item => item.status === 'Low Stock').length;
+            const outOfStockCount = ingredients.filter(item => item.status === 'Out of Stock').length;
+            const totalIngredients = ingredients.length;
 
-            lowStockCount,
+            const lowStockIngredients = ingredients.filter(
+                item => item.status === 'Low Stock' || item.status === 'Out of Stock'
+            );
 
-            outOfStockCount,
+            const totalStockValue = ingredients.reduce(
+                (sum, item) => sum + (item.quantity * item.unitPrice), 0
+            );
 
-            totalStockValue,
-
-            ingredients,
-
-            lowStockIngredients
-        });
+            return new InventoryModel({
+                totalIngredients,
+                inStockCount,
+                lowStockCount,
+                outOfStockCount,
+                totalStockValue,
+                ingredients,
+                lowStockIngredients
+            });
+        }
     }
 
     /* =========================================================
-       UPDATE INGREDIENT
+       UPDATE INGREDIENT (adjust stock)
        ========================================================= */
 
-    updateIngredient(
-        id,
-        newQuantity
-    ) {
+    async updateIngredient(id, newQuantity) {
+        try {
+            const ingredients = await this.getIngredients();
+            const ingredient = ingredients.find(item => String(item.id) === String(id));
 
-        const ingredients =
-            this.getRawIngredients();
+            if (!ingredient) {
+                return false;
+            }
 
-        const ingredient =
-            ingredients.find(
-                item =>
-                    String(item.id) ===
-                    String(id)
-            );
+            const quantity = Number(newQuantity);
+            if (Number.isNaN(quantity) || quantity < 0) {
+                return false;
+            }
 
-        if (!ingredient) {
+            // Calculate quantity change
+            const quantityChange = quantity - ingredient.quantity;
+
+            if (quantityChange === 0) {
+                return true; // No change needed
+            }
+
+            // Determine reason based on change direction
+            const reason = quantityChange > 0 ? 'RESTOCK' : 'ADJUSTMENT';
+
+            // Call backend adjust_stock endpoint
+            const response = await apiPost(`/inventory/ingredients/${id}/adjust_stock/`, {
+                quantity_change: quantityChange,
+                reason: reason,
+                notes: 'Manual adjustment from inventory page'
+            });
+
+            if (response.success) {
+                // Invalidate cache
+                this.ingredientsCache = null;
+                this.cacheTimestamp = null;
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Failed to update ingredient:', error);
             return false;
         }
-
-        const quantity =
-            Number(newQuantity);
-
-        if (
-            Number.isNaN(quantity) ||
-            quantity < 0
-        ) {
-            return false;
-        }
-
-        ingredient.quantity =
-            quantity;
-
-        this.saveRawIngredients(
-            ingredients
-        );
-
-        return true;
     }
 
     /* =========================================================
        DELETE INGREDIENT
        ========================================================= */
 
-    deleteIngredient(id) {
+    async deleteIngredient(id) {
+        try {
+            const response = await apiDelete(`/inventory/ingredients/${id}/`);
 
-        const ingredients =
-            this.getRawIngredients();
+            // Invalidate cache
+            this.ingredientsCache = null;
+            this.cacheTimestamp = null;
 
-        const originalLength =
-            ingredients.length;
-
-        const filteredIngredients =
-            ingredients.filter(
-                item =>
-                    String(item.id) !==
-                    String(id)
-            );
-
-        if (
-            filteredIngredients.length ===
-            originalLength
-        ) {
+            return response !== null; // 204 returns null
+        } catch (error) {
+            console.error('Failed to delete ingredient:', error);
             return false;
         }
-
-        this.saveRawIngredients(
-            filteredIngredients
-        );
-
-        return true;
     }
 
     /* =========================================================
-       RAW LOCAL STORAGE DATA
+       CREATE INGREDIENT (Admin only)
        ========================================================= */
 
-    getRawIngredients() {
-
+    async createIngredient(data) {
         try {
+            const response = await apiPost('/inventory/ingredients/', data);
 
-            return (
-                JSON.parse(
-                    localStorage.getItem(
-                        this.storageKey
-                    )
-                ) || []
-            );
+            // Invalidate cache
+            this.ingredientsCache = null;
+            this.cacheTimestamp = null;
 
+            return this.transformIngredientFromAPI(response);
         } catch (error) {
+            console.error('Failed to create ingredient:', error);
+            throw error;
+        }
+    }
 
-            console.error(
-                'Unable to read raw inventory:',
-                error
-            );
+    /* =========================================================
+       GET CATEGORIES, UNITS, DAILY USAGE LEVELS
+       ========================================================= */
 
+    async getCategories() {
+        try {
+            const response = await apiGet('/inventory/ingredients/categories/');
+            return response.data || response;
+        } catch (error) {
+            console.error('Failed to fetch categories:', error);
+            return [];
+        }
+    }
+
+    async getUnits() {
+        try {
+            const response = await apiGet('/inventory/ingredients/units/');
+            return response.data || response;
+        } catch (error) {
+            console.error('Failed to fetch units:', error);
+            return [];
+        }
+    }
+
+    async getDailyUsageLevels() {
+        try {
+            const response = await apiGet('/inventory/ingredients/daily_usage_levels/');
+            return response.data || response;
+        } catch (error) {
+            console.error('Failed to fetch daily usage levels:', error);
             return [];
         }
     }
 
     /* =========================================================
-       SAVE LOCAL STORAGE DATA
+       GET STOCK MOVEMENTS
        ========================================================= */
 
-    saveRawIngredients(
-        ingredients
-    ) {
+    async getStockMovements(params = {}) {
+        try {
+            const queryString = new URLSearchParams(params).toString();
+            const endpoint = `/inventory/movements/${queryString ? '?' + queryString : ''}`;
+            const response = await apiGet(endpoint);
+            return response.results || response;
+        } catch (error) {
+            console.error('Failed to fetch stock movements:', error);
+            return [];
+        }
+    }
 
-        localStorage.setItem(
-            this.storageKey,
-            JSON.stringify(
-                ingredients
-            )
-        );
+    /* =========================================================
+       CLEAR CACHE
+       ========================================================= */
+
+    clearCache() {
+        this.ingredientsCache = null;
+        this.cacheTimestamp = null;
     }
 }

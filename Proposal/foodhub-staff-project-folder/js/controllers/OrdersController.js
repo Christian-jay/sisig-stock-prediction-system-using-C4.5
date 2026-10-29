@@ -1,5 +1,5 @@
 import { OrderService } from '../services/OrderService.js';
-import { CartItem } from '../models/OrderModel.js';
+import { CartItem, MenuItem } from '../models/OrderModel.js';
 
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
@@ -36,6 +36,30 @@ class OrdersController {
 
 
     /**
+     * Load cart from sessionStorage (for returning from payment page edit mode).
+     */
+    loadCartFromSessionStorage() {
+        try {
+            const raw = sessionStorage.getItem('foodhub_cart_for_payment');
+            if (raw) {
+                const cartData = JSON.parse(raw);
+                if (cartData.items && cartData.items.length > 0) {
+                    // Convert sessionStorage format to CartItem objects
+                    this.cart = cartData.items.map(item => {
+                        const menuItem = new MenuItem(item.id, item.name, item.price, '', item.image || '');
+                        return new CartItem(menuItem, item.quantity);
+                    });
+                    // Store orderType for payment page
+                    this.orderType = cartData.orderType || 'Takeout';
+                    console.log('Loaded cart from sessionStorage:', this.cart.length, 'items');
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load cart from sessionStorage:', error);
+        }
+    }
+
+    /**
      * Initialize page.
      */
     async init() {
@@ -43,6 +67,9 @@ class OrdersController {
         try {
 
             await this.loadMenu();
+
+            // Load cart from sessionStorage (for edit mode returning from payment page)
+            this.loadCartFromSessionStorage();
 
             this.bindEvents();
 
@@ -847,19 +874,19 @@ class OrdersController {
 
         const orderType = document.getElementById('orderTypeSelect')?.value || 'Takeout';
 
-        const orderData = {
-            orderId: '#' + Math.floor(1000 + Math.random() * 9000),
-            timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' • ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            customerName: 'Juan Dela Cruz',
-            orderType: orderType, // <-- Added orderType here
+        // Save cart data to sessionStorage for payment page
+        // Actual order creation happens in PaymentController after payment confirmation
+        const cartData = {
+            orderType: orderType,
             items: this.cart.map(cartItem => ({
+                id: cartItem.menuItem.id,
                 name: cartItem.menuItem.name,
                 quantity: cartItem.quantity,
                 price: cartItem.menuItem.price
             }))
         };
 
-        localStorage.setItem('foodhub_current_order', JSON.stringify(orderData));
+        sessionStorage.setItem('foodhub_cart_for_payment', JSON.stringify(cartData));
         window.location.href = 'payment.html';
     }
 

@@ -5,7 +5,7 @@ import AuthService from '../services/AuthService.js';
  * LoginController
  * Connects UI events with the AuthService business logic.
  */
-class LoginController {
+export default class LoginController {
     constructor() {
         this.authService = new AuthService();
         this.initEventListeners();
@@ -39,15 +39,15 @@ class LoginController {
 
         try {
             const response = await this.authService.authenticate(user);
-            
+
             // Success Handling
             messageElement.style.color = "#16a34a"; // Green
             messageElement.textContent = response.message;
-            
-            // Future redirect hook can be placed here
+
+            // Redirect to inventory page on successful login
             setTimeout(() => {
-                // window.location.href = "dashboard.html";
-            }, 1500);
+                window.location.href = "dashboard.html";
+            }, 1000);
 
         } catch (error) {
             // Error Handling
@@ -59,8 +59,3 @@ class LoginController {
         }
     }
 }
-
-// Initialize Controller on DOM Load
-document.addEventListener('DOMContentLoaded', () => {
-    new LoginController();
-});

@@ -1,49 +1,135 @@
 /**
  * DashboardService
- * Mocks database retrieval or API calls (future Django/Flask endpoints integration ready).
+ * Calls real Django API endpoints for dashboard data.
  */
+import { apiGet } from '../utils/api.js';
+
 export default class DashboardService {
     async fetchDashboardData() {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({
-                    metrics: {
-                        totalSales: "₱24,835.00",
-                        totalOrders: 28,
-                        lowStockCount: 4,
-                        totalCustomers: 34
-                    },
-                    salesOverview: [
-                        { date: "Oct 14", amount: 8000, height: "35%" },
-                        { date: "Oct 15", amount: 11000, height: "48%" },
-                        { date: "Oct 16", amount: 12500, height: "55%" },
-                        { date: "Oct 17", amount: 14000, height: "62%" },
-                        { date: "Oct 18", amount: 16000, height: "70%" },
-                        { date: "Oct 19", amount: 17500, height: "78%" },
-                        { date: "Oct 20", amount: 21000, height: "95%" }
-                    ],
-                    topSellingItems: [
-                        { rank: "1.", name: "Sisig Burger", percentage: "18%" },
-                        { rank: "2.", name: "Sisig Meal", percentage: "14%" },
-                        { rank: "3.", name: "Sisig Sizzler", percentage: "10%" },
-                        { rank: "4.", name: "Sisig (Solo)", percentage: "8%" },
-                        { rank: "5.", name: "Sisig Family", percentage: "6%" }
-                    ],
-                    recentOrders: [
-                        { id: 1, orderId: "#1001", items: "Sisig Burger (x1)", price: "₱55.00", status: "Completed", date: "Oct 20, 2025 4:12 PM" },
-                        { id: 2, orderId: "#1002", items: "Maria Meal (x2)", price: "₱170.00", status: "Processing", date: "Oct 20, 2025 3:15 PM" },
-                        { id: 3, orderId: "#1003", items: "Pedro Reyes (x1)", price: "₱99.00", status: "Completed", date: "Oct 20, 2025 2:10 PM" },
-                        { id: 4, orderId: "#1004", items: "Ana Lim (x1)", price: "₱145.00", status: "Pending", date: "Oct 20, 2025 1:45 PM" },
-                        { id: 5, orderId: "#1005", items: "Lechon Kawali (x1)", price: "₱150.00", status: "Completed", date: "Oct 20, 2025 12:20 PM" }
-                    ],
-                    lowStockItems: [
-                        { ingredient: "Mayo", quantity: 2, unit: "kg", status: "Low Stock" },
-                        { ingredient: "Sili green", quantity: 1, unit: "kg", status: "Low Stock" },
-                        { ingredient: "Kalamansi", quantity: 1, unit: "kg", status: "Low Stock" },
-                        { ingredient: "Onion", quantity: 2, unit: "kg", status: "Low Stock" }
-                    ]
-                });
-            }, 300);
+        try {
+            // Try the full endpoint first (all data in one call)
+            const data = await apiGet('/dashboard/full/');
+            return this.transformData(data);
+        } catch (error) {
+            console.warn('[Dashboard] Full endpoint failed, falling back to individual calls:', error);
+            // Fallback to individual endpoint calls
+            return this.fetchIndividualEndpoints();
+        }
+    }
+
+    async fetchIndividualEndpoints() {
+        const [metrics, salesOverview, topSelling, recentOrders, lowStock] = await Promise.all([
+            apiGet('/dashboard/metrics/'),
+            apiGet('/dashboard/sales_overview/?days=7'),
+            apiGet('/dashboard/top_selling/?limit=5'),
+            apiGet('/dashboard/recent_orders/?limit=5'),
+            apiGet('/dashboard/low_stock/'),
+        ]);
+
+        return this.transformData({
+            metrics,
+            sales_overview: salesOverview,
+            top_selling: topSelling,
+            recent_orders: recentOrders,
+            low_stock: lowStock,
         });
+    }
+
+    // Helper to parse peso-formatted string to number
+    parsePesoString(str) {
+        if (typeof str === 'number') return str;
+        if (!str) return 0;
+        // Remove ₱, commas, spaces
+        return parseFloat(str.replace(/[₱,\s]/g, '')) || 0;
+    }
+
+    transformData(apiData) {
+        const metrics = apiData.metrics || {};
+        const salesOverview = apiData.sales_overview || {};
+        const topSelling = apiData.top_selling || [];
+        const recentOrders = apiData.recent_orders || [];
+        const lowStock = apiData.low_stock || [];
+
+        // Transform sales overview to match controller expectations
+        const transformedSalesOverview = this.transformSalesOverview(salesOverview);
+
+        // Transform top selling to match controller expectations
+        const transformedTopSelling = this.transformTopSelling(topSelling);
+
+        // Transform recent orders (already in correct format, just ensure)
+        const transformedRecentOrders = recentOrders.map((order, index) => ({
+            id: order.id || index + 1,
+            orderId: order.order_number || order.id || `#${index + 1}`,
+            items: order.items_summary || 'N/A',
+            price: order.total_amount || '₱0.00',
+            status: order.status || 'Pending',
+            date: order.created_at ? new Date(order.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
+        }));
+
+        // Transform low stock
+        const transformedLowStock = lowStock.map((item, index) => ({
+            ingredient: item.ingredient || 'Unknown',
+            quantity: item.quantity ?? 0,
+            unit: item.unit || '',
+            status: item.status || 'Low Stock',
+        }));
+
+        // Parse revenue strings to numbers
+        const todayRevenueNum = this.parsePesoString(metrics.today_revenue);
+        const totalSalesNum = this.parsePesoString(metrics.total_sales);
+
+        return {
+            metrics: {
+                totalSales: metrics.total_sales || '₱0.00',
+                totalOrders: metrics.total_orders ?? 0,
+                lowStockCount: metrics.low_stock_count ?? 0,
+                totalCustomers: metrics.total_customers ?? 0,
+                // Additional fields for Quick Stats box
+                todayOrders: metrics.today_orders ?? 0,
+                todayRevenue: todayRevenueNum,
+                completedOrdersToday: metrics.completed_orders_today ?? 0,
+                pendingOrdersToday: metrics.pending_orders_today ?? 0,
+                totalMenuItems: metrics.total_menu_items ?? 0,
+            },
+            salesOverview: transformedSalesOverview,
+            topSellingItems: transformedTopSelling,
+            recentOrders: transformedRecentOrders,
+            lowStockItems: transformedLowStock,
+        };
+    }
+
+    transformSalesOverview(salesOverview) {
+        const labels = salesOverview.labels || [];
+        const values = salesOverview.values || [];
+
+        return labels.map((label, index) => ({
+            date: label,
+            amount: values[index] ?? 0,
+            // height will be calculated by the controller
+        }));
+    }
+
+    transformTopSelling(topSelling) {
+        if (!Array.isArray(topSelling) || topSelling.length === 0) {
+            return [];
+        }
+
+        return topSelling.map(item => ({
+            rank: item.rank || '1.',
+            name: item.name || 'Unknown',
+            percentage: item.percentage || '0%',
+            totalSold: item.total_sold ?? 0,
+            revenue: item.revenue || '₱0.00',
+        }));
+    }
+
+    async fetchOrderById(orderId) {
+        try {
+            const response = await apiGet(`/orders/orders/${orderId}/`);
+            return response;
+        } catch (error) {
+            console.error('[DashboardService] Failed to fetch order by ID:', error);
+            throw error;
+        }
     }
 }

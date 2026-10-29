@@ -18,6 +18,10 @@ export class HistoryService {
     }
 
     static log({ category = 'system', action = 'Activity', reference = '—', details = '', user = 'Admin', result = 'Success', metadata = {} } = {}) {
+        const now = new Date();
+        // Store timestamp in Manila timezone (ISO format with +08:00 offset)
+        const manilaOffset = '+08:00';
+        const timestamp = now.toLocaleString('en-CA', { timeZone: 'Asia/Manila', hour12: false }).replace(', ', 'T') + manilaOffset;
         const entry = {
             id: globalThis.crypto?.randomUUID?.() ?? `LOG-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
             category: String(category).toLowerCase(),
@@ -26,7 +30,7 @@ export class HistoryService {
             details: String(details ?? ''),
             user: String(user || 'Admin'),
             result: String(result || 'Success'),
-            timestamp: new Date().toISOString(),
+            timestamp: timestamp,
             metadata: metadata && typeof metadata === 'object' ? metadata : {}
         };
 

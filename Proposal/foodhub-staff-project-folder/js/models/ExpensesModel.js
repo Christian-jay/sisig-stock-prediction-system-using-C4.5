@@ -1,7 +1,10 @@
 export class ExpenseRecordModel {
     constructor(data = {}) {
         this.id = data.id || `EXP-${Math.floor(1000 + Math.random() * 9000)}`;
-        this.timestamp = data.timestamp || new Date().toISOString();
+        // Store timestamp in Manila timezone (ISO format with +08:00 offset)
+        const now = new Date();
+        const manilaOffset = '+08:00';
+        this.timestamp = data.timestamp || now.toLocaleString('en-CA', { timeZone: 'Asia/Manila', hour12: false }).replace(', ', 'T') + manilaOffset;
         this.description = data.description || '';
         this.category = data.category || 'Supplies'; // Supplies, Utilities, Others, Ingredients
         this.amount = data.amount || 0;
@@ -10,8 +13,8 @@ export class ExpenseRecordModel {
     getFormattedDateTime() {
         try {
             const dateObj = new Date(this.timestamp);
-            const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const dateStr = dateObj.toLocaleDateString('en-US', { timeZone: 'Asia/Manila', month: 'short', day: '2-digit', year: 'numeric' });
+            const timeStr = dateObj.toLocaleTimeString('en-US', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hour12: true });
             return `${dateStr} - ${timeStr}`;
         } catch (e) {
             return this.timestamp;

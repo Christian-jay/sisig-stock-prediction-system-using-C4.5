@@ -1,7 +1,10 @@
 export class TodaysOrdersModel {
     constructor(orderData = {}) {
         this.id = orderData.id || `#${Math.floor(1000 + Math.random() * 9000)}`;
-        this.timestamp = orderData.timestamp || new Date().toISOString();
+        // Store timestamp in Manila timezone (ISO format with +08:00 offset)
+        const now = new Date();
+        const manilaOffset = '+08:00';
+        this.timestamp = orderData.timestamp || now.toLocaleString('en-CA', { timeZone: 'Asia/Manila', hour12: false }).replace(', ', 'T') + manilaOffset;
         this.items = orderData.items || [];
         this.subtotal = orderData.subtotal || 0;
         this.tax = orderData.tax || 0;
@@ -14,16 +17,15 @@ export class TodaysOrdersModel {
 
     getDateOnly() {
         if (!this.timestamp) return '';
-        if (this.timestamp.includes('T')) {
-            return this.timestamp.split('T')[0];
-        }
-        return this.timestamp.substring(0, 10);
+        // Return date in Manila timezone (YYYY-MM-DD)
+        const dateObj = new Date(this.timestamp);
+        return dateObj.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
     }
 
     getFormattedTime() {
         try {
             const dateObj = new Date(this.timestamp);
-            return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return dateObj.toLocaleTimeString('en-US', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hour12: true });
         } catch (e) {
             return this.timestamp;
         }

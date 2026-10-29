@@ -1,58 +1,153 @@
 import { PaymentModel } from '../models/PaymentsModel.js';
+import { apiGet } from '../utils/api.js';
 
 export class PaymentService {
     constructor() {
-        this.storageKey = 'foodhub_payments';
-        this.initializeDefaultPayments();
+        this.paymentsCache = null;
+        this.cacheTimestamp = null;
+        this.cacheDuration = 30000; // 30 seconds cache
     }
 
     /* =========================================================
-       INITIALIZE DEFAULT PAYMENTS (Mock Data)
+       FETCH ALL ORDERS FROM BACKEND API
        ========================================================= */
-    initializeDefaultPayments() {
-        const existing = localStorage.getItem(this.storageKey);
-        if (existing) return;
+    async fetchPaymentsFromAPI() {
+        try {
+            // Return cached payments if the cache is still valid
+            if (
+                this.paymentsCache !== null &&
+                this.cacheTimestamp !== null &&
+                Date.now() - this.cacheTimestamp < this.cacheDuration
+            ) {
+                return this.paymentsCache;
+            }
 
-        const defaultPayments = [
-            { id: '#1001', date: 'Apr 27, 2025 - 10:24 AM', customer: 'Juan Dela Cruz', method: 'Cash', amount: 55.00, status: 'Paid' },
-            { id: '#1002', date: 'Apr 27, 2025 - 10:17 AM', customer: 'Marie Santos', method: 'GCash', amount: 85.00, status: 'Paid' },
-            { id: '#1003', date: 'Apr 27, 2025 - 10:12 AM', customer: 'Carlos Reyes', method: 'Maya', amount: 120.00, status: 'Paid' },
-            { id: '#1004', date: 'Apr 27, 2025 - 09:58 AM', customer: 'Ana Lim', method: 'Panda', amount: 150.00, status: 'Paid' },
-            { id: '#1005', date: 'Apr 27, 2025 - 09:45 AM', customer: 'Rafael Cruz', method: 'GCash', amount: 120.00, status: 'Paid' },
-            { id: '#1006', date: 'Apr 27, 2025 - 09:30 AM', customer: 'Liza Fernandez', method: 'Cash', amount: 255.00, status: 'Paid' },
-            { id: '#1007', date: 'Apr 27, 2025 - 09:21 AM', customer: 'Michael Tan', method: 'Maya', amount: 185.00, status: 'Paid' },
-            { id: '#1008', date: 'Apr 27, 2025 - 08:55 AM', customer: 'Patricia Garcia', method: 'Panda', amount: 150.00, status: 'Paid' },
-            { id: '#1009', date: 'Apr 27, 2025 - 08:40 AM', customer: 'Jayson Reyes', method: 'GCash', amount: 170.00, status: 'Paid' },
-            { id: '#1010', date: 'Apr 27, 2025 - 08:32 AM', customer: 'Bee Cruz', method: 'Cash', amount: 120.00, status: 'Paid' }
-        ];
+            const allOrders = [];
+            let nextPage = '/orders/orders/?ordering=-created_at';
 
-        localStorage.setItem(this.storageKey, JSON.stringify(defaultPayments));
+            // Fetch every page from Django REST Framework
+            while (nextPage) {
+                const response = await apiGet(nextPage);
+
+                // Handle non-paginated responses
+                if (Array.isArray(response)) {
+                    allOrders.push(...response);
+                    break;
+                }
+
+                if (!Array.isArray(response.results)) {
+                    throw new Error(
+                        'Unexpected orders API response: missing results array.'
+                    );
+                }
+
+                allOrders.push(...response.results);
+
+                if (response.next) {
+                    const nextUrl = new URL(
+                        response.next,
+                        window.location.origin
+                    );
+
+                    // apiGet() already adds the /api prefix
+                    let nextPath = nextUrl.pathname;
+
+                    if (nextPath.startsWith('/api/')) {
+                        nextPath = nextPath.substring(4);
+                    }
+
+                    nextPage = nextPath + nextUrl.search;
+                } else {
+                    nextPage = null;
+                }
+            }
+
+            // Transform all fetched orders into payment transactions
+            const payments = allOrders.map(order =>
+                this.transformOrderToPayment(order)
+            );
+
+            this.paymentsCache = payments;
+            this.cacheTimestamp = Date.now();
+
+            console.log(`Payments loaded: ${payments.length} transactions`);
+
+            return payments;
+        } catch (error) {
+            console.error('Failed to fetch payments from API:', error);
+            return this.paymentsCache ?? [];
+        }
+    }
+
+    /* =========================================================
+       TRANSFORM ORDER INTO PAYMENT TRANSACTION
+       ========================================================= */
+    transformOrderToPayment(order) {
+        const createdAt = new Date(order.created_at);
+
+        const date =
+            createdAt.toLocaleDateString('en-US', {
+                timeZone: 'Asia/Manila',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            }) +
+            ' - ' +
+            createdAt.toLocaleTimeString('en-US', {
+                timeZone: 'Asia/Manila',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+        const methodMap = {
+            CASH: 'Cash',
+            GCASH: 'GCash',
+            MAYA: 'Maya',
+            FOODPANDA: 'Panda',
+            CARD: 'Card',
+            ONLINE: 'Online'
+        };
+
+        return {
+            id: order.order_number,
+            dbId: order.id,
+            date,
+            createdAt: order.created_at,
+            method: methodMap[order.payment_method] ||
+                order.payment_method ||
+                'Unknown',
+            amount: parseFloat(order.total_amount) || 0,
+            status: order.payment_status || 'Unknown'
+        };
     }
 
     /* =========================================================
        GET ALL PAYMENTS
        ========================================================= */
-    getPayments() {
-        try {
-            const raw = JSON.parse(localStorage.getItem(this.storageKey)) || [];
-            return raw.map(item => new PaymentModel(item));
-        } catch (error) {
-            console.error('Error reading payments from storage:', error);
-            return [];
-        }
+    async getPayments() {
+        return await this.fetchPaymentsFromAPI();
     }
 
     /* =========================================================
-       GET DASHBOARD METRICS (By Payment Method Breakdown)
+       GET DASHBOARD METRICS
        ========================================================= */
-    getPaymentMetrics() {
-        const payments = this.getPayments();
+    async getPaymentMetrics() {
+        const payments = await this.getPayments();
 
-        const getSummaryByMethod = (methodName) => {
-            const filtered = payments.filter(p => p.method.toLowerCase() === methodName.toLowerCase());
-            const count = filtered.length;
-            const totalAmount = filtered.reduce((sum, p) => sum + p.amount, 0);
-            return { count, totalAmount };
+        const getSummaryByMethod = methodName => {
+            const filtered = payments.filter(
+                payment =>
+                    payment.method.toLowerCase() ===
+                    methodName.toLowerCase()
+            );
+
+            return {
+                count: filtered.length,
+                totalAmount: filtered.reduce(
+                    (sum, payment) => sum + payment.amount,
+                    0
+                )
+            };
         };
 
         return {
@@ -68,11 +163,12 @@ export class PaymentService {
        ADD NEW PAYMENT TRANSACTION
        ========================================================= */
     addPayment(paymentData) {
-        const payments = this.getPayments();
         const newPayment = new PaymentModel(paymentData);
 
-        payments.unshift(newPayment); // I-lagay sa pinakataas
-        localStorage.setItem(this.storageKey, JSON.stringify(payments));
+        if (this.paymentsCache !== null) {
+            this.paymentsCache.unshift(newPayment);
+        }
+
         return newPayment;
     }
 }
