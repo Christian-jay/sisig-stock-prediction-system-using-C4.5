@@ -683,6 +683,19 @@
         </div>
     </div>
 
+    <!-- Auth Guard - Must load before InventoryController -->
+    <script type="module">
+        import { protectPage } from './js/utils/AuthGuard.js';
+
+        // Protect this page - only ADMIN can access
+        protectPage({ allowedRoles: ['ADMIN'] }).then(userData => {
+            if (userData) {
+                // User is authenticated and authorized, store user data for controllers
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
     <script type="module" src="js/controllers/InventoryController.js">
     </script>
 

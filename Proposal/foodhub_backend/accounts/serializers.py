@@ -3,6 +3,7 @@ Accounts serializers - User and Profile serialization.
 """
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User, UserProfile, Role
 
 
@@ -62,6 +63,27 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Custom JWT token serializer that includes user role in the token payload.
+    This allows frontend to get role without additional API call.
+    """
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Add custom claims
+        token['role'] = user.role
+        token['email'] = user.email
+        token['username'] = user.username
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Add user data to response
+        data['user'] = UserSerializer(self.user).data
+        return data
+
+
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -89,3 +111,19 @@ class ChangePasswordSerializer(serializers.Serializer):
 class RoleSerializer(serializers.Serializer):
     value = serializers.ChoiceField(choices=Role.choices)
     label = serializers.CharField(source='get_role_display', read_only=True)
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    token = serializers.CharField(required=True)
+    uid = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
+    new_password_confirm = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['new_password_confirm']:
+            raise serializers.ValidationError({'new_password_confirm': 'Passwords do not match.'})
+        return attrs

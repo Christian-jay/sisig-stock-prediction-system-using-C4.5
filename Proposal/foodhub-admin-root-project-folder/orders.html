@@ -186,6 +186,18 @@
 
     </div>
 
+    <!-- Auth Guard - Must load before OrdersController -->
+    <script type="module">
+        import { protectPage } from './js/utils/AuthGuard.js';
+
+        // Protect this page - only ADMIN can access
+        protectPage({ allowedRoles: ['ADMIN'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
     <!-- Clean Architecture JS Entry Point -->
     <script type="module" src="js/controllers/OrdersController.js"></script>
 

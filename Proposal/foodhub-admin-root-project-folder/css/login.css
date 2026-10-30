@@ -191,14 +191,14 @@ body {
 }
 
 .chef-icon-wrapper {
-    width: 56px;
-    height: 56px;
+    width: 140px;
+    height: 140px;
     color: var(--slate-dark);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px auto;
+    margin: 0 auto 0px auto;
     /* box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15); */
 }
 

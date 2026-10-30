@@ -8,9 +8,22 @@ from menu.models import MenuItem
 
 class MenuItemSimpleSerializer(serializers.ModelSerializer):
     """Simple serializer for menu item in orders."""
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = MenuItem
-        fields = ['id', 'name', 'image', 'price']
+        fields = ['id', 'name', 'image', 'image_url', 'price']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            # If image is already an absolute URL (external), return as-is
+            image_url = obj.image.url
+            if image_url.startswith('http://') or image_url.startswith('https://'):
+                return image_url
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(image_url)
+        return None
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -65,7 +78,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'payment_method', 'notes', 'order_type',
-            'tax_amount', 'discount_amount',
+            'tax_amount', 'discount_amount','payment_status',
             'items'
         ]
 

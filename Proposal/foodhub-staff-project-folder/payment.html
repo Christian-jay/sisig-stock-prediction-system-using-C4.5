@@ -52,8 +52,8 @@
                 </header>
 
                 <!-- =====================================
-     ORDER SUMMARY CARD
-     ===================================== -->
+         ORDER SUMMARY CARD
+         ===================================== -->
                 <section class="card order-summary-card">
 
                     <!-- Card Header -->
@@ -234,6 +234,18 @@
         </main>
 
     </div>
+
+    <!-- Auth Guard - Must load before PaymentController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
 
     <!-- JavaScript Controller -->
     <script type="module" src="js/controllers/PaymentController.js"></script>

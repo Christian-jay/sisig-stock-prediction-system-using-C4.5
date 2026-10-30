@@ -47,7 +47,7 @@
                         </div>
                         <div class="metric-info">
                             <span class="metric-label">Today's Sales</span>
-                            <h3 class="metric-value">₱4,835.00</h3>
+                            <h3 class="metric-value" id="todaySalesValue">₱4,835.00</h3>
                             <span class="metric-trend positive">↑ +12% vs. yesterday</span>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                         </div>
                         <div class="metric-info">
                             <span class="metric-label">Orders Today</span>
-                            <h3 class="metric-value">14</h3>
+                            <h3 class="metric-value" id="ordersTodayValue">14</h3>
                             <span class="metric-trend positive">↑ +27% vs. yesterday</span>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="metric-info">
                             <span class="metric-label">Pending Orders</span>
-                            <h3 class="metric-value">3</h3>
+                            <h3 class="metric-value" id="pendingOrdersValue">3</h3>
                             <span class="metric-trend warning">Needs attention</span>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                         </div>
                         <div class="metric-info">
                             <span class="metric-label">Low Stock Items</span>
-                            <h3 class="metric-value">3</h3>
+                            <h3 class="metric-value" id="lowStockCountValue">3</h3>
                             <span class="metric-trend danger">Requires restock</span>
                         </div>
                     </div>
@@ -232,6 +232,14 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- Pagination Footer for Low Stock -->
+                        <div class="pagination-footer">
+                            <span id="lowStockPaginationInfo" class="pagination-info">Showing 0-0 of 0 items</span>
+                            <div class="pagination-buttons">
+                                <button id="prevLowStockBtn" class="btn-page-sm" disabled>Prev</button>
+                                <button id="nextLowStockBtn" class="btn-page-sm" disabled>Next</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -240,6 +248,18 @@
         </main>
 
     </div>
+
+    <!-- Auth Guard - Must load before DashboardController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
 
     <!-- JavaScript Clean Architecture Entry Point -->
     <script type="module" src="js/controllers/DashboardController.js"></script>

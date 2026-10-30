@@ -29,18 +29,35 @@
             <div id="top-navbar-container"></div>
 
             <!-- PAGE CONTENT -->
-            <div class="content-body" style="padding: 30px;">
+            <div class="settings-dashboard-body">
 
                 <!-- PAGE HEADER -->
-                <section class="page-header-row" style="margin-bottom: 24px;">
+                <section class="page-header" style="margin-bottom: 24px;">
                     <div>
-                        <h2 style="font-size: 24px; font-weight: 800; color: var(--navy-dark);">System Settings</h2>
-                        <p style="color: var(--slate-muted); font-size: 14px;">Configure general preferences, themes,
-                            notifications, and system backups.</p>
+                        <h2 class="page-title">System Settings</h2>
+                        <p class="page-subtitle">Configure general preferences, themes, notifications, and system backups.</p>
                     </div>
                 </section>
 
-                <div class="settings-layout-grid">
+                <!-- LOADING STATE -->
+                <div id="settingsLoadingState" class="loading-state" style="display: none;">
+                    <div class="spinner"></div>
+                    <p class="text-muted">Loading settings...</p>
+                </div>
+
+                <!-- ERROR STATE -->
+                <div id="settingsErrorState" class="error-state" style="display: none;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.6;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>Failed to load settings</p>
+                    <p class="text-muted font-13" id="settingsErrorMessage"></p>
+                    <button class="btn-retry" id="settingsRetryBtn">Retry</button>
+                </div>
+
+                <div class="settings-layout-grid" id="settingsContentGrid" style="display: none;">
 
                     <!-- LEFT SIDEBAR MENU CARD -->
                     <div class="settings-menu-card">
@@ -50,7 +67,7 @@
                                     stroke-width="2">
                                     <circle cx="12" cy="12" r="3"></circle>
                                     <path
-                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
                                     </path>
                                 </svg>
                                 <span>General</span>
@@ -91,6 +108,18 @@
         </main>
 
     </div>
+
+    <!-- Auth Guard - Must load before SettingsController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
 
     <script type="module" src="js/controllers/SettingsController.js"></script>
 

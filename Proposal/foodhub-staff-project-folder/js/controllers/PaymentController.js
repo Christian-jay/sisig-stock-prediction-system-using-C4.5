@@ -355,9 +355,8 @@ class PaymentController {
             };
 
             // Only include payment_status in edit mode (OrderCreateSerializer doesn't accept it)
-            if (this.isEditMode) {
-                orderPayload.payment_status = djangoPaymentStatus;
-            }
+            orderPayload.payment_status = djangoPaymentStatus;
+            
 
             console.log(this.isEditMode ? 'Updating order via API:' : 'Creating order via API:', orderPayload);
 

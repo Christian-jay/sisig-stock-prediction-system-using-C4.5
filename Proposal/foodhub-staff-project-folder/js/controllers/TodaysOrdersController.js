@@ -7,7 +7,7 @@ export class TodaysOrdersController {
     constructor() {
         this.todaysOrdersService = new TodaysOrdersService();
         this.currentPage = 1;
-        this.pageSize = 20;
+        this.pageSize = 10; // 10 items per page
         this.currentOrderDbId = null; // Store current order DB ID for edit/update/delete
 
         this.initLayout();
@@ -699,7 +699,7 @@ export class TodaysOrdersController {
                 name: item.menu_item.name,
                 price: parseFloat(item.unit_price),  // Use original order price, not current menu price
                 quantity: item.quantity,
-                image: item.menu_item.image || ''  // Include image URL for POS display
+                image: item.menu_item.image_url || item.menu_item.image || ''  // Use absolute URL for POS display
             }));
 
             // Prepare cart data in the format PaymentController expects

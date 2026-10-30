@@ -15,6 +15,7 @@ from inventory.models import Ingredient, StockMovement, StockMovementReason
 from menu.models import MenuItem, MenuCategory
 from accounts.models import User
 from orders.models import Order, OrderItem, OrderStatus, PaymentMethod
+from core.permissions import IsStaffUser
 
 
 class DashboardViewSet(viewsets.ViewSet):
@@ -22,7 +23,7 @@ class DashboardViewSet(viewsets.ViewSet):
     ViewSet for dashboard analytics.
     Aggregates data from inventory, menu, and orders apps.
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsStaffUser]
 
     @action(detail=False, methods=['get'])
     def metrics(self, request):

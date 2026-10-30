@@ -1,65 +1,175 @@
+import { apiGet, apiPost, apiPatch, apiDelete } from '../utils/api.js';
 import { ExpensesSummaryModel, ExpenseRecordModel, ReplenishIngredientModel } from '../models/ExpensesModel.js';
 
+/**
+ * Category label to value mapping for API calls
+ * Backend expects uppercase values: SUPPLIES, UTILITIES, OTHERS, INGREDIENTS
+ */
+const CATEGORY_LABEL_TO_VALUE = {
+    'Supplies': 'SUPPLIES',
+    'Utilities': 'UTILITIES',
+    'Others': 'OTHERS',
+    'Ingredients': 'INGREDIENTS'
+};
+
+const CATEGORY_VALUE_TO_LABEL = {
+    'SUPPLIES': 'Supplies',
+    'UTILITIES': 'Utilities',
+    'OTHERS': 'Others',
+    'INGREDIENTS': 'Ingredients'
+};
+
 export class ExpensesService {
-    getExpensesData() {
-        // Mock data base sa ibinigay na UI Design
-        const rawExpenseRecords = [
-            { id: '1', timestamp: '2025-04-27T10:24:00Z', description: 'Rice (5kg)', category: 'Supplies', amount: 250.00 },
-            { id: '2', timestamp: '2025-04-27T09:45:00Z', description: 'Cooking Oil (1L)', category: 'Supplies', amount: 180.00 },
-            { id: '3', timestamp: '2025-04-27T08:30:00Z', description: 'Gas (LPG)', category: 'Utilities', amount: 300.00 },
-            { id: '4', timestamp: '2025-04-27T07:15:00Z', description: 'Packaging', category: 'Supplies', amount: 220.00 },
-            { id: '5', timestamp: '2025-04-26T17:50:00Z', description: 'Cleaning Supplies', category: 'Others', amount: 300.00 }
-        ];
+    /**
+     * Fetch expenses data from the backend API.
+     * Supports server-side filtering and pagination.
+     *
+     * @param {Object} params - Query parameters
+     * @param {number} params.page - Page number (1-based)
+     * @param {number} params.page_size - Number of records per page
+     * @param {string} params.search - Search term for description
+     * @param {string} params.category - Category filter (All, Supplies, Utilities, Others, Ingredients) - LABEL format
+     * @param {string} params.ordering - Ordering field (e.g., -date, -created_at)
+     */
+    async getExpensesData(params = {}) {
+        const queryParams = new URLSearchParams();
 
-        const rawLowStockIngredients = [
-            { id: 'ING-1', name: 'Mayo', currentStock: 2, unit: 'kg', status: 'Low Stock' },
-            { id: 'ING-2', name: 'Sili green', currentStock: 1, unit: 'kg', status: 'Low Stock' },
-            { id: 'ING-3', name: 'Kalamansi', currentStock: 1, unit: 'kg', status: 'Low Stock' },
-            { id: 'ING-4', name: 'Lechon Kawali', currentStock: 3, unit: 'pcs', status: 'Low Stock' },
-            { id: 'ING-5', name: 'Medium Bilao', currentStock: 1, unit: 'pcs', status: 'Low Stock' },
-            { id: 'ING-6', name: 'Small Bilao', currentStock: 2, unit: 'pcs', status: 'Low Stock' },
-            { id: 'ING-7', name: 'Sizzling Plate', currentStock: 1, unit: 'pcs', status: 'Low Stock' },
-            { id: 'ING-8', name: 'Pork', currentStock: 3, unit: 'kg', status: 'In Stock' },
-            { id: 'ING-9', name: 'Egg', currentStock: 6, unit: 'pcs', status: 'In Stock' },
-            { id: 'ING-10', name: 'Chicken', currentStock: 5, unit: 'kg', status: 'In Stock' }
-        ];
-
-        const expenseRecords = rawExpenseRecords.map(item => new ExpenseRecordModel(item));
-        const lowStockIngredients = rawLowStockIngredients.map(item => new ReplenishIngredientModel(item));
-
-        // Computations para sa stat cards
-        const totalExpenses = expenseRecords.reduce((sum, item) => sum + item.amount, 0);
-        const totalTransactions = expenseRecords.length;
-        const averageExpense = totalTransactions > 0 ? (totalExpenses / totalTransactions) : 0;
-
-        // Kunin ang Highest Category sa pamamagitan ng grouping
-        const categoryTotals = {};
-        expenseRecords.forEach(item => {
-            categoryTotals[item.category] = (categoryTotals[item.category] || 0) + item.amount;
-        });
-
-        let highestCategoryName = 'Supplies';
-        let highestCategoryAmount = 0;
-        for (const [cat, amt] of Object.entries(categoryTotals)) {
-            if (amt > highestCategoryAmount) {
-                highestCategoryAmount = amt;
-                highestCategoryName = cat;
-            }
+        if (params.page) queryParams.append('page', params.page);
+        if (params.page_size) queryParams.append('page_size', params.page_size);
+        if (params.search) queryParams.append('search', params.search);
+        if (params.category && params.category !== 'All') {
+            // Convert label to value for backend
+            const categoryValue = CATEGORY_LABEL_TO_VALUE[params.category] || params.category;
+            queryParams.append('category', categoryValue);
         }
+        if (params.ordering) queryParams.append('ordering', params.ordering);
 
-        return new ExpensesSummaryModel({
-            totalExpenses,
-            totalTransactions,
-            highestCategoryName,
-            highestCategoryAmount,
-            averageExpense,
-            expenseRecords,
-            lowStockIngredients
+        const endpoint = `/expenses/${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+        const response = await apiGet(endpoint);
+
+        // Backend returns paginated response with results array
+        const expenseRecords = (response.results || []).map(item => new ExpenseRecordModel({
+            id: item.id,
+            timestamp: item.date, // Backend uses 'date' field
+            description: item.description,
+            category: CATEGORY_VALUE_TO_LABEL[item.category] || item.category, // Convert value to label for display
+            amount: item.amount
+        }));
+
+        return {
+            results: expenseRecords,
+            count: response.count,
+            next: response.next,
+            previous: response.previous,
+            page: params.page || 1,
+            page_size: params.page_size || 20
+        };
+    }
+
+    /**
+     * Fetch expenses summary statistics from the backend API.
+     * No date filtering - shows all expenses summary.
+     */
+    async getExpensesSummary() {
+        const response = await apiGet('/expenses/summary/');
+
+        return {
+            totalExpenses: response.total_expenses || 0,
+            totalTransactions: response.total_records || 0,
+            highestCategoryName: response.highest_category?.category_display || 'N/A',
+            highestCategoryAmount: response.highest_category?.total || 0,
+            averageExpense: response.average_expense || 0
+        };
+    }
+
+    /**
+     * Fetch available expense categories from the backend API.
+     * Returns array of { value, label } objects.
+     */
+    async getCategories() {
+        const response = await apiGet('/expenses/categories/');
+        // Backend returns array of { value: "SUPPLIES", label: "Supplies" }
+        return response;
+    }
+
+    /**
+     * Fetch a single expense by ID.
+     *
+     * @param {number} id - Expense ID
+     */
+    async getExpense(id) {
+        const response = await apiGet(`/expenses/${id}/`);
+        return new ExpenseRecordModel({
+            id: response.id,
+            timestamp: response.date,
+            description: response.description,
+            category: CATEGORY_VALUE_TO_LABEL[response.category] || response.category,
+            amount: response.amount,
+            createdAt: response.created_at,
+            updatedAt: response.updated_at
         });
     }
 
-    addExpenseRecord(recordData) {
-        console.warn("Static mode: Expense added temporarily in view. Update ExpensesService.js to save permanently.");
-        return new ExpenseRecordModel(recordData);
+    /**
+     * Create a new expense record.
+     *
+     * @param {Object} expenseData - Expense data
+     * @param {string} expenseData.description - Expense description
+     * @param {string} expenseData.category - Category (SUPPLIES, UTILITIES, OTHERS, INGREDIENTS)
+     * @param {number} expenseData.amount - Amount
+     * @param {string} expenseData.date - Date in YYYY-MM-DD format
+     */
+    async createExpense(expenseData) {
+        const response = await apiPost('/expenses/', {
+            description: expenseData.description,
+            category: expenseData.category,
+            amount: expenseData.amount,
+            date: expenseData.date
+        });
+
+        return new ExpenseRecordModel({
+            id: response.id,
+            timestamp: response.date,
+            description: response.description,
+            category: CATEGORY_VALUE_TO_LABEL[response.category] || response.category,
+            amount: response.amount
+        });
+    }
+
+    /**
+     * Update an existing expense record.
+     *
+     * @param {number} id - Expense ID
+     * @param {Object} expenseData - Updated expense data
+     */
+    async updateExpense(id, expenseData) {
+        const response = await apiPatch(`/expenses/${id}/`, expenseData);
+
+        return new ExpenseRecordModel({
+            id: response.id,
+            timestamp: response.date,
+            description: response.description,
+            category: CATEGORY_VALUE_TO_LABEL[response.category] || response.category,
+            amount: response.amount
+        });
+    }
+
+    /**
+     * Delete an expense record.
+     *
+     * @param {number} id - Expense ID
+     */
+    async deleteExpense(id) {
+        await apiDelete(`/expenses/${id}/`);
+        return true;
+    }
+
+    /**
+     * Fetch low stock ingredients (for replenishment section).
+     * This could come from inventory API in the future.
+     */
+    async getLowStockIngredients() {
+        // For now, return empty array - can be connected to inventory API later
+        return [];
     }
 }

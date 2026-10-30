@@ -4,10 +4,12 @@ export class ExpenseRecordModel {
         // Store timestamp in Manila timezone (ISO format with +08:00 offset)
         const now = new Date();
         const manilaOffset = '+08:00';
-        this.timestamp = data.timestamp || now.toLocaleString('en-CA', { timeZone: 'Asia/Manila', hour12: false }).replace(', ', 'T') + manilaOffset;
+        this.timestamp = data.timestamp || data.date || now.toLocaleString('en-CA', { timeZone: 'Asia/Manila', hour12: false }).replace(', ', 'T') + manilaOffset;
         this.description = data.description || '';
         this.category = data.category || 'Supplies'; // Supplies, Utilities, Others, Ingredients
         this.amount = data.amount || 0;
+        this.createdAt = data.createdAt || null;
+        this.updatedAt = data.updatedAt || null;
     }
 
     getFormattedDateTime() {

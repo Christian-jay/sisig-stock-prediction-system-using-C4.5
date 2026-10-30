@@ -19,7 +19,7 @@ DATABASES = {
 }
 
 # Email backend for development (console)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Disable password validators in development for easier testing
 AUTH_PASSWORD_VALIDATORS = []

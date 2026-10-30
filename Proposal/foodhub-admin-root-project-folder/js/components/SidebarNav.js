@@ -28,12 +28,8 @@ export function loadSidebarNav(customTitle = '') {
         <!-- SIDEBAR NAVIGATION -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <svg class="brand-logo-icon" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path
-                        d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
-                    <line x1="6" y1="17" x2="18" y2="17" />
-                </svg>
+                 <img src="./assets/foodhub_logo_no_bg.png" alt="foodhub"
+                        loading="lazy" style="max-width: 30%; height: auto; display: block;">
                 <span>FOODHUB</span>
             </div>
 

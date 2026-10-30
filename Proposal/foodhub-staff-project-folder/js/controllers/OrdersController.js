@@ -882,7 +882,8 @@ class OrdersController {
                 id: cartItem.menuItem.id,
                 name: cartItem.menuItem.name,
                 quantity: cartItem.quantity,
-                price: cartItem.menuItem.price
+                price: cartItem.menuItem.price,
+                image: cartItem.menuItem.image
             }))
         };
 

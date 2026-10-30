@@ -105,7 +105,7 @@
                         <div class="stat-card-top">
                             <div class="stat-icon-wrapper gcash">
                                 <img src="assets/gcash.svg"
-                                    alt="gcash" width="30" height="30"   /> 
+                                    alt="gcash" width="30" height="30"   />
                             </div>
                             <span class="stat-title">GCash Payments</span>
                         </div>
@@ -293,6 +293,18 @@
             </div>
         </div>
     </div>
+
+    <!-- Auth Guard - Must load before PaymentsController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
 
     <!-- JavaScript Clean Architecture Entry Point -->
     <script type="module" src="js/controllers/PaymentsController.js"></script>

@@ -17,6 +17,7 @@ from .serializers import (
     OrderSerializer, OrderCreateSerializer, OrderStatusSerializer,
     OrderUpdateSerializer, DashboardOrderSerializer
 )
+from core.permissions import CanManageOrders
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -24,7 +25,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     ViewSet for order management.
     """
     queryset = Order.objects.select_related('created_by', 'served_by').prefetch_related('items__menu_item').all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [CanManageOrders]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['order_number']
     ordering_fields = ['created_at', 'total_amount', 'status']

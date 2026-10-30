@@ -11,17 +11,7 @@ from .models import MenuCategory, MenuItem
 from .serializers import (
     MenuCategorySerializer, MenuItemSerializer, MenuItemSimpleSerializer
 )
-
-
-class IsAuthenticatedOrReadOnly(IsAuthenticated):
-    """
-    Allow unauthenticated access for safe methods (GET, HEAD, OPTIONS).
-    Require authentication for write operations (POST, PUT, PATCH, DELETE).
-    """
-    def has_permission(self, request, view):
-        if request.method in SAFE_METHODS:
-            return True
-        return super().has_permission(request, view)
+from core.permissions import CanManageMenu
 
 
 class MenuCategoryViewSet(viewsets.ModelViewSet):
@@ -30,7 +20,7 @@ class MenuCategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = MenuCategory.objects.all()
     serializer_class = MenuCategorySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [CanManageMenu]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     ordering_fields = ['display_order', 'name']
@@ -49,7 +39,7 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     ViewSet for menu item management.
     """
     queryset = MenuItem.objects.select_related('category').prefetch_related('recipe_ingredients__ingredient').all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [CanManageMenu]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description']
     ordering_fields = ['category__display_order', 'display_order', 'name', 'price']
