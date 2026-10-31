@@ -10,11 +10,21 @@
         rel="stylesheet">
     <!-- Custom Stylesheets -->
     <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="../foodhub-staff-project-folder/css/themes.css">
     <link rel="stylesheet" href="css/sidebar_nav.css">
     <link rel="stylesheet" href="css/topbar_nav.css">
 </head>
 
 <body>
+    <!-- Apply saved theme immediately (before paint) -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('foodhub_theme');
+        if (theme === 'dark') {
+          document.body.setAttribute('data-theme', theme);
+        }
+      })();
+    </script>
 
     <div class="admin-layout">
 
@@ -120,6 +130,16 @@
                 window.currentUser = userData;
             }
         });
+    </script>
+
+    <!-- ThemeManager - Must load before SettingsController for theme preview -->
+    <script type="module">
+        import { ThemeManager } from './js/utils/ThemeManager.js';
+        import { SettingsService } from './js/services/SettingsService.js';
+
+        // Initialize ThemeManager early for no-flash theme on page load
+        const themeManager = new ThemeManager({ settingsService: new SettingsService() });
+        await themeManager.init();
     </script>
 
     <script type="module" src="js/controllers/SettingsController.js"></script>

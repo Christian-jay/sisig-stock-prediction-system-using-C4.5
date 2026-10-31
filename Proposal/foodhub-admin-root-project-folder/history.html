@@ -8,11 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="../foodhub-staff-project-folder/css/themes.css">
     <link rel="stylesheet" href="css/sidebar_nav.css">
     <link rel="stylesheet" href="css/topbar_nav.css">
 </head>
 
 <body>
+    <!-- Apply saved theme immediately (before paint) -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('foodhub_theme');
+        if (theme === 'dark') {
+          document.body.setAttribute('data-theme', theme);
+        }
+      })();
+    </script>
     <div class="admin-layout">
         <div id="sidebar-nav-container"></div>
         <main class="main-content">
