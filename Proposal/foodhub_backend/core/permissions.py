@@ -85,7 +85,7 @@ class CanManageMenu(permissions.BasePermission):
 class CanManageOrders(permissions.BasePermission):
     """
     Permission for order operations.
-    Staff can create orders and view their own.
+    Staff can create orders and view all orders (for Today's Orders page).
     Admins can view all and update statuses.
     """
     message = 'Insufficient permissions for order operation.'
@@ -99,11 +99,14 @@ class CanManageOrders(permissions.BasePermission):
         if request.user.role == 'ADMIN':
             return True
         if request.user.role == 'STAFF':
-            # Staff can view orders they created
-            if hasattr(obj, 'created_by') and obj.created_by == request.user:
+            # Staff can VIEW (GET/HEAD/OPTIONS) all orders for Today's Orders page
+            if request.method in permissions.SAFE_METHODS:
                 return True
-            # Staff can create new orders (handled at view level)
+            # Staff can create new orders
             if request.method == 'POST':
+                return True
+            # Staff can update/delete only orders they created
+            if hasattr(obj, 'created_by') and obj.created_by == request.user:
                 return True
         return False
 

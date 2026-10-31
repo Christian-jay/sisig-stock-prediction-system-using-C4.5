@@ -59,5 +59,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+        'accounts.views': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
 }
