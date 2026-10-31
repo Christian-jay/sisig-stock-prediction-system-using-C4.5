@@ -28,4 +28,14 @@ export class SettingsService {
         }
         return { success: true, message: `${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)} settings saved successfully!` };
     }
+
+    /**
+     * Save theme mode to localStorage directly.
+     * Used by ThemeManager for consistency.
+     *
+     * @param {string} themeMode - 'light' or 'dark'
+     */
+    saveLocalThemeMode(themeMode) {
+        localStorage.setItem('foodhub_theme', themeMode);
+    }
 }

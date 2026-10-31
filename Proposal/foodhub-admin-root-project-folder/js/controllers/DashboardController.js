@@ -636,7 +636,11 @@ class DashboardController {
     renderRecentOrders(orders) {
         const tbody = document.getElementById('recentOrdersTableBody');
         if (!tbody) return;
-        tbody.innerHTML = orders.map(order => `
+
+        // Limit to 5 most recent orders
+        const recentOrders = orders.slice(0, 5);
+
+        tbody.innerHTML = recentOrders.map(order => `
             <tr>
                 <td><strong>${order.orderId}</strong></td>
                 <td>${order.items}</td>
