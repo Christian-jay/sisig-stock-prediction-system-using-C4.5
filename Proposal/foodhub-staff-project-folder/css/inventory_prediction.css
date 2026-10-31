@@ -1,33 +1,7 @@
 /* =========================================================
-   FOODHUB STAFF — INVENTORY PAGE
+   FOODHUB STAFF — INVENTORY PREDICTION PAGE
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-
-    --success-bg: #dcfce7;
-    --success-text: #15803d;
-
-    --warning-bg: #ffedd5;
-    --warning-text: #c2410c;
-
-    --danger-bg: #fee2e2;
-    --danger-text: #dc2626;
-
-    --secondary-bg: #f1f5f9;
-    --secondary-text: #475569;
-}
 
 /* =========================================================
    GLOBAL
@@ -62,6 +36,17 @@ input {
 img,
 svg {
     max-width: 100%;
+}
+
+/* =========================================================
+   CARD BASE CLASS
+   ========================================================= */
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
 }
 
 /* =========================================================
@@ -101,7 +86,7 @@ svg {
 }
 
 .page-header h1 {
-    color: var(--navy-dark);
+    color: var(--slate-text);
     font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.025em;
@@ -132,11 +117,11 @@ svg {
     padding: 22px !important;
     overflow: hidden;
     box-sizing: border-box;
-    background: #ffffff !important;
-    color: #334155 !important;
-    border: 1px solid #e2e8f0 !important;
+    background: var(--card-bg) !important;
+    color: var(--slate-text) !important;
+    border: 1px solid var(--border-color) !important;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    box-shadow: var(--shadow-card);
 }
 
 .c45-heading {
@@ -146,7 +131,7 @@ svg {
     flex-wrap: wrap;
     min-width: 0;
     padding-bottom: 20px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .c45-heading-icon {
@@ -156,13 +141,13 @@ svg {
     height: 48px;
     flex-shrink: 0;
     border-radius: 12px;
-    background: #e0f2fe;
-    color: #0369a1;
+    background: var(--info-bg);
+    color: var(--info);
     font-size: 25px;
 }
 
 .c45-heading h2 {
-    color: #0b192c;
+    color: var(--slate-text);
     font-size: 19px;
     font-weight: 800;
     overflow-wrap: anywhere;
@@ -171,7 +156,7 @@ svg {
 .c45-heading p,
 .c45-table-heading p {
     margin-top: 5px;
-    color: #64748b;
+    color: var(--slate-muted);
     font-size: 12px;
     line-height: 1.6;
 }
@@ -180,8 +165,8 @@ svg {
     margin-left: auto;
     padding: 7px 10px;
     border-radius: 8px;
-    background: #f1f5f9;
-    color: #475569;
+    background: var(--bg-secondary);
+    color: var(--slate-muted);
     font-size: 10px;
     font-weight: 800;
     white-space: nowrap;
@@ -204,40 +189,40 @@ svg {
     gap: 7px;
     min-width: 0;
     padding: 15px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    background: #ffffff;
+    background: var(--card-bg);
     overflow-wrap: anywhere;
 }
 
 .c45-summary-card>span {
-    color: #475569;
+    color: var(--slate-muted);
     font-size: 12px;
     font-weight: 700;
 }
 
 .c45-summary-card strong {
-    color: #0f172a;
+    color: var(--slate-text);
     font-size: 28px;
     line-height: 1.2;
 }
 
 .c45-summary-card small {
-    color: #64748b;
+    color: var(--slate-muted);
     font-size: 11px;
     line-height: 1.5;
 }
 
 .c45-summary-card.critical {
-    border-left: 4px solid #dc2626;
+    border-left: 4px solid var(--danger);
 }
 
 .c45-summary-card.warning {
-    border-left: 4px solid #d97706;
+    border-left: 4px solid var(--warning);
 }
 
 .c45-summary-card.normal {
-    border-left: 4px solid #0284c7;
+    border-left: 4px solid var(--info);
 }
 
 /* Alert banner */
@@ -250,8 +235,8 @@ svg {
     min-width: 0;
     margin-bottom: 24px;
     padding: 15px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
 }
 
@@ -262,8 +247,8 @@ svg {
     height: 30px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: var(--info-bg);
+    color: var(--info);
     font-weight: 800;
 }
 
@@ -273,34 +258,34 @@ svg {
 }
 
 .c45-alert-banner.is-critical {
-    background: #fef2f2;
-    border-color: #fecaca;
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
 }
 
 .c45-alert-banner.is-critical .c45-alert-symbol {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger);
 }
 
 .c45-alert-banner.is-warning {
-    background: #fffbeb;
-    border-color: #fde68a;
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
 }
 
 .c45-alert-banner.is-warning .c45-alert-symbol {
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--warning-bg);
+    color: var(--warning);
 }
 
 .c45-alert-banner strong {
     display: block;
-    color: #0f172a;
+    color: var(--slate-text);
     font-size: 13px;
 }
 
 .c45-alert-banner p {
     margin-top: 5px;
-    color: #475569;
+    color: var(--slate-muted);
     font-size: 12px;
     line-height: 1.6;
     overflow-wrap: anywhere;
@@ -319,7 +304,7 @@ svg {
 }
 
 .c45-table-heading h3 {
-    color: #0b192c;
+    color: var(--slate-text);
     font-size: 15px;
     font-weight: 800;
 }
@@ -329,8 +314,8 @@ svg {
     padding: 10px 14px;
     border: none;
     border-radius: 8px;
-    background: #0284c7;
-    color: #ffffff;
+    background: var(--primary);
+    color: var(--btn-primary-text);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -338,11 +323,11 @@ svg {
 }
 
 .c45-refresh-btn:hover {
-    background: #0369a1;
+    background: var(--primary-dark);
 }
 
 .c45-refresh-btn:focus-visible {
-    outline: 3px solid #7dd3fc;
+    outline: 3px solid var(--primary-focus);
     outline-offset: 3px;
 }
 
@@ -354,7 +339,7 @@ svg {
     min-width: 0;
     overflow-x: hidden;
     overflow-y: visible;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 10px;
 }
 
@@ -378,21 +363,21 @@ svg {
 }
 
 .c45-table thead th {
-    background: #f8fafc;
-    color: #64748b;
+    background: var(--table-header-bg);
+    color: var(--table-header-text);
     font-size: 10px;
     font-weight: 700;
 }
 
 .c45-table tbody td {
-    border-bottom: 1px solid #e2e8f0;
-    color: #334155;
+    border-bottom: 1px solid var(--table-border);
+    color: var(--slate-text);
     font-size: 11px;
     line-height: 1.5;
 }
 
 .c45-table tbody tr:hover {
-    background: #f8fafc;
+    background: var(--table-row-hover);
 }
 
 /* Six prediction columns */
@@ -443,29 +428,29 @@ svg {
 }
 
 .c45-risk.critical {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 .c45-risk.high {
-    background: #ffedd5;
-    color: #9a3412;
+    background: var(--warning-bg);
+    color: var(--warning-text);
 }
 
 .c45-risk.medium {
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--warning-bg);
+    color: var(--warning-text);
 }
 
 .c45-risk.low {
-    background: #dcfce7;
-    color: #166534;
+    background: var(--success-bg);
+    color: var(--success-text);
 }
 
 .c45-action-text {
     display: block;
     max-width: 100%;
-    color: #334155;
+    color: var(--slate-text);
     font-size: 11px;
     line-height: 1.5;
     white-space: normal;
@@ -482,8 +467,8 @@ svg {
     min-width: 0;
     margin-top: 16px;
     padding-top: 14px;
-    border-top: 1px solid #e2e8f0;
-    color: #64748b;
+    border-top: 1px solid var(--border-color);
+    color: var(--slate-muted);
     font-size: 11px;
     line-height: 1.6;
     overflow-wrap: anywhere;

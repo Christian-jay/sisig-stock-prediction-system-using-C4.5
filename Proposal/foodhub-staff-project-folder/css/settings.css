@@ -1,30 +1,7 @@
 /* =========================================================
    FOODHUB STAFF — SYSTEM SETTINGS
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-
-    --success: #16a34a;
-    --success-bg: #dcfce7;
-    --success-light: #dcfce7;
-    --warning: #ca8a04;
-    --warning-bg: #fef9c3;
-    --danger: #dc2626;
-    --danger-bg: #fee2e2;
-    --danger-light: #fee2e2;
-}
 
 /* =========================================================
    GLOBAL
@@ -77,7 +54,7 @@ body {
     font-weight: 800;
     line-height: 1.25;
     letter-spacing: -0.6px;
-    color: var(--navy-dark);
+    color: var(--slate-text);
 }
 
 .page-subtitle {
@@ -106,7 +83,6 @@ body {
     border-radius: 12px;
     padding: 12px;
     height: fit-content;
-    position: sticky;
     top: 100px;
 }
 
@@ -137,8 +113,8 @@ body {
 }
 
 .settings-menu-item:hover {
-    background-color: var(--bg-main);
-    color: var(--slate-dark);
+    background-color: var(--bg-secondary);
+    color: var(--slate-text);
 }
 
 .settings-menu-item.active {
@@ -167,7 +143,7 @@ body {
     font-size: 18px;
     font-weight: 700;
     line-height: 1.4;
-    color: var(--navy-dark);
+    color: var(--slate-text);
     margin-bottom: 4px;
 }
 
@@ -201,32 +177,32 @@ body {
 .form-control {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 14px;
     font-weight: 400;
     line-height: 1.4;
-    color: var(--slate-text);
-    background-color: var(--card-bg);
+    color: var(--input-text);
+    background-color: var(--input-bg);
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--primary-light);
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px var(--primary-focus);
 }
 
 .form-control:disabled,
 .form-control[readonly] {
-    background-color: var(--bg-main);
-    color: var(--slate-muted);
+    background-color: var(--bg-secondary);
+    color: var(--input-placeholder);
     cursor: not-allowed;
 }
 
 .form-control::placeholder {
-    color: var(--slate-muted);
+    color: var(--input-placeholder);
 }
 
 .form-hint {
@@ -302,7 +278,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #cbd5e1;
+    background-color: var(--switch-off-bg);
     transition: 0.3s;
 }
 
@@ -313,12 +289,12 @@ body {
     height: 18px;
     left: 3px;
     bottom: 3px;
-    background-color: #ffffff;
+    background-color: var(--switch-thumb);
     transition: 0.3s;
 }
 
 input:checked + .slider {
-    background-color: var(--primary);
+    background-color: var(--switch-on-bg);
 }
 
 input:checked + .slider:before {
@@ -352,8 +328,8 @@ input:checked + .slider:before {
 }
 
 .btn-primary {
-    background-color: var(--primary);
-    color: #ffffff;
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
@@ -366,7 +342,7 @@ input:checked + .slider:before {
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: var(--primary-dark);
+    background-color: var(--btn-primary-hover);
 }
 
 .btn-primary:disabled {
@@ -376,9 +352,9 @@ input:checked + .slider:before {
 
 /* Secondary Button */
 .btn-secondary {
-    background-color: var(--card-bg);
+    background-color: var(--btn-secondary-bg);
     color: var(--slate-text);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--btn-secondary-border);
     border-radius: 8px;
     padding: 10px 20px;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -390,8 +366,9 @@ input:checked + .slider:before {
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background-color: var(--bg-main);
-    border-color: var(--slate-muted);
+    background-color: var(--btn-secondary-hover);
+    border-color: var(--primary);
+    color: var(--primary-dark);
 }
 
 .btn-secondary:disabled {
@@ -401,8 +378,8 @@ input:checked + .slider:before {
 
 /* Danger Button */
 .btn-danger {
-    background-color: var(--danger);
-    color: #ffffff;
+    background-color: var(--btn-danger-bg);
+    color: var(--btn-danger-text);
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
@@ -418,7 +395,7 @@ input:checked + .slider:before {
 }
 
 .btn-danger:hover:not(:disabled) {
-    background-color: #b91c1c;
+    background-color: var(--btn-danger-hover);
 }
 
 .btn-danger:disabled {
@@ -439,6 +416,7 @@ input:checked + .slider:before {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 6px;
+    color: var(--slate-text);
 }
 
 .danger-zone .btn-danger {
@@ -499,8 +477,8 @@ input:checked + .slider:before {
 }
 
 .btn-retry {
-    background: var(--danger);
-    color: white;
+    background: var(--btn-danger-bg);
+    color: var(--btn-danger-text);
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
@@ -512,12 +490,12 @@ input:checked + .slider:before {
 }
 
 .btn-retry:hover {
-    background: #b91c1c;
+    background: var(--btn-danger-hover);
 }
 
 /* Skeleton Loaders */
 .skeleton-loader {
-    background: linear-gradient(90deg, var(--border-color) 25%, #f1f5f9 50%, var(--border-color) 75%);
+    background: linear-gradient(90deg, var(--border-color) 25%, var(--bg-tertiary) 50%, var(--border-color) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     border-radius: 4px;
@@ -536,10 +514,11 @@ input:checked + .slider:before {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: white;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 14px 18px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-dropdown);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -581,134 +560,586 @@ input:checked + .slider:before {
 }
 
 .toast-close:hover {
-    color: var(--navy-dark);
-}
-
-/* =========================================================
-   DARK MODE
-   ========================================================= */
-
-[data-theme="dark"] {
-    --bg-main: #0f172a;
-    --card-bg: #1e293b;
-    --slate-text: #f1f5f9;
-    --navy-dark: #ffffff;
-    --slate-muted: #94a3b8;
-    --border-color: #334155;
-    --primary-light: #0369a1;
-}
-
-[data-theme="dark"] body {
-    background-color: var(--bg-main);
     color: var(--slate-text);
 }
 
-[data-theme="dark"] .settings-menu-card,
-[data-theme="dark"] .settings-content-card {
-    background-color: #1e293b;
-    border-color: #334155;
+/* =========================================================
+   THEME PREVIEW CARDS — Miniature POS Screenshots (Orders Page)
+   ========================================================= */
+
+.theme-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 12px;
 }
 
-[data-theme="dark"] .settings-menu-item {
-    color: #cbd5e1;
+.theme-preview-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-[data-theme="dark"] .settings-menu-item:hover {
-    background-color: #334155;
-    color: #ffffff;
-}
-
-[data-theme="dark"] .settings-menu-item.active {
-    background-color: #0369a1;
-    color: #ffffff;
-}
-
-[data-theme="dark"] .form-control {
-    background-color: #0f172a;
-    color: #f1f5f9;
-    border-color: #334155;
-}
-
-[data-theme="dark"] .form-control:focus {
+.theme-preview-card:hover {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.3);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
 }
 
-[data-theme="dark"] .form-control:disabled,
-[data-theme="dark"] .form-control[readonly] {
-    background-color: #0f172a;
+.theme-preview-card:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-color: var(--primary);
+}
+
+.theme-preview-card.selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-focus), var(--shadow-card);
+}
+
+/* Visual Preview — Mini POS */
+.theme-preview-visual {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 12px;
+}
+
+/* =========================================================
+   MINI POS LAYOUT (based on actual Orders page)
+   ========================================================= */
+.theme-mini-pos {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    grid-template-rows: 32px 1fr;
+    grid-template-areas:
+        "sidebar topbar"
+        "sidebar main";
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    background: var(--bg-main);
+    min-height: 170px;
+}
+
+/* =========================================================
+   LIGHT CLASSIC — Hardcoded Original FOODHUB Colors
+   ========================================================= */
+.theme-mini-pos--light {
+    background: #f8fafc;
+}
+
+/* Sidebar */
+.theme-mini-pos--light .mini-sidebar {
+    grid-area: sidebar;
+    background: #0b192c;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 6px 10px;
+    gap: 3px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.theme-mini-pos--light .mini-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.theme-mini-pos--light .mini-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.theme-mini-pos--light .mini-nav-item.active {
+    background: rgba(2, 132, 199, 0.18);
+}
+
+/* Main area */
+.theme-mini-pos--light .mini-main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+}
+
+/* Topbar */
+.theme-mini-pos--light .mini-topbar {
+    grid-area: topbar;
+    height: 32px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    gap: 8px;
+}
+
+.theme-mini-pos--light .mini-search {
+    width: 70px;
+    height: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.theme-mini-pos--light .mini-user {
+    width: 20px;
+    height: 20px;
+    background: #0284c7;
+    border-radius: 50%;
+}
+
+/* POS Grid - 2 column cards */
+.theme-mini-pos--light .mini-pos-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 6px;
+    padding: 8px;
+    min-height: 0;
+}
+
+/* Cards */
+.theme-mini-pos--light .mini-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Current Order Card (left) */
+.theme-mini-pos--light .mini-order-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--light .mini-card-header {
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.theme-mini-pos--light .mini-card-title {
+    color: #334155;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--light .mini-cart-area {
+    flex: 1;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--light .mini-cart-item {
+    height: 18px;
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.theme-mini-pos--light .mini-cart-footer {
+    height: 36px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.theme-mini-pos--light .mini-cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.theme-mini-pos--light .mini-summary-label {
     color: #64748b;
+    font-size: 7px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
-[data-theme="dark"] .form-hint {
-    color: #64748b;
+.theme-mini-pos--light .mini-summary-value {
+    color: #0284c7;
+    font-size: 10px;
+    font-weight: 800;
 }
 
-[data-theme="dark"] .toggle-row {
-    border-color: #334155;
+.theme-mini-pos--light .mini-btn-payment {
+    width: 56px;
+    height: 24px;
+    background: #0284c7;
+    border: none;
+    border-radius: 6px;
+    opacity: 0.5;
 }
 
-[data-theme="dark"] .toggle-info strong {
-    color: #f1f5f9;
+/* Menu Catalog Card (right) */
+.theme-mini-pos--light .mini-menu-card {
+    min-width: 0;
 }
 
-[data-theme="dark"] .section-divider {
-    border-color: #334155;
+.theme-mini-pos--light .mini-menu-card .mini-card-header {
+    justify-content: space-between;
 }
 
-[data-theme="dark"] .btn-secondary {
-    background-color: #1e293b;
-    color: #f1f5f9;
-    border-color: #334155;
+.theme-mini-pos--light .mini-catalog-actions {
+    width: 20px;
+    height: 16px;
+    background: #f1f5f9;
+    border-radius: 3px;
 }
 
-[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
-    background-color: #334155;
-    border-color: #64748b;
+.theme-mini-pos--light .mini-category-tabs {
+    display: flex;
+    gap: 3px;
+    padding: 6px 8px 4px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-[data-theme="dark"] .toast {
-    background: #1e293b;
-    color: #f1f5f9;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+.theme-mini-pos--light .mini-tab {
+    flex: 1;
+    height: 16px;
+    background: #f1f5f9;
+    border-radius: 3px;
 }
 
-[data-theme="dark"] .toast-close {
-    color: #94a3b8;
+.theme-mini-pos--light .mini-tab.active {
+    background: #0284c7;
 }
 
-[data-theme="dark"] .toast-close:hover {
-    color: #ffffff;
+.theme-mini-pos--light .mini-menu-grid {
+    flex: 1;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    overflow: hidden;
 }
 
-[data-theme="dark"] .loading-state,
-[data-theme="dark"] .error-state {
-    color: #94a3b8;
+.theme-mini-pos--light .mini-menu-item {
+    aspect-ratio: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
 }
 
-[data-theme="dark"] .btn-retry {
-    background: var(--danger);
-    color: white;
+/* =========================================================
+   DARK MIDNIGHT — Hardcoded Sisig-Inspired Colors
+   ========================================================= */
+.theme-mini-pos--dark {
+    background: #171412;
 }
 
-[data-theme="dark"] .btn-retry:hover {
-    background: #b91c1c;
+/* Sidebar */
+.theme-mini-pos--dark .mini-sidebar {
+    grid-area: sidebar;
+    background: #171412;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 6px 10px;
+    gap: 3px;
+    border-right: 1px solid #3B2D24;
 }
 
-/* Dark mode for switch */
-[data-theme="dark"] .slider {
-    background-color: #475569;
+.theme-mini-pos--dark .mini-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
-[data-theme="dark"] input:checked + .slider {
-    background-color: var(--primary);
+.theme-mini-pos--dark .mini-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.theme-mini-pos--dark .mini-nav-item.active {
+    background: rgba(245, 158, 11, 0.18);
+}
+
+/* Main area */
+.theme-mini-pos--dark .mini-main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    background: #171412;
+}
+
+/* Topbar */
+.theme-mini-pos--dark .mini-topbar {
+    grid-area: topbar;
+    height: 32px;
+    background: #211B17;
+    border-bottom: 1px solid #49382D;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    gap: 8px;
+}
+
+.theme-mini-pos--dark .mini-search {
+    width: 70px;
+    height: 20px;
+    background: #171412;
+    border: 1px solid #49382D;
+    border-radius: 6px;
+}
+
+.theme-mini-pos--dark .mini-user {
+    width: 20px;
+    height: 20px;
+    background: #F59E0B;
+    border-radius: 50%;
+}
+
+/* POS Grid - 2 column cards */
+.theme-mini-pos--dark .mini-pos-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 6px;
+    padding: 8px;
+    min-height: 0;
+}
+
+/* Cards */
+.theme-mini-pos--dark .mini-card {
+    background: #2A211B;
+    border: 1px solid #49382D;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Current Order Card (left) */
+.theme-mini-pos--dark .mini-order-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--dark .mini-card-header {
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #49382D;
+}
+
+.theme-mini-pos--dark .mini-card-title {
+    color: #FFF7ED;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--dark .mini-cart-area {
+    flex: 1;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--dark .mini-cart-item {
+    height: 18px;
+    background: #211B17;
+    border-radius: 4px;
+    border: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-cart-footer {
+    height: 36px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #49382D;
+    background: #211B17;
+}
+
+.theme-mini-pos--dark .mini-cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.theme-mini-pos--dark .mini-summary-label {
+    color: #B6A08D;
+    font-size: 7px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--dark .mini-summary-value {
+    color: #F59E0B;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.theme-mini-pos--dark .mini-btn-payment {
+    width: 56px;
+    height: 24px;
+    background: #F59E0B;
+    border: none;
+    border-radius: 6px;
+    opacity: 0.5;
+}
+
+/* Menu Catalog Card (right) */
+.theme-mini-pos--dark .mini-menu-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--dark .mini-menu-card .mini-card-header {
+    justify-content: space-between;
+}
+
+.theme-mini-pos--dark .mini-catalog-actions {
+    width: 20px;
+    height: 16px;
+    background: #211B17;
+    border-radius: 3px;
+    border: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-category-tabs {
+    display: flex;
+    gap: 3px;
+    padding: 6px 8px 4px;
+    border-bottom: 1px solid #49382D;
+}
+
+.theme-mini-pos--dark .mini-tab {
+    flex: 1;
+    height: 16px;
+    background: #211B17;
+    border-radius: 3px;
+    border: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-tab.active {
+    background: #3D2B10;
+    border-color: #F59E0B;
+}
+
+.theme-mini-pos--dark .mini-menu-grid {
+    flex: 1;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--dark .mini-menu-item {
+    aspect-ratio: 1;
+    background: #171412;
+    border: 1px solid #3B2D24;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   THEME PREVIEW INFO
+   ========================================================= */
+.theme-preview-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.theme-preview-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--slate-text);
+    margin: 0;
+}
+
+.theme-preview-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--slate-muted);
+    margin: 0;
+}
+
+/* Checkmark Indicator */
+.theme-preview-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--border-color);
+    color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.theme-preview-card.selected .theme-preview-check {
+    background: var(--primary);
+    color: var(--btn-primary-text);
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Hidden input for form */
+#themeModeInput {
+    display: none;
+}
+
+/* Cancel button visible when theme changed */
+.form-actions .btn-secondary {
+    display: inline-flex;
+}
+
+/* Cancel button visible when theme changed */
+.form-actions .btn-secondary {
+    display: inline-flex;
 }
 
 /* =========================================================
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 1024px) {
+@media (max-width: 1024x) {
     .settings-layout-grid {
         grid-template-columns: 240px 1fr;
     }
@@ -754,6 +1185,14 @@ input:checked + .slider:before {
     .form-actions .btn-danger {
         width: 100%;
         justify-content: center;
+    }
+
+    .theme-preview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .theme-preview-visual {
+        max-width: 100%;
     }
 
     .toast {

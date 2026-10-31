@@ -1,25 +1,7 @@
 /* =========================================================
-   FOODHUB ADMIN — STAFF PROFILE PAGE
+   FOODHUB STAFF — STAFF PROFILE PAGE
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-    --success-bg: #dcfce7;
-    --success-text: #16a34a;
-    --warning-bg: #fef9c3;
-    --warning-text: #ca8a04;
-    --processing-bg: #dbeafe;
-    --processing-text: #2563eb;
-}
 
 * {
     margin: 0;
@@ -32,6 +14,17 @@ body {
     background-color: var(--bg-main);
     color: var(--slate-text);
     -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================================
+   CARD BASE CLASS
+   ========================================================= */
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
 }
 
 /* Layout Grid */
@@ -57,7 +50,7 @@ body {
 }
 
 .page-header h1 {
-    color: var(--navy-dark);
+    color: var(--slate-text);
     font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.025em;
@@ -113,7 +106,7 @@ body {
 .profile-name {
     font-size: 18px;
     font-weight: 800;
-    color: var(--navy-dark);
+    color: var(--slate-text);
     margin-bottom: 6px;
 }
 
@@ -150,7 +143,7 @@ body {
 
 .info-value {
     font-weight: 600;
-    color: var(--navy-dark);
+    color: var(--slate-text);
 }
 
 /* Card Header Flex */
@@ -164,7 +157,7 @@ body {
 .card-title {
     font-size: 16px;
     font-weight: 700;
-    color: var(--navy-dark);
+    color: var(--slate-text);
 }
 
 .card-subtitle {
@@ -194,16 +187,35 @@ body {
 .form-control {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     font-size: 13px;
-    color: var(--slate-text);
+    color: var(--input-text);
+    background: var(--input-bg);
     outline: none;
     font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-control:focus {
-    border-color: var(--primary);
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px var(--primary-focus);
+}
+
+.form-control::placeholder {
+    color: var(--input-placeholder);
+}
+
+/* Dark mode: transparent form inputs */
+body[data-theme="dark"] .form-control {
+    background: transparent;
+    border-color: var(--input-border);
+}
+
+body[data-theme="dark"] .form-control:focus {
+    background: transparent;
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px var(--primary-focus);
 }
 
 .form-actions {
@@ -212,18 +224,24 @@ body {
 }
 
 .btn-primary {
-    background: var(--primary);
-    color: white;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.btn-primary:hover {
-    background: var(--primary-dark);
+.btn-primary:hover:not(:disabled) {
+    background: var(--btn-primary-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Preferences Toggle Rows */
@@ -260,7 +278,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #cbd5e1;
+    background-color: var(--switch-off-bg);
     transition: .3s;
 }
 
@@ -271,15 +289,15 @@ body {
     width: 18px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: var(--switch-thumb);
     transition: .3s;
 }
 
-input:checked+.slider {
-    background-color: var(--primary);
+input:checked + .slider {
+    background-color: var(--switch-on-bg);
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
     transform: translateX(20px);
 }
 
@@ -310,4 +328,60 @@ input:checked+.slider:before {
 
 .font-12 {
     font-size: 12px;
+}
+
+/* =========================================================
+   TOAST NOTIFICATIONS
+   ========================================================= */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: var(--shadow-dropdown);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+    max-width: 400px;
+    z-index: 1100;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    border-left: 4px solid var(--primary);
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-success {
+    border-left-color: var(--success);
+}
+
+.toast-error {
+    border-left-color: var(--danger);
+}
+
+.toast-warning {
+    border-left-color: var(--warning);
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--slate-muted);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    margin-left: auto;
+}
+
+.toast-close:hover {
+    color: var(--slate-text);
 }

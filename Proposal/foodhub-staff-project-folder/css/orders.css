@@ -1,33 +1,8 @@
 /* =========================================================
    FOODHUB — ORDERS / POS
    Professional POS Interface
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-
-/* =========================================================
-   VARIABLES
-   ========================================================= */
-
-:root {
-
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-    --success-bg: #dcfce7;
-    --success-text: #16a34a;
-    --warning-bg: #fef9c3;
-    --warning-text: #ca8a04;
-    --processing-bg: #dbeafe;
-    --processing-text: #2563eb;
-}
-
 
 /* =========================================================
    RESET
@@ -39,55 +14,37 @@
     box-sizing: border-box;
 }
 
-
 html,
 body {
     width: 100%;
     min-height: 100%;
 }
 
-
 body {
-
     font-family: 'Plus Jakarta Sans', sans-serif;
-
     background: var(--bg-main);
-
     color: var(--slate-text);
-
     -webkit-font-smoothing: antialiased;
 }
-
 
 /* =========================================================
    MAIN LAYOUT
    ========================================================= */
 
 .admin-layout {
-
     display: flex;
-
     min-height: 100vh;
-
     width: 100%;
 }
 
-
 .main-content {
-
     margin-left: 260px;
-
     flex: 1;
-
     min-width: 0;
-
     min-height: 100vh;
-
     display: flex;
-
     flex-direction: column;
 }
-
 
 /* =========================================================
    CONTENT
@@ -105,38 +62,27 @@ body {
     overflow: hidden;
 }
 
-
 /* =========================================================
    PAGE HEADER
    ========================================================= */
 
 .page-header {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     flex-shrink: 0;
 }
 
-
 .page-header h1 {
-    color: var(--navy-dark);
-
+    color: var(--slate-text);
     font-size: 26px;
     font-weight: 800;
-
     letter-spacing: -0.025em;
 }
 
-
 .page-header p {
     margin-top: 4px;
-
     color: var(--slate-muted);
-
     font-size: 14px;
     font-weight: 500;
 }
@@ -155,88 +101,56 @@ body {
     height: 100%;
 }
 
-
 /* =========================================================
    CARD
    ========================================================= */
 
 .card {
-
     background: var(--card-bg);
-
     border: 1px solid var(--border-color);
-
-    border-radius: var(--radius);
-
-    box-shadow: var(--shadow);
-
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
     min-width: 0;
 }
-
 
 /* =========================================================
    CURRENT ORDER
    ========================================================= */
 
 .current-order-card {
-
     display: flex;
-
     flex-direction: column;
-
     min-height: 0;
-
     overflow: hidden;
 }
 
-
 .card-header {
-
     height: 68px;
-
     padding: 0 20px;
-
     display: flex;
-
     align-items: center;
-
     flex-shrink: 0;
-
     border-bottom: 1px solid var(--border-light);
 }
 
-
 .card-title {
-
     display: flex;
-
     align-items: center;
-
     gap: 10px;
 }
 
-
 .title-icon {
-
     color: var(--primary);
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 }
 
-
 .card-title h2 {
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 17px;
-
     font-weight: 700;
 }
-
 
 /* =========================================================
    CART
@@ -245,11 +159,8 @@ body {
 .cart-items-container {
     height: calc(100vh - 380px) !important;
     max-height: calc(100vh - 380px) !important;
-
-    /* Siguraduhing naka-on ang vertical scrolling */
     overflow-y: auto !important;
     overflow-x: hidden !important;
-
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -257,502 +168,303 @@ body {
 }
 
 /* Scrollbar */
-
 .cart-items-container::-webkit-scrollbar,
 .menu-grid::-webkit-scrollbar {
-
     width: 6px;
 }
 
-
 .cart-items-container::-webkit-scrollbar-track,
 .menu-grid::-webkit-scrollbar-track {
-
     background: transparent;
 }
 
-
 .cart-items-container::-webkit-scrollbar-thumb,
 .menu-grid::-webkit-scrollbar-thumb {
-
-    background: #bfdbfe;
-
+    background: var(--scrollbar-thumb);
     border-radius: 10px;
 }
 
-
 .cart-items-container::-webkit-scrollbar-thumb:hover,
 .menu-grid::-webkit-scrollbar-thumb:hover {
-
-    background: #93c5fd;
+    background: var(--scrollbar-thumb-hover);
 }
-
 
 /* =========================================================
    EMPTY CART
    ========================================================= */
 
 .empty-cart-state {
-
     width: 100%;
-
     height: 100%;
-
     min-height: 260px;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
-
     text-align: center;
-
     padding: 30px;
 }
 
-
 .empty-icon-box {
-
     width: 68px;
-
     height: 68px;
-
     border-radius: 50%;
-
-    background: #eff6ff;
-
-    color: #93c5fd;
-
+    background: var(--primary-light);
+    color: var(--primary);
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     margin-bottom: 14px;
 }
 
-
 .empty-cart-state h3 {
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 18px;
-
     font-weight: 700;
-
     margin-bottom: 5px;
 }
 
-
 .empty-cart-state p {
-
-    color: #6b8bb5;
-
+    color: var(--slate-muted);
     font-size: 13px;
-
     line-height: 1.6;
-
     max-width: 220px;
 }
-
 
 /* =========================================================
    CART ITEMS
    ========================================================= */
 
 .cart-list {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 10px;
 }
 
-
 .cart-item {
-
     display: grid;
-
     grid-template-columns: 52px minmax(0, 1fr) auto;
-
     gap: 12px;
-
     align-items: center;
-
     padding: 10px;
-
-    border: 1px solid #e2ecf8;
-
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-
-    background: #fbfdff;
+    background: var(--card-bg);
 }
-
 
 .cart-item-image {
-
     width: 52px;
-
     height: 52px;
-
     border-radius: 8px;
-
     object-fit: cover;
-
-    background: #f1f5f9;
+    background: var(--bg-secondary);
 }
 
-
 .cart-item-info {
-
     min-width: 0;
 }
 
-
 .cart-item-name {
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 13px;
-
     font-weight: 700;
-
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
-
 .cart-item-price {
-
     margin-top: 3px;
-
-    color: #7190b7;
-
+    color: var(--slate-muted);
     font-size: 11px;
 }
 
-
 .cart-item-right {
-
     display: flex;
-
     flex-direction: column;
-
     align-items: flex-end;
-
     gap: 7px;
 }
 
-
 .cart-item-total {
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 13px;
-
     font-weight: 700;
 }
 
-
 /* Quantity controls */
-
 .quantity-control {
-
     display: flex;
-
     align-items: center;
-
     gap: 5px;
 }
 
-
 .quantity-btn {
-
     width: 25px;
-
     height: 25px;
-
-    border: 1px solid #d7e5f4;
-
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-
-    background: #ffffff;
-
-    color: #075a9c;
-
+    background: var(--card-bg);
+    color: var(--primary);
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     cursor: pointer;
-
-    transition: 0.15s ease;
+    transition: var(--transition-fast);
 }
-
 
 .quantity-btn:hover {
-
-    background: #eff6ff;
-
-    border-color: #93c5fd;
+    background: var(--primary-light);
+    border-color: var(--primary);
 }
 
-
 .quantity-value {
-
     min-width: 20px;
-
     text-align: center;
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 12px;
-
     font-weight: 700;
 }
 
-
 .remove-item-btn {
-
     border: none;
-
     background: transparent;
-
-    color: #94a3b8;
-
+    color: var(--slate-muted);
     cursor: pointer;
-
     font-size: 12px;
-
     padding: 2px;
 }
 
-
 .remove-item-btn:hover {
-
-    color: #ef4444;
+    color: var(--danger);
 }
-
 
 /* =========================================================
    CART FOOTER
    ========================================================= */
 
 .cart-footer {
-
     flex-shrink: 0;
-
     padding: 14px;
-
-    border-top: 1px solid var(--border-light);
-
-    background: #f8fcff;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
 }
-
 
 .cart-footer-top {
-
     display: grid;
-
     grid-template-columns: auto 1fr;
-
     align-items: center;
-
     gap: 18px;
-
     margin-bottom: 12px;
 }
-
 
 /* =========================================================
    ORDER TYPE
    ========================================================= */
 
 .order-type {
-
     position: relative;
-
     min-width: 135px;
-
     height: 42px;
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     padding: 0 12px;
-
-    border: 1px solid #cfe3f7;
-
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-
-    background: #ffffff;
-
+    background: var(--card-bg);
     color: var(--primary);
 }
 
-
 .order-type select {
-
     width: 100%;
-
     appearance: none;
-
     border: none;
-
     outline: none;
-
     background: transparent;
-
-    color: #075a9c;
-
+    color: var(--primary);
     font-family: inherit;
-
     font-size: 12px;
-
     font-weight: 600;
-
     cursor: pointer;
 }
 
-
 .select-arrow {
-
     pointer-events: none;
-
-    color: #64748b;
-
+    color: var(--slate-muted);
     flex-shrink: 0;
 }
-
 
 /* =========================================================
    SUMMARY
    ========================================================= */
 
 .cart-summary {
-
     display: flex;
-
     justify-content: flex-end;
-
     align-items: center;
-
     gap: 20px;
 }
 
-
 .summary-item {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 2px;
 }
 
-
 .summary-item span {
-
-    color: #6b8bb5;
-
+    color: var(--slate-muted);
     font-size: 11px;
 }
 
-
 .summary-item strong {
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 14px;
-
     font-weight: 700;
 }
 
-
 .summary-item.total strong {
-
     font-size: 17px;
-
-    color: #0b3f91;
+    color: var(--slate-text);
 }
-
 
 .summary-divider {
-
     width: 1px;
-
     height: 30px;
-
-    background: #cbdff2;
+    background: var(--border-color);
 }
-
 
 /* =========================================================
    PAYMENT BUTTON
    ========================================================= */
 
 .btn-payment {
-
     width: 100%;
-
     height: 46px;
-
     border: none;
-
     border-radius: 8px;
-
-    background: var(--primary);
-
-    color: #ffffff;
-
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     gap: 8px;
-
     font-family: inherit;
-
     font-size: 13px;
-
     font-weight: 700;
-
     cursor: pointer;
-
     transition: background 0.2s ease, transform 0.15s ease;
 }
 
-
 .btn-payment:hover:not(:disabled) {
-
-    background: var(--primary-dark);
-
+    background: var(--btn-primary-hover);
     transform: translateY(-1px);
 }
 
-
 .btn-payment:disabled {
-
-    background: #cbd5e1;
-
+    background: var(--btn-primary-disabled);
     cursor: not-allowed;
 }
-
 
 /* =========================================================
    MENU CATALOG CARD
@@ -762,229 +474,142 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    /* Hayaan itong umangkop sa pos-container nang hindi napipilitan */
     min-height: 0;
     overflow: hidden;
     padding: 14px;
 }
-
 
 /* =========================================================
    CATALOG HEADER
    ========================================================= */
 
 .catalog-header {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     gap: 12px;
-
     flex-shrink: 0;
-
     margin-bottom: 12px;
 }
 
-
 .catalog-actions {
-
     display: flex;
-
     gap: 8px;
 }
 
-
 .btn-outline {
-
     height: 38px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     gap: 7px;
-
     padding: 0 13px;
-
-    border: 1px solid #dc3545;
-
+    border: 1px solid var(--danger);
     border-radius: 8px;
-
-    background: #dc3545;
-
-    color: white;
-
+    background: var(--danger);
+    color: var(--btn-danger-text);
     font-family: inherit;
-
     font-size: 12px;
-
     font-weight: 600;
-
     cursor: pointer;
-
-    transition: 0.15s ease;
+    transition: var(--transition-fast);
 }
-
 
 .btn-outline:hover {
-    background-color: #bb2d3b;
-    border-color: #bb2d3b;
+    background: var(--btn-danger-hover);
+    border-color: var(--btn-danger-hover);
 }
-
 
 /* =========================================================
    SEARCH
    ========================================================= */
 
 .menu-search {
-
     position: relative;
-
     width: min(290px, 100%);
-
     flex-shrink: 1;
 }
 
-
 .menu-search svg {
-
     position: absolute;
-
     left: 12px;
-
     top: 50%;
-
     transform: translateY(-50%);
-
-    color: #6b8bb5;
-
+    color: var(--slate-muted);
     pointer-events: none;
 }
 
-
 .menu-search input {
-
     width: 100%;
-
     height: 38px;
-
     padding: 0 12px 0 38px;
-
-    border: 1px solid #cfe3f7;
-
+    border: 1px solid var(--input-border);
     border-radius: 8px;
-
     outline: none;
-
-    background: #ffffff;
-
-    color: #0b2a63;
-
+    background: var(--input-bg);
+    color: var(--input-text);
     font-family: inherit;
-
     font-size: 12px;
-
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-
 .menu-search input::placeholder {
-
-    color: #91a9c4;
+    color: var(--input-placeholder);
 }
-
 
 .menu-search input:focus {
-
-    border-color: var(--primary);
-
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.08);
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px var(--primary-focus);
 }
-
 
 /* =========================================================
    CATEGORY TABS
    ========================================================= */
 
 .category-tabs {
-
     display: flex;
-
     gap: 4px;
-
-    background: #edf7ff;
-
+    background: var(--bg-secondary);
     border-radius: 8px;
-
     padding: 4px;
-
     flex-shrink: 0;
-
     margin-bottom: 12px;
 }
 
-
 .cat-tab {
-
     flex: 1;
-
     height: 40px;
-
     border: none;
-
     border-radius: 6px;
-
     background: transparent;
-
-    color: #5278a5;
-
+    color: var(--slate-muted);
     font-family: inherit;
-
     font-size: 12px;
-
     font-weight: 600;
-
     cursor: pointer;
-
-    transition: 0.15s ease;
+    transition: var(--transition-fast);
 }
-
 
 .cat-tab:hover {
-
-    color: #075a9c;
-
-    background: rgba(255, 255, 255, 0.7);
+    color: var(--primary);
+    background: var(--bg-tertiary);
 }
-
 
 .cat-tab.active {
-
-    background: #ffffff;
-
-    color: #075a9c;
-
-    box-shadow: 0 1px 5px rgba(15, 23, 42, 0.08);
+    background: var(--card-bg);
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
 }
-
 
 /* =========================================================
    MENU GRID
    ========================================================= */
 
 .menu-grid {
-    /* Direktang diktahan ng fixed height o viewport calculation para gumarantiyang mag-scroll */
     height: calc(100vh - 340px) !important;
     max-height: calc(100vh - 340px) !important;
-
     overflow-y: auto !important;
     overflow-x: hidden !important;
-
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-content: start;
@@ -1002,14 +627,13 @@ body {
 }
 
 .menu-grid::-webkit-scrollbar-thumb {
-    background: #bfdbfe;
+    background: var(--scrollbar-thumb);
     border-radius: 10px;
 }
 
 .menu-grid::-webkit-scrollbar-thumb:hover {
-    background: #93c5fd;
+    background: var(--scrollbar-thumb-hover);
 }
-
 
 /* =========================================================
    MENU ITEM
@@ -1018,10 +642,9 @@ body {
 .menu-item-box {
     min-width: 0;
     min-height: 145px;
-    /* Sinisigurong laging kasya ang image at details */
-    border: 1px solid #d7e7f7;
+    border: 1px solid var(--border-color);
     border-radius: 9px;
-    background: #ffffff;
+    background: var(--card-bg);
     overflow: hidden;
     cursor: pointer;
     display: flex;
@@ -1029,328 +652,200 @@ body {
     transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-
 .menu-item-box:hover {
-
-    border-color: #93c5fd;
-
-    box-shadow: 0 5px 14px rgba(2, 132, 199, 0.10);
-
+    border-color: var(--primary);
+    box-shadow: 0 5px 14px var(--primary-focus);
     transform: translateY(-2px);
 }
 
-
 .menu-item-box:active {
-
     transform: translateY(0);
 }
 
-
 /* Image */
-
 .menu-item-img {
-
     display: block;
-
     width: 100%;
-
     height: 95px;
-
     object-fit: cover;
-
-    background: #f1f5f9;
+    background: var(--bg-secondary);
 }
 
-
 /* Details */
-
 .menu-item-details {
-
     padding: 9px 10px 10px;
-
     display: flex;
-
     flex-direction: column;
-
     gap: 3px;
 }
 
-
 .menu-item-name {
-
-    color: #0b2a63;
-
+    color: var(--slate-text);
     font-size: 12px;
-
     line-height: 1.35;
-
     font-weight: 700;
-
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
 }
 
-
 .menu-item-price {
-
-    color: #075a9c;
-
+    color: var(--primary);
     font-size: 12px;
-
     font-weight: 700;
 }
-
 
 /* =========================================================
    NO RESULTS
    ========================================================= */
 
 .menu-empty {
-
     grid-column: 1 / -1;
-
     min-height: 220px;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
     align-items: center;
-
     text-align: center;
-
-    color: #7894b5;
+    color: var(--slate-muted);
 }
-
 
 .menu-empty-icon {
-
     width: 54px;
-
     height: 54px;
-
     margin-bottom: 12px;
-
     border-radius: 50%;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    background: #eff6ff;
-
-    color: #93c5fd;
+    background: var(--primary-light);
+    color: var(--primary);
 }
 
-
 .menu-empty h3 {
-
-    color: #244b78;
-
+    color: var(--slate-text);
     font-size: 14px;
-
     margin-bottom: 4px;
 }
 
-
 .menu-empty p {
-
     font-size: 12px;
 }
-
 
 /* =========================================================
    TABLET / LANDSCAPE
    ========================================================= */
 
 @media (max-width: 1200px) {
-
     .main-content {
-
         margin-left: 230px;
     }
-
     .content-body {
-
         padding: 18px;
     }
-
     .pos-container {
-
         grid-template-columns:
             minmax(300px, 0.9fr) minmax(470px, 1.4fr);
     }
-
     .menu-grid {
-
         grid-template-columns: repeat(3, minmax(0, 1fr));
-
         gap: 8px;
     }
-
     .menu-item-img {
-
         height: 82px;
     }
-
     .catalog-header {
-
         align-items: stretch;
-
         flex-direction: column;
     }
-
     .menu-search {
-
         width: 100%;
     }
-
 }
-
 
 /* =========================================================
    SMALLER TABLETS
    ========================================================= */
 
 @media (max-width: 900px) {
-
     .main-content {
-
         margin-left: 0;
     }
-
     .content-body {
-
         overflow: visible;
     }
-
     .pos-container {
-
         grid-template-columns: 1fr;
-
         overflow: visible;
     }
-
     .current-order-card {
-
         min-height: 430px;
-
         max-height: 520px;
     }
-
     .menu-catalog-card {
-
         min-height: 600px;
     }
-
 }
-
 
 /* =========================================================
    PHONE
    ========================================================= */
 
 @media (max-width: 600px) {
-
     .content-body {
-
         padding: 14px;
-
         gap: 14px;
     }
-
     .page-header h1 {
-
         font-size: 23px;
     }
-
     .page-header p {
-
         font-size: 12px;
     }
-
     .catalog-actions {
-
         width: 100%;
     }
-
     .btn-outline {
-
         flex: 1;
     }
-
     .menu-grid {
-
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
     .menu-item-img {
-
         height: 100px;
     }
-
     .cart-footer-top {
-
         grid-template-columns: 1fr;
-
         gap: 12px;
     }
-
     .cart-summary {
-
         justify-content: space-between;
     }
-
 }
-
 
 /* =========================================================
    VERY SMALL PHONE
    ========================================================= */
 
 @media (max-width: 400px) {
-
     .menu-grid {
-
         grid-template-columns: 1fr;
     }
-
     .menu-item-img {
-
         height: 140px;
     }
-
     .cart-item {
-
         grid-template-columns: 44px minmax(0, 1fr);
-
     }
-
     .cart-item-image {
-
         width: 44px;
-
         height: 44px;
     }
-
     .cart-item-right {
-
         grid-column: 2;
-
         align-items: flex-start;
-
         flex-direction: row;
-
         justify-content: space-between;
-
         width: 100%;
     }
-
 }

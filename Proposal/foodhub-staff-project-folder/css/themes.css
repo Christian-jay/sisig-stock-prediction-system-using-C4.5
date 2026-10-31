@@ -1,0 +1,371 @@
+/* =========================================================
+   FOODHUB STAFF — GLOBAL THEME FOUNDATION
+   =========================================================
+   Centralized CSS variables for Light Classic & Dark Midnight.
+   Load this BEFORE page-specific CSS files.
+   Usage: <body data-theme="light"> or <body data-theme="dark">
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. LIGHT CLASSIC — Root defaults (data-theme="light")
+   Original FOODHUB design preserved
+   --------------------------------------------------------- */
+:root,
+body[data-theme="light"] {
+    /* ---- Brand & Primary (Original FOODHUB Blue) ---- */
+    --primary: linear-gradient(135deg,
+            #287ed2 0%,
+            #176dc4 100%);
+    --primary-dark: #0369a1;
+    --primary-light: rgba(56, 189, 248, 0.12);
+    --primary-hover: #0369a1;
+    --primary-active: #026aa7;
+    --primary-focus: rgba(2, 132, 199, 0.25);
+
+    /* ---- Neutral / Text (Original) ---- */
+    --navy-dark: #0b192c;
+    --slate-dark: #0f172a;
+    --slate-text: #334155;
+    --slate-muted: #64748b;
+    --slate-placeholder: #94a3b8;
+
+    /* ---- Backgrounds (Original) ---- */
+    --bg-main: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-tertiary: #e2e8f0;
+    --card-bg: #ffffff;
+    --card-bg-hover: #f8fafc;
+    --sidebar-bg: #0b192c;
+    --topbar-bg: #ffffff;
+
+    /* ---- Borders & Dividers (Original) ---- */
+    --border-color: #e2e8f0;
+    --border-light: #f1f5f9;
+    --border-dark: #cbd5e1;
+    --divider-color: #e2e8f0;
+
+    /* ---- Shadows (Original) ---- */
+    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+    --shadow-hover: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
+    --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    --shadow-dropdown: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+
+    /* ---- Radius ---- */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* ---- Status / Semantic (Original) ---- */
+    --success: #16a34a;
+    --success-bg: #dcfce7;
+    --success-text: #16a34a;
+    --success-border: #86efac;
+    --success-hover: #15803d;
+
+    --warning: #ca8a04;
+    --warning-bg: #fef9c3;
+    --warning-text: #854d0e;
+    --warning-border: #eab308;
+    --warning-hover: #a16207;
+
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --danger-text: #dc2626;
+    --danger-border: #fca5a5;
+    --danger-hover: #b91c1c;
+
+    --info: #0284c7;
+    --info-bg: #e0f2fe;
+    --info-text: #0369a1;
+    --info-border: #7dd3fc;
+    --info-hover: #0369a1;
+
+    /* ---- Processing / In-progress (Original) ---- */
+    --processing: #2563eb;
+    --processing-bg: #dbeafe;
+    --processing-text: #1d4ed8;
+    --processing-border: #93c5fd;
+
+    /* ---- Inputs, Selects, Textareas (Original) ---- */
+    --input-bg: #ffffff;
+    --input-border: #e2e8f0;
+    --input-border-hover: #cbd5e1;
+    --input-border-focus: #0284c7;
+    --input-text: #334155;
+    --input-placeholder: #94a3b8;
+    --input-disabled-bg: #f1f5f9;
+    --input-disabled-text: #94a3b8;
+    --input-disabled-border: #e2e8f0;
+
+    /* ---- Buttons (Original) ---- */
+    --btn-primary-bg: #0284c7;
+    --btn-primary-text: #ffffff;
+    --btn-primary-hover: #0369a1;
+    --btn-primary-active: #026aa7;
+    --btn-primary-disabled: #7dd3fc;
+
+    --btn-secondary-bg: #ffffff;
+    --btn-secondary-text: #334155;
+    --btn-secondary-border: #e2e8f0;
+    --btn-secondary-hover: #f8fafc;
+    --btn-secondary-active: #f1f5f9;
+    --btn-secondary-disabled: #f1f5f9;
+
+    --btn-danger-bg: #dc2626;
+    --btn-danger-text: #ffffff;
+    --btn-danger-hover: #b91c1c;
+    --btn-danger-active: #991b1b;
+
+    --btn-ghost-bg: transparent;
+    --btn-ghost-text: #0284c7;
+    --btn-ghost-hover: #e0f2fe;
+
+    /* ---- Switch / Toggle (Original) ---- */
+    --switch-off-bg: #cbd5e1;
+    --switch-on-bg: #0284c7;
+    --switch-thumb: #ffffff;
+
+    /* ---- Sidebar (Original - Dark Navy Blue) ---- */
+    --sidebar-bg: #0b192c;
+    --sidebar-text: #f1f5f9;
+    --sidebar-text-muted: #94a3b8;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-active-bg: #0284c7;
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+
+    /* ---- Topbar (Original) ---- */
+    --topbar-bg: #ffffff;
+    --topbar-border: #e2e8f0;
+    --topbar-search-bg: #f8fafc;
+
+    /* ---- Table (Original) ---- */
+    --table-header-bg: #f8fafc;
+    --table-header-text: #64748b;
+    --table-row-bg: #ffffff;
+    --table-row-hover: #f8fafc;
+    --table-border: #e2e8f0;
+
+    /* ---- Badge (Original) ---- */
+    --badge-bg: #f1f5f9;
+    --badge-text: #334155;
+
+    /* ---- Modal / Overlay (Original) ---- */
+    --modal-backdrop: rgba(15, 23, 42, 0.5);
+    --modal-bg: #ffffff;
+    --modal-border: #e2e8f0;
+
+    /* ---- Dropdown / Popover (Original) ---- */
+    --dropdown-bg: #ffffff;
+    --dropdown-border: #e2e8f0;
+    --dropdown-hover: #f8fafc;
+
+    /* ---- Scrollbar (Original) ---- */
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+
+    /* ---- Transitions ---- */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+}
+
+/* ---------------------------------------------------------
+   2. DARK MIDNIGHT — body[data-theme="dark"]
+   Sisig-inspired palette (Filipino food identity)
+   Warm charcoal, roasted brown, golden amber, chili-orange
+   --------------------------------------------------------- */
+body[data-theme="dark"] {
+    /* ---- Brand & Primary (Golden Amber - Sisig crisp) ---- */
+    --primary: #F59E0B;
+    --primary-dark: #D97706;
+    --primary-light: #3D2B10;
+    --primary-hover: #D97706;
+    --primary-active: #B45309;
+    --primary-focus: rgba(245, 158, 11, 0.3);
+
+    /* ---- Neutral / Text (Warm cream hierarchy) ---- */
+    --navy-dark: #FFF7ED;
+    --slate-dark: #FFF7ED;
+    --slate-text: #FFF7ED;
+    --slate-muted: #B6A08D;
+    --slate-placeholder: #9A8672;
+
+    /* ---- Backgrounds (Warm charcoal layers) ---- */
+    --bg-main: #171412;
+    --bg-secondary: #211B17;
+    --bg-tertiary: #2A211B;
+    --card-bg: #2A211B;
+    --card-bg-hover: #352820;
+    --sidebar-bg: #171412;
+    --topbar-bg: #211B17;
+
+    /* ---- Borders & Dividers (Subtle warm borders) ---- */
+    --border-color: #49382D;
+    --border-light: #3B2D24;
+    --border-dark: #5A4535;
+    --divider-color: #49382D;
+
+    /* ---- Shadows (Warm, subtle depth) ---- */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+    --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+
+    /* ---- Status / Semantic (Food-inspired accents) ---- */
+    --success: #4ADE80;
+    --success-bg: #1A3D22;
+    --success-text: #86EFAC;
+    --success-border: #22C55E;
+    --success-hover: #34D399;
+
+    --warning: #FBBF24;
+    --warning-bg: #3D2F0A;
+    --warning-text: #FDE047;
+    --warning-border: #F59E0B;
+    --warning-hover: #F59E0B;
+
+    --danger: #FB7185;
+    --danger-bg: #4A161A;
+    --danger-text: #FDA4AF;
+    --danger-border: #F43F5E;
+    --danger-hover: #F43F5E;
+
+    --info: #38BDF8;
+    --info-bg: #0F2A3D;
+    --info-text: #BAE6FD;
+    --info-border: #0EA5E9;
+    --info-hover: #0EA5E9;
+
+    /* ---- Processing / In-progress (Warm amber) ---- */
+    --processing: #F59E0B;
+    --processing-bg: #3D2B10;
+    --processing-text: #FCD34D;
+    --processing-border: #D97706;
+
+    /* ---- Inputs, Selects, Textareas ---- */
+    --input-bg: #171412;
+    --input-border: #49382D;
+    --input-border-hover: #5A4535;
+    --input-border-focus: #F59E0B;
+    --input-text: #FFF7ED;
+    --input-placeholder: #9A8672;
+    --input-disabled-bg: #211B17;
+    --input-disabled-text: #9A8672;
+    --input-disabled-border: #49382D;
+
+    /* ---- Buttons ---- */
+    --btn-primary-bg: #F59E0B;
+    --btn-primary-text: #E7D5C3;
+    --btn-primary-hover: #D97706;
+    --btn-primary-active: #B45309;
+    --btn-primary-disabled: #78350F;
+
+    --btn-secondary-bg: #352820;
+    --btn-secondary-text: #171412;
+    --btn-secondary-border: #49382D;
+    --btn-secondary-hover: #423126;
+    --btn-secondary-active: #49382D;
+    --btn-secondary-disabled: #2A211B;
+
+    --btn-danger-bg: #EA580C;
+    --btn-danger-text: #FFF7ED;
+    --btn-danger-hover: #DC2626;
+    --btn-danger-active: #B91C1C;
+
+    --btn-ghost-bg: transparent;
+    --btn-ghost-text: #F59E0B;
+    --btn-ghost-hover: rgba(245, 158, 11, 0.12);
+
+    /* ---- Switch / Toggle ---- */
+    --switch-off-bg: #49382D;
+    --switch-on-bg: #F59E0B;
+    --switch-thumb: #FFF7ED;
+
+    /* ---- Sidebar (Warm charcoal) ---- */
+    --sidebar-bg: #171412;
+    --sidebar-text: #FFF7ED;
+    --sidebar-text-muted: #B6A08D;
+    --sidebar-hover-bg: rgba(245, 158, 11, 0.1);
+    --sidebar-active-bg: #3D2B10;
+    --sidebar-border: #3B2D24;
+
+    /* ---- Topbar ---- */
+    --topbar-bg: #211B17;
+    --topbar-border: #49382D;
+    --topbar-search-bg: #171412;
+
+    /* ---- Table ---- */
+    --table-header-bg: #211B17;
+    --table-header-text: #B6A08D;
+    --table-row-bg: #2A211B;
+    --table-row-hover: #352820;
+    --table-border: #49382D;
+
+    /* ---- Badge ---- */
+    --badge-bg: #352820;
+    --badge-text: #E7D5C3;
+
+    /* ---- Modal / Overlay ---- */
+    --modal-backdrop: rgba(0, 0, 0, 0.75);
+    --modal-bg: #2A211B;
+    --modal-border: #49382D;
+
+    /* ---- Dropdown / Popover ---- */
+    --dropdown-bg: #2A211B;
+    --dropdown-border: #49382D;
+    --dropdown-hover: #352820;
+
+    /* ---- Scrollbar ---- */
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: #5A4535;
+    --scrollbar-thumb-hover: #78563A;
+}
+
+/* ---------------------------------------------------------
+   3. UNIVERSAL UTILITIES (both themes)
+   --------------------------------------------------------- */
+
+/* Focus ring - accessible, theme-aware */
+*:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+body[data-theme="dark"] ::selection {
+    background: var(--primary-light);
+    color: var(--navy-dark);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Print */
+@media print {
+    body[data-theme="dark"] {
+        --bg-main: #ffffff;
+        --card-bg: #ffffff;
+        --slate-text: #0b192c;
+        --slate-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+}
