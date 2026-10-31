@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FOODHUB — Staff Predictive Stock Alert</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/inventory_prediction.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDE NAVBAR -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- INVENTORY CONTENT WRAPPER -->
+            <div class="inventory-dashboard-body">
+
+                <!-- PAGE HEADER -->
+                <div class="page-header">
+                    <h1>Predictive Stock Alerts</h1>
+                    <p>
+                        C4.5 Decision Tree · Ingredient risk monitoring
+                    </p>
+                </div>
+
+                <!-- PREDICTIVE STOCK ALERT CENTER -->
+                <section class="c45-prediction-section">
+                    <div class="card-box c45-main-card">
+
+                        <div class="c45-summary-grid">
+                            <div class="c45-summary-card critical">
+                                <span>Critical Items</span>
+                                <strong id="c45CriticalCount">0</strong>
+                                <small>Out of stock</small>
+                            </div>
+
+                            <div class="c45-summary-card warning">
+                                <span>At-Risk Items</span>
+                                <strong id="c45RiskCount">0</strong>
+                                <small>Low stock or high usage</small>
+                            </div>
+
+                            <div class="c45-summary-card normal">
+                                <span>Items Monitored</span>
+                                <strong id="c45MonitoredCount">0</strong>
+                                <small>Ingredients evaluated</small>
+                            </div>
+                        </div>
+
+                        <div class="c45-alert-banner" id="c45AlertBanner" role="status" aria-live="polite">
+                            <span class="c45-alert-symbol">!</span>
+                            <div>
+                                <strong id="c45AlertTitle">Checking inventory risks...</strong>
+                                <p id="c45AlertDescription">
+                                    Reviewing current quantities and usage classifications.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="c45-table-heading">
+                            <div>
+                                <h3>Ingredient Risk Assessment</h3>
+                                <p>Prioritized recommendations for staff and administrators.</p>
+                            </div>
+
+                            <button type="button" id="runC45AnalysisBtn" class="c45-refresh-btn">
+                                ↻ Refresh Analysis
+                            </button>
+                        </div>
+
+                        <div class="table-responsive c45-table-wrapper">
+                            <table class="data-table c45-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ingredient</th>
+                                        <th>Current Stock</th>
+                                        <th>Reorder Level</th>
+                                        <th>Daily Usage</th>
+                                        <th>Risk Assessment</th>
+                                        <th>Recommended Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="c45PredictionTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-table">
+                                            Analyzing inventory...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="c45-footer">
+                            <span id="c45StatusText">
+                                Waiting for inventory analysis.
+                            </span>
+                            <span>Analysis uses current inventory records.</span>
+                        </div>
+
+                    </div>
+                </section>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Auth Guard - Must load before InventoryPredictionController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
+    <script type="module" src="js/controllers/InventoryPredictionController.js">
+    </script>
+
+</body>
+
+</html>

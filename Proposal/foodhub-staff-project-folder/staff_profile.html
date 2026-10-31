@@ -8,10 +8,22 @@
     <!-- Google Fonts Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <!-- Custom Stylesheet -->
+    <!-- Theme System (load FIRST to prevent flash) -->
+    <link rel="stylesheet" href="css/themes.css">
+    <!-- Page Stylesheets -->
     <link rel="stylesheet" href="css/staff_profile.css">
     <link rel="stylesheet" href="css/sidebar_nav.css">
     <link rel="stylesheet" href="css/topbar_nav.css">
+    <!-- No-flash theme initialization (runs before paint) -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('foodhub_theme');
+            if (theme === 'light' || theme === 'dark') {
+                document.documentElement.dataset.theme = theme;
+                document.body.dataset.theme = theme;
+            }
+        })();
+    </script>
 </head>
 
 <body>
@@ -135,6 +147,16 @@
         </main>
 
     </div>
+
+    <!-- Theme Manager - Initialize global theme system -->
+    <script type="module">
+        import { ThemeManager } from './js/utils/ThemeManager.js';
+        import { SettingsService } from './js/services/SettingsService.js';
+
+        const themeManager = new ThemeManager({ settingsService: new SettingsService() });
+        await themeManager.init();
+        window.themeManager = themeManager; // Expose globally for debugging
+    </script>
 
     <!-- Auth Guard - Must load before StaffProfileController -->
     <script type="module">

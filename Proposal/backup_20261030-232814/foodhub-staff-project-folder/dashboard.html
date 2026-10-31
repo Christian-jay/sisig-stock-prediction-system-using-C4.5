@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Staff Dashboard Overview</title>
+    <!-- Google Fonts Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Dashboard Custom Stylesheet -->
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDE NAVBAR -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- DASHBOARD CONTENT BODY -->
+            <div class="content-body">
+
+                <!-- Page Header -->
+                <section class="page-header-row">
+                    <div>
+                        <h2>Staff Dashboard</h2>
+                        <p>Welcome back, Staff</p>
+                    </div>
+                </section>
+
+                <!-- Top 4 Metric Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon green">
+                            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="currentColor"
+                                font-family="'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="700">₱</text>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Today's Sales</span>
+                            <h3 class="metric-value" id="todaySalesValue">₱4,835.00</h3>
+                            <span class="metric-trend positive">↑ +12% vs. yesterday</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon blue">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                </path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                <line x1="9" y1="12" x2="15" y2="12"></line>
+                                <line x1="9" y1="16" x2="13" y2="16"></line>
+                                <line x1="9" y1="8" x2="11" y2="8"></line>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Orders Today</span>
+                            <h3 class="metric-value" id="ordersTodayValue">14</h3>
+                            <span class="metric-trend positive">↑ +27% vs. yesterday</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon yellow">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Pending Orders</span>
+                            <h3 class="metric-value" id="pendingOrdersValue">3</h3>
+                            <span class="metric-trend warning">Needs attention</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon red">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z">
+                                </path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <span class="metric-label">Low Stock Items</span>
+                            <h3 class="metric-value" id="lowStockCountValue">3</h3>
+                            <span class="metric-trend danger">Requires restock</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Grid Section (Today's Orders & Popular Menu Items) -->
+                <div class="dashboard-grid-main">
+                    <!-- Today's Orders Table Card -->
+                    <div class="card table-card">
+                        <div class="card-header-flex">
+                            <div class="card-title-group">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2">
+                                    </path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                                    <line x1="9" y1="16" x2="13" y2="16"></line>
+                                    <line x1="9" y1="8" x2="11" y2="8"></line>
+                                </svg>
+                                <h3>Today's Orders</h3>
+                            </div>
+                            <a href="orders.html" class="btn-link">View All</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Menu Item</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="todaysOrdersTableBody">
+                                    <!-- Dynamic rows injected via Controller -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Popular Menu Items Card -->
+                    <div class="card popular-card">
+                        <div class="card-header-flex">
+                            <div class="card-title-group">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+                                    class="text-warning">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                    </polygon>
+                                </svg>
+                                <h3>Popular Menu Items</h3>
+                            </div>
+                        </div>
+                        <div class="popular-list" id="popularItemsList">
+                            <!-- Dynamic items injected via Controller -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Grid Section (Quick Actions & Low Stock Ingredients) -->
+                <div class="dashboard-grid-bottom">
+                    <!-- Quick Actions Card -->
+                    <div class="card actions-card">
+                        <div class="card-header-flex">
+                            <div class="card-title-group">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                                <h3>Quick Actions</h3>
+                            </div>
+                        </div>
+                        <div class="action-cards-grid">
+                            <button class="action-box primary" id="btnNewOrder">
+                                <div class="action-icon-circle">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </div>
+                                <div class="action-text">
+                                    <strong>New Order</strong>
+                                    <span>Create a new customer order</span>
+                                </div>
+                            </button>
+                            <button class="action-box secondary" id="btnRecordExpense">
+                                <div class="action-icon-circle">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="action-text">
+                                    <strong>Record Expense</strong>
+                                    <span>Log supplies or other expenses</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Low Stock Ingredients Table Card -->
+                    <div class="card stock-card">
+                        <div class="card-header-flex">
+                            <div class="card-title-group">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z">
+                                    </path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                <h3>Low Stock Ingredients</h3>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ingredient</th>
+                                        <th>Quantity</th>
+                                        <th>Unit</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lowStockTableBody">
+                                    <!-- Dynamic rows injected via Controller -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination Footer for Low Stock -->
+                        <div class="pagination-footer">
+                            <span id="lowStockPaginationInfo" class="pagination-info">Showing 0-0 of 0 items</span>
+                            <div class="pagination-buttons">
+                                <button id="prevLowStockBtn" class="btn-page-sm" disabled>Prev</button>
+                                <button id="nextLowStockBtn" class="btn-page-sm" disabled>Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Auth Guard - Must load before DashboardController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
+    <!-- JavaScript Clean Architecture Entry Point -->
+    <script type="module" src="js/controllers/DashboardController.js"></script>
+
+</body>
+
+</html>

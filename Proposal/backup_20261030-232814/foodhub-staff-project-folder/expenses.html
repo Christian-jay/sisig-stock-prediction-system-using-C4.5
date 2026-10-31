@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Staff Daily Expenses and Costs Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/expenses.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <!-- SIDE NAVBAR -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <div class="expenses-dashboard-body">
+
+                <!-- PAGE HEADER -->
+                <div class="expenses-page-header">
+                    <div>
+                        <h1>Expenses</h1>
+                        <p>Track your daily expenses and manage your costs.</p>
+                    </div>
+                </div>
+
+                <!-- 4 STAT CARDS -->
+                <div class="stats-grid-4">
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper bg-success-light text-success">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                <line x1="2" y1="10" x2="22" y2="10"></line>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Total Expenses</span>
+                        <h3 id="statTotalExpenses" class="stat-value">₱0.00</h3>
+                        <span class="stat-subtext">for selected period</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper bg-primary-light text-primary">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Total Transactions</span>
+                        <h3 id="statTotalTransactions" class="stat-value">0</h3>
+                        <span class="stat-subtext">expense records</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper bg-warning-light text-warning">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+
+                            </svg>
+                        </div>
+                        <span class="stat-label">Highest Category</span>
+                        <h3 id="statHighestCategory" class="stat-value">Supplies</h3>
+                        <span id="statHighestCategoryAmount" class="stat-subtext">₱0.00</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon-wrapper bg-purple-light text-purple">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Average Expense</span>
+                        <h3 id="statAverageExpense" class="stat-value">₱0.00</h3>
+                        <span class="stat-subtext">per transaction</span>
+                    </div>
+                </div>
+
+                <!-- EXPENSE RECORDS TABLE CARD (FULL WIDTH) -->
+                <div class="card-box">
+                    <div class="card-header-between">
+                        <div class="card-header-title">
+                            <svg class="text-primary" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <h3>Expense Records</h3>
+                        </div>
+                        <button class="btn-add-primary">+ Add Expense</button>
+                    </div>
+
+                    <!-- FILTERS -->
+                    <div class="table-filters-row">
+                        <div class="search-input-wrapper">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="searchExpenseInput" placeholder="Search expense description...">
+                        </div>
+                        <select id="categoryFilterSelect" class="filter-select">
+                            <option value="All">All Categories</option>
+                            <option value="Supplies">Supplies</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Others">Others</option>
+                            <option value="Ingredients">Ingredients</option>
+                        </select>
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseRecordsTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- PAGINATION -->
+                    <div class="pagination-footer">
+                        <span id="expensePaginationInfo" class="pagination-info">Showing 0-0 of 0 records</span>
+                        <div class="pagination-buttons">
+                            <button id="prevExpenseBtn" class="btn-page">Prev</button>
+                            <button id="nextExpenseBtn" class="btn-page">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth Guard - Must load before ExpensesController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
+    <script type="module" src="js/controllers/ExpensesController.js"></script>
+
+</body>
+
+</html>

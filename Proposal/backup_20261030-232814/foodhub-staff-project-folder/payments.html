@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODHUB — Staff Daily Transactions</title>
+    <!-- Google Fonts Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Dashboard Custom Stylesheet -->
+    <link rel="stylesheet" href="css/payments.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDE NAVBAR (UNTOUCHED) -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR (UNTOUCHED) -->
+            <div id="top-navbar-container"></div>
+
+            <!-- PAYMENTS MAIN CONTENT WRAPPER -->
+            <div class="payments-dashboard-body">
+
+                <!-- PAGE HEADER -->
+                <div class="payments-header-flex">
+                    <div class="page-header">
+                        <h1>Payments</h1>
+                        <p>View and track all payment transactions.</p>
+                    </div>
+                    <div class="date-filter-wrapper">
+                        <div class="date-filter-inputs">
+                            <label for="dateFromFilter">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                From
+                            </label>
+                            <input type="date" id="dateFromFilter" class="date-input">
+                            <label for="dateToFilter">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                To
+                            </label>
+                            <input type="date" id="dateToFilter" class="date-input">
+                            <button id="btnApplyDateFilter" class="btn-primary-sm" title="Apply Date Filter">Apply</button>
+                            <button id="btnResetDate" class="btn-secondary-sm" title="Reset to Today">Today</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 STAT CARDS GRID -->
+                <div class="stats-grid-4">
+
+                    <!-- Cash Payments -->
+                    <div class="stat-card">
+                        <div class="stat-card-top">
+                            <div class="stat-icon-wrapper cash">
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                    <circle cx="12" cy="12" r="2"></circle>
+                                    <line x1="6" y1="12" x2="6.01" y2="12"></line>
+                                    <line x1="18" y1="12" x2="18.01" y2="12"></line>
+                                </svg>
+                            </div>
+                            <span class="stat-title">Cash Payments</span>
+                        </div>
+
+                        <div class="stat-card-mid">
+                            <!-- Transactions sa Itaas -->
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Transactions</span>
+                                <span class="stat-count" id="statCashCount">8</span>
+                            </div>
+                            <!-- Total Amount sa Baba -->
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Total Amount</span>
+                                <span class="stat-amount" id="statCashAmount">₱2,485.00</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card-btm text-success">
+                            <span class="trend-arrow">&uarr;</span> +14% vs. yesterday
+                        </div>
+                    </div>
+
+                    <!-- GCash Payments -->
+                    <div class="stat-card">
+                        <div class="stat-card-top">
+                            <div class="stat-icon-wrapper gcash">
+                                <img src="assets/gcash.svg"
+                                    alt="gcash" width="30" height="30"   />
+                            </div>
+                            <span class="stat-title">GCash Payments</span>
+                        </div>
+                        <div class="stat-card-mid">
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Transactions</span>
+                                <span class="stat-count" id="statGcashCount">0</span>
+                            </div>
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Total Amount</span>
+                                <span class="stat-amount" id="statGcashAmount">₱0.00</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-btm text-success">
+                            <span class="trend-arrow">&uarr;</span> +9% vs. yesterday
+                        </div>
+                    </div>
+
+                    <!-- Maya Payments -->
+                    <div class="stat-card">
+                        <div class="stat-card-top">
+                            <div class="stat-icon-wrapper maya">
+                                <img src="assets/maya.svg"
+                                    alt="maya" width="35" height="35" />
+                            </div>
+                            <span class="stat-title">Maya Payments</span>
+                        </div>
+                        <div class="stat-card-mid">
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Transactions</span>
+                                <span class="stat-count" id="statMayaCount">0</span>
+                            </div>
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Total Amount</span>
+                                <span class="stat-amount" id="statMayaAmount">₱0.00</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-btm text-success">
+                            <span class="trend-arrow">&uarr;</span> +33% vs. yesterday
+                        </div>
+                    </div>
+
+                    <!-- Panda Payments -->
+                    <div class="stat-card">
+                        <div class="stat-card-top">
+                            <div class="stat-icon-wrapper panda">
+                                <img src="assets/foodpanda.svg"
+                                    alt="foodpanda" width="30" height="30" />
+                            </div>
+                            <span class="stat-title">Panda Payments</span>
+                        </div>
+                        <div class="stat-card-mid">
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Transactions</span>
+                                <span class="stat-count" id="statPandaCount">0</span>
+                            </div>
+                            <div class="stat-metric-row">
+                                <span class="stat-metric-label">Total Amount</span>
+                                <span class="stat-amount" id="statPandaAmount">₱0.00</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-btm text-success">
+                            <span class="trend-arrow">&uarr;</span> +20% vs. yesterday
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- TRANSACTIONS TABLE SECTION -->
+                <div class="card-box transactions-card">
+
+                    <!-- Table Header Bar -->
+                    <div class="transactions-header-bar">
+                        <div class="section-title-group">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <h3>Payment Transactions</h3>
+                        </div>
+
+                        <div class="transactions-filter-group">
+                            <!-- Search Input -->
+                            <div class="search-input-wrapper">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" id="transactionSearchInput" placeholder="Search by order ID...">
+                            </div>
+
+                            <!-- Method Filter Dropdown -->
+                            <select id="methodFilterSelect" class="filter-select">
+                                <option value="all">All Methods</option>
+                                <option value="Cash">Cash</option>
+                                <option value="GCash">GCash</option>
+                                <option value="Maya">Maya</option>
+                                <option value="Panda">Panda</option>
+                            </select>
+
+                            <!-- Status Filter Dropdown -->
+                            <select id="statusFilterSelect" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="PAID">Paid</option>
+                                <option value="UNPAID">Unpaid</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="table-responsive">
+                        <table class="data-table payments-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Order ID</th>
+                                    <th>Payment Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                <!-- Populated via PaymentsController.js -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Pagination Footer -->
+                    <div class="pagination-footer">
+                        <span id="paymentsPaginationInfo" class="pagination-info">Showing 0 of 0 payments</span>
+                        <div class="pagination-buttons" id="paymentsPaginationButtons">
+                            <!-- Populated via PaymentsController.js -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- View Details Modal -->
+    <div id="paymentDetailsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" style="display: none;">
+        <div class="modal-container" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Transaction Details</h3>
+                <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="order-detail-header">
+                    <h4 id="modalOrderId">#1001</h4>
+                    <div class="order-info-grid">
+                        <div><strong>Date & Time:</strong> <span id="modalDateTime">Apr 27, 2025 - 10:24 AM</span></div>
+                        <div><strong>Customer:</strong> <span id="modalCustomer">Walk-in Customer</span></div>
+                        <div><strong>Payment Method:</strong> <span id="modalMethod" class="badge-status">Cash</span></div>
+                        <div><strong>Status:</strong> <span id="modalStatus" class="badge-status badge-completed">Paid</span></div>
+                    </div>
+                </div>
+                <div class="order-detail-items">
+                    <h5>Items</h5>
+                    <div id="modalItemsContainer">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                <div class="order-detail-totals">
+                    <div><span>Subtotal</span> <span id="modalSubtotal">₱0.00</span></div>
+                    <div><span>Tax (12%)</span> <span id="modalTax">₱0.00</span></div>
+                    <div id="modalDiscountRow" style="display: none; color: var(--red-600);"><span>Discount</span> <span id="modalDiscount">-₱0.00</span></div>
+                    <div class="total-row"><span>Total</span> <span id="modalTotal">₱0.00</span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="modalCloseBtn2">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Guard - Must load before PaymentsController -->
+    <script type="module">
+        import { protectPage } from '../foodhub-admin-root-project-folder/js/utils/AuthGuard.js';
+
+        // Protect this page - STAFF and ADMIN can access
+        protectPage({ allowedRoles: ['STAFF'] }).then(userData => {
+            if (userData) {
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
+    <!-- JavaScript Clean Architecture Entry Point -->
+    <script type="module" src="js/controllers/PaymentsController.js"></script>
+
+</body>
+
+</html>
