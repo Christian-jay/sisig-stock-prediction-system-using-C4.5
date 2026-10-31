@@ -1,36 +1,7 @@
 /* =========================================================
    FOODHUB ADMIN — SALES REPORT
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-
-    --bg-main: #f1f5f9;
-    --card-bg: #ffffff;
-
-    --border-color: #e2e8f0;
-    --border-light: #f1f5f9;
-
-    --success-bg: #dcfce7;
-    --success-text: #16a34a;
-
-    --warning-bg: #fef3c7;
-    --warning-text: #d97706;
-
-    --purple-bg: #f3e8ff;
-    --purple-text: #9333ea;
-
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05);
-}
-
 
 /* =========================================================
    RESET
@@ -462,10 +433,10 @@ body {
 .chart-period {
     flex-shrink: 0;
     padding: 7px 11px;
-    border: 1px solid #bae6fd;
+    border: 1px solid var(--info-border);
     border-radius: 8px;
-    background: #f0f9ff;
-    color: #0369a1;
+    background: var(--info-bg);
+    color: var(--info-text);
     font-size: 10px;
     font-weight: 700;
 }
@@ -501,7 +472,7 @@ body {
     min-width: 0;
     height: 100%;
     padding: 0;
-    color: #8492a6;
+    color: var(--slate-muted);
     font-size: 10px;
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -546,7 +517,7 @@ body {
     width: 100%;
     height: 1px;
     border: 0;
-    border-top: 1px dashed #e5ebf2;
+    border-top: 1px dashed var(--border-color);
 }
 
 /* Vertical grid lines */
@@ -562,7 +533,7 @@ body {
 .trend-grid-vertical-line {
     width: 1px;
     height: 100%;
-    border-left: 1px dashed #edf1f6;
+    border-left: 1px dashed var(--border-color);
 }
 
 /* SVG layer */
@@ -585,7 +556,7 @@ body {
 /* Smooth sales line */
 .trend-line {
     fill: none;
-    stroke: #0284c7;
+    stroke: var(--primary);
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -594,8 +565,8 @@ body {
 
 /* Data points */
 .trend-point {
-    fill: #0284c7;
-    stroke: #ffffff;
+    fill: var(--primary);
+    stroke: var(--card-bg);
     stroke-width: 3;
     vector-effect: non-scaling-stroke;
     transition: r 160ms ease;
@@ -613,7 +584,7 @@ body {
     min-width: 0;
     height: 30px;
     padding-top: 10px;
-    color: #8492a6;
+    color: var(--slate-muted);
     font-size: 10px;
 }
 
@@ -629,10 +600,10 @@ body {
     position: absolute;
     z-index: 10;
     padding: 9px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     border-radius: 9px;
-    background: #0f172a;
-    color: #ffffff;
+    background: var(--slate-dark);
+    color: var(--card-bg);
     font-size: 11px;
     font-weight: 700;
     line-height: 1.5;
@@ -692,7 +663,7 @@ body {
 .top-item-rank {
     font-weight: 700;
     font-size: 14px;
-    color: var(--text-muted, #64748b);
+    color: var(--slate-muted);
     min-width: 24px;
 }
 
@@ -701,25 +672,25 @@ body {
     height: 42px;
     object-fit: cover;
     border-radius: 6px;
-    background-color: #e2e8f0;
+    background-color: var(--border-color);
     /* Fallback background habang nag-a-load ang image */
 }
 
 .top-item-name {
     font-weight: 600;
     font-size: 14px;
-    color: var(--text-main, #1e293b);
+    color: var(--slate-dark);
 }
 
 .top-item-quantity {
     font-size: 12px;
-    color: var(--text-muted, #64748b);
+    color: var(--slate-muted);
 }
 
 .top-item-sales {
     font-weight: 700;
     font-size: 14px;
-    color: var(--text-main, #1e293b);
+    color: var(--slate-dark);
 }
 
 /* =========================================================
@@ -794,7 +765,7 @@ body {
 }
 
 .data-table tbody tr:hover {
-    background: #f8fafc;
+    background: var(--bg-main);
 }
 
 

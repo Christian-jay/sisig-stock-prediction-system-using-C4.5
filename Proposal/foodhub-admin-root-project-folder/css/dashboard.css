@@ -344,6 +344,23 @@ body {
     background: var(--bg-main);
 }
 
+.btn-sm-view {
+    padding: 4px 12px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--primary-text);
+    transition: all 0.2s;
+}
+
+.btn-sm-view:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
 /* 4. Footer Widgets Grid */
 .footer-widgets-grid {
     display: grid;

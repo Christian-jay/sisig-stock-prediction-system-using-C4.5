@@ -1,25 +1,7 @@
 /* =========================================================
    FOODHUB ADMIN — INVENTORY PAGE
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-    --success-bg: #dcfce7;
-    --success-text: #16a34a;
-    --warning-bg: #fef9c3;
-    --warning-text: #ca8a04;
-    --processing-bg: #dbeafe;
-    --processing-text: #2563eb;
-}
 
 * {
     margin: 0;
@@ -163,14 +145,14 @@ body {
 }
 
 .action-buttons .danger {
-    background-color: #dc3545;
+    background-color: var(--danger);
     color: white;
-    border: 1px solid #dc3545;
+    border: 1px solid var(--danger);
 }
 
 .action-buttons .danger:hover {
-    background-color: #bb2d3b;
-    border-color: #bb2d3b;
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
 }
 
 .add-icon {
@@ -244,27 +226,23 @@ body {
 }
 
 .metric-icon.blue {
-    background: #e0f2fe;
-
-    color: #0284c7;
+    background: var(--info-bg);
+    color: var(--info);
 }
 
 .metric-icon.green {
-    background: #dcfce7;
-
-    color: #16a34a;
+    background: var(--success-bg);
+    color: var(--success);
 }
 
 .metric-icon.yellow {
-    background: #fef3c7;
-
-    color: #d97706;
+    background: var(--warning-bg);
+    color: var(--warning-text);
 }
 
 .metric-icon.red {
-    background: #fee2e2;
-
-    color: #dc2626;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 .metric-content {
@@ -307,15 +285,15 @@ body {
 }
 
 .metric-description.positive {
-    color: #16a34a;
+    color: var(--success-text);
 }
 
 .metric-description.warning {
-    color: #d97706;
+    color: var(--warning-text);
 }
 
 .metric-description.danger {
-    color: #dc2626;
+    color: var(--danger-text);
 }
 
 
@@ -416,9 +394,9 @@ body {
 
     border-radius: 9px;
 
-    background: #e0f2fe;
+    background: var(--info-bg);
 
-    color: #0284c7;
+    color: var(--info);
 }
 
 .table-actions {
@@ -455,10 +433,8 @@ body {
 
 .table-actions select:focus,
 .analytics-select:focus {
-    border-color: #7dd3fc;
-
-    box-shadow:
-        0 0 0 3px rgba(14, 165, 233, 0.08);
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px var(--primary-focus);
 }
 
 .table-responsive {
@@ -483,37 +459,23 @@ body {
 
 .data-table th {
     padding: 11px 12px;
-
     text-align: left;
-
-    background: #f8fafc;
-
+    background: var(--bg-main);
     border-bottom: 1px solid var(--border-color);
-
     color: var(--slate-muted);
-
     font-size: 9px;
-
     font-weight: 800;
-
     text-transform: uppercase;
-
     letter-spacing: 0.4px;
-
     white-space: nowrap;
 }
 
 .data-table td {
     padding: 13px 12px;
-
-    border-bottom: 1px solid #eef2f7;
-
+    border-bottom: 1px solid var(--border-color);
     color: var(--slate-dark);
-
     font-size: 11px;
-
     font-weight: 500;
-
     white-space: nowrap;
 }
 
@@ -526,7 +488,7 @@ body {
 }
 
 .data-table tbody tr:hover {
-    background: #f8fbfd;
+    background: var(--bg-main);
 }
 
 
@@ -551,21 +513,18 @@ body {
 }
 
 .badge.instock {
-    background: #dcfce7;
-
-    color: #15803d;
+    background: var(--success-bg);
+    color: var(--success-text);
 }
 
 .badge.lowstock {
-    background: #fef3c7;
-
-    color: #b45309;
+    background: var(--warning-bg);
+    color: var(--warning-text);
 }
 
 .badge.outstock {
-    background: #fee2e2;
-
-    color: #dc2626;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 
@@ -700,24 +659,24 @@ body {
 }
 
 .dot-indicator.green {
-    background: #10b981;
+    background: var(--success);
 }
 
 .dot-indicator.yellow {
-    background: #f59e0b;
+    background: var(--warning);
 }
 
 .dot-indicator.red {
-    background: #f43f5e;
+    background: var(--danger);
 }
 
 /* ===== INVENTORY ALERTS ===== */
 
 .alert-card {
     padding: 22px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-top: 4px solid #ef4444;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--danger);
     border-radius: 18px;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
 }
@@ -732,7 +691,7 @@ body {
 
 .alert-header h3 {
     margin: 0;
-    color: #0f172a;
+    color: var(--slate-dark);
     font-size: 17px;
     font-weight: 800;
     letter-spacing: -0.4px;
@@ -740,7 +699,7 @@ body {
 
 .alert-header p {
     margin: 5px 0 0;
-    color: #64748b;
+    color: var(--slate-muted);
     font-size: 12px;
 }
 
@@ -752,8 +711,8 @@ body {
     height: 36px;
     padding: 0 12px;
     border-radius: 11px;
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger-text);
     font-size: 12px;
     font-weight: 800;
 }
@@ -769,26 +728,26 @@ body {
     align-items: center;
     gap: 13px;
     padding: 14px 12px;
-    background: #ffffff;
-    border: 1px solid #e5eaf1;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 13px;
     margin-bottom: 12px;
     transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .alert-item:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+    background: var(--bg-main);
+    border-color: var(--slate-muted);
 }
 
 .alert-item.warning {
-    background: #fffdf7;
-    border-color: #fde68a;
+    background: var(--warning-bg);
+    border-color: var(--warning);
 }
 
 .alert-item.critical {
-    background: #fff7f7;
-    border-color: #fecaca;
+    background: var(--danger-bg);
+    border-color: var(--danger);
 }
 
 .alert-dot {
@@ -796,13 +755,13 @@ body {
     height: 10px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: #d97706;
-    box-shadow: 0 0 0 4px #fef3c7;
+    background: var(--warning);
+    box-shadow: 0 0 0 4px var(--warning-bg);
 }
 
 .alert-item.critical .alert-dot {
-    background: #dc2626;
-    box-shadow: 0 0 0 4px #fee2e2;
+    background: var(--danger);
+    box-shadow: 0 0 0 4px var(--danger-bg);
 }
 
 .alert-content {
@@ -813,14 +772,14 @@ body {
 .alert-content strong {
     display: block;
     margin-bottom: 5px;
-    color: #1e293b;
+    color: var(--slate-dark);
     font-size: 13px;
     font-weight: 800;
 }
 
 .alert-content>span {
     display: block;
-    color: #64748b;
+    color: var(--slate-muted);
     font-size: 11px;
     line-height: 1.5;
 }
@@ -829,26 +788,26 @@ body {
     flex-shrink: 0;
     padding: 5px 7px;
     border-radius: 6px;
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--warning-bg);
+    color: var(--warning-text);
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.3px;
 }
 
 .alert-item.critical .alert-status {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 .alert-item.healthy {
-    background: #f0fdf4;
-    border-color: #bbf7d0;
+    background: var(--success-bg);
+    border-color: var(--success);
 }
 
 .alert-item.healthy .alert-dot {
-    background: #16a34a;
-    box-shadow: 0 0 0 4px #dcfce7;
+    background: var(--success);
+    box-shadow: 0 0 0 4px var(--success-bg);
 }
 
 @media (max-width: 480px) {
@@ -880,9 +839,9 @@ body {
 
     border-radius: 6px;
 
-    background: #e0f2fe;
+    background: var(--info-bg);
 
-    color: #0284c7;
+    color: var(--info);
 
     font-size: 8px;
 
@@ -908,7 +867,7 @@ body {
 
     padding: 9px 10px;
 
-    background: #f8fafc;
+    background: var(--bg-main);
 
     border: 1px solid var(--border-color);
 
@@ -937,15 +896,15 @@ body {
 }
 
 .risk-row.high i {
-    background: #f43f5e;
+    background: var(--danger);
 }
 
 .risk-row.medium i {
-    background: #f59e0b;
+    background: var(--warning);
 }
 
 .risk-row.low i {
-    background: #10b981;
+    background: var(--success);
 }
 
 .risk-row strong {
@@ -967,9 +926,9 @@ body {
 
     border-radius: 9px;
 
-    background: #f0f9ff;
+    background: var(--info-bg);
 
-    border: 1px solid #e0f2fe;
+    border: 1px solid var(--info-border);
 }
 
 .recommendation-icon {
@@ -985,7 +944,7 @@ body {
 
     border-radius: 6px;
 
-    background: #0284c7;
+    background: var(--info);
 
     color: white;
 
@@ -997,7 +956,7 @@ body {
 .c45-recommendation strong {
     display: block;
 
-    color: #0369a1;
+    color: var(--info-text);
 
     font-size: 9px;
 
@@ -1069,7 +1028,7 @@ body {
 
     width: 100%;
 
-    border-top: 1px dashed #dbe3ec;
+    border-top: 1px dashed var(--border-color);
 }
 
 .usage-chart svg {
@@ -1161,7 +1120,7 @@ body {
 }
 
 .priority-item:hover {
-    background: #f8fafc;
+    background: var(--bg-main);
 
     transform: translateX(2px);
 }
@@ -1195,15 +1154,15 @@ body {
 }
 
 .priority-item.critical .priority-icon {
-    background: #fee2e2;
+    background: var(--danger-bg);
 
-    color: #dc2626;
+    color: var(--danger-text);
 }
 
 .priority-item.warning .priority-icon {
-    background: #fef3c7;
+    background: var(--warning-bg);
 
-    color: #d97706;
+    color: var(--warning-text);
 }
 
 .priority-info strong {
@@ -1239,15 +1198,15 @@ body {
 }
 
 .priority-item.critical .priority-badge {
-    background: #fee2e2;
+    background: var(--danger-bg);
 
-    color: #dc2626;
+    color: var(--danger-text);
 }
 
 .priority-item.warning .priority-badge {
-    background: #fef3c7;
+    background: var(--warning-bg);
 
-    color: #b45309;
+    color: var(--warning-text);
 }
 
 .priority-pagination {
@@ -1478,7 +1437,7 @@ body {
 }
 
 .form-group label .required {
-    color: #dc2626;
+    color: var(--danger);
     margin-left: 2px;
 }
 
@@ -1516,13 +1475,13 @@ body {
 .form-group.has-error input,
 .form-group.has-error select,
 .form-group.has-error textarea {
-    border-color: #fca5a5;
-    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-focus);
 }
 
 .field-error {
     display: none;
-    color: #dc2626;
+    color: var(--danger-text);
     font-size: 10px;
     font-weight: 500;
 }
@@ -1549,10 +1508,10 @@ body {
 
 .form-error-banner {
     padding: 12px 16px;
-    background: #fee2e2;
-    border: 1px solid #fecaca;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger);
     border-radius: 8px;
-    color: #991b1b;
+    color: var(--danger-text);
     font-size: 12px;
     font-weight: 500;
 }
@@ -1563,7 +1522,7 @@ body {
     gap: 12px;
     padding: 16px 24px;
     border-top: 1px solid var(--border-color);
-    background: #fafbfc;
+    background: var(--bg-main);
     border-radius: 0 0 16px 16px;
 }
 
@@ -1578,7 +1537,7 @@ body {
 }
 
 .modal-footer .action-btn.secondary:hover {
-    background: #e2e8f0;
+    background: var(--border-color);
 }
 
 .modal-footer .action-btn.primary:disabled {

@@ -1,25 +1,7 @@
 /* =========================================================
    FOODHUB ADMIN — ORDERS PAGE
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-    --success-bg: #dcfce7;
-    --success-text: #16a34a;
-    --warning-bg: #fef9c3;
-    --warning-text: #ca8a04;
-    --processing-bg: #dbeafe;
-    --processing-text: #2563eb;
-}
 
 * {
     margin: 0;
@@ -122,8 +104,8 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--primary-light);
-    color: var(--primary);
+    background: var(--info-bg);
+    color: var(--info);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,23 +114,23 @@ body {
 }
 
 .metric-icon.blue {
-    background: #e0f2fe;
-    color: #0284c7;
+    background: var(--info-bg);
+    color: var(--info);
 }
 
 .metric-icon.orange {
-    background: #ffedd5;
-    color: #f97316;
+    background: var(--warning-bg);
+    color: var(--warning);
 }
 
 .metric-icon.yellow {
-    background: #fef9c3;
-    color: #ca8a04;
+    background: var(--warning-bg);
+    color: var(--warning-text);
 }
 
 .metric-icon.green {
-    background: #dcfce7;
-    color: #16a34a;
+    background: var(--success-bg);
+    color: var(--success-text);
 }
 
 .metric-data {
@@ -266,7 +248,7 @@ body {
 .item-thumb {
     width: 28px;
     height: 28px;
-    background: #e2e8f0;
+    background: var(--border-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -333,7 +315,7 @@ body {
     font-weight: 600;
     padding: 10px 12px;
     border-bottom: 1px solid var(--border-color);
-    background: #f8fafc;
+    background: var(--bg-main);
     white-space: nowrap;
 }
 
@@ -368,8 +350,8 @@ body {
 }
 
 .badge.cancelled {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 .badge.lowstock {
@@ -382,7 +364,7 @@ body {
     padding: 4px 12px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    background: #ffffff;
+    background: var(--card-bg);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -682,7 +664,7 @@ body {
 }
 
 .action-btn.secondary:hover {
-    background: #e2e8f0;
+    background: var(--border-color);
 }
 
 /* Orders Table Pagination */
@@ -896,8 +878,8 @@ body {
 }
 
 .btn-remove-item:hover {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 #addItemBtn {
@@ -980,8 +962,8 @@ body {
 }
 
 .badge.cancelled {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: var(--danger-bg);
+    color: var(--danger-text);
 }
 
 .order-detail-footer {

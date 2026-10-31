@@ -1,19 +1,7 @@
 /* =========================================================
    FOODHUB ADMIN — SETTINGS PAGE (Staff Profile Style)
+   Uses centralized theme variables from themes.css
    ========================================================= */
-
-:root {
-    --primary: #0284c7;
-    --primary-dark: #0369a1;
-    --primary-light: #e0f2fe;
-    --navy-dark: #0b192c;
-    --slate-dark: #0f172a;
-    --slate-text: #334155;
-    --slate-muted: #64748b;
-    --bg-main: #f8fafc;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
-}
 
 * {
     margin: 0;
@@ -162,8 +150,15 @@ body {
 }
 
 .form-control:disabled {
-    background-color: #f1f5f9;
-    color: #94a3b8;
+    background-color: var(--bg-main);
+    color: var(--slate-muted);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--slate-muted);
 }
 
 .checkbox-group {
@@ -191,23 +186,59 @@ body {
 
 .form-actions {
     margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .btn-primary {
-    background-color: var(--primary);
-    color: #ffffff;
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 14px;
     font-weight: 600;
+    line-height: 1.4;
     cursor: pointer;
-    font-family: inherit;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
-.btn-primary:hover {
-    background-color: var(--primary-dark);
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--btn-primary-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--slate-text);
+    border: 1px solid var(--btn-secondary-border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--btn-secondary-hover);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Modern Toggle Switch */
@@ -231,7 +262,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #cbd5e1;
+    background-color: var(--slate-muted);
     transition: .3s;
 }
 
@@ -242,15 +273,15 @@ body {
     width: 18px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: var(--card-bg);
     transition: .3s;
 }
 
-input:checked+.slider {
+input:checked + .slider {
     background-color: var(--primary);
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
     transform: translateX(20px);
 }
 
@@ -262,24 +293,769 @@ input:checked+.slider:before {
     border-radius: 50%;
 }
 
-/* Dark Mode Theme Mapping */
-[data-theme="dark"] {
-    --bg-main: #0f172a;
-    --card-bg: #1e293b;
-    --slate-text: #f1f5f9;
-    --navy-dark: #ffffff;
-    --slate-muted: #94a3b8;
-    --border-color: #334155;
-    --primary-light: #0369a1;
+/* =========================================================
+   TOAST NOTIFICATIONS
+   ========================================================= */
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: var(--shadow-dropdown);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+    max-width: 400px;
+    z-index: 1100;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    border-left: 4px solid var(--primary);
 }
 
-[data-theme="dark"] .form-control:disabled {
-    background-color: #0f172a;
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-success {
+    border-left-color: var(--success);
+}
+
+.toast-error {
+    border-left-color: var(--danger);
+}
+
+.toast-warning {
+    border-left-color: var(--warning);
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--slate-muted);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    margin-left: auto;
+}
+
+.toast-close:hover {
+    color: var(--slate-text);
+}
+
+/* =========================================================
+   THEME PREVIEW CARDS — Miniature Admin Screenshots
+   ========================================================= */
+
+.theme-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.theme-preview-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.theme-preview-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.theme-preview-card:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-color: var(--primary);
+}
+
+.theme-preview-card.selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-focus), var(--shadow-card);
+}
+
+/* Visual Preview — Mini Admin Layout */
+.theme-preview-visual {
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 12px;
+}
+
+/* =========================================================
+   MINI ADMIN LAYOUT (based on actual Admin Dashboard page)
+   ========================================================= */
+.theme-mini-pos {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    grid-template-rows: 32px 1fr;
+    grid-template-areas:
+        "sidebar topbar"
+        "sidebar main";
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    background: var(--bg-main);
+    min-height: 170px;
+}
+
+/* =========================================================
+   LIGHT CLASSIC — Hardcoded Original FOODHUB Colors
+   ========================================================= */
+.theme-mini-pos--light {
+    background: #f8fafc;
+}
+
+/* Sidebar */
+.theme-mini-pos--light .mini-sidebar {
+    grid-area: sidebar;
+    background: #0b192c;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 6px 10px;
+    gap: 3px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.theme-mini-pos--light .mini-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.theme-mini-pos--light .mini-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.theme-mini-pos--light .mini-nav-item.active {
+    background: rgba(2, 132, 199, 0.18);
+}
+
+/* Main area */
+.theme-mini-pos--light .mini-main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+}
+
+/* Topbar */
+.theme-mini-pos--light .mini-topbar {
+    grid-area: topbar;
+    height: 32px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    gap: 8px;
+}
+
+.theme-mini-pos--light .mini-search {
+    width: 70px;
+    height: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.theme-mini-pos--light .mini-user {
+    width: 20px;
+    height: 20px;
+    background: #0284c7;
+    border-radius: 50%;
+}
+
+/* Admin Grid - 2 column cards */
+.theme-mini-pos--light .mini-pos-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 6px;
+    padding: 8px;
+    min-height: 0;
+}
+
+/* Cards */
+.theme-mini-pos--light .mini-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Dashboard Card (left) */
+.theme-mini-pos--light .mini-order-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--light .mini-card-header {
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.theme-mini-pos--light .mini-card-title {
+    color: #334155;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--light .mini-cart-area {
+    flex: 1;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--light .mini-cart-item {
+    height: 18px;
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.theme-mini-pos--light .mini-cart-footer {
+    height: 36px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.theme-mini-pos--light .mini-cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.theme-mini-pos--light .mini-summary-label {
     color: #64748b;
+    font-size: 7px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--light .mini-summary-value {
+    color: #0284c7;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* Inventory Card (right) */
+.theme-mini-pos--light .mini-menu-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--light .mini-menu-card .mini-card-header {
+    justify-content: space-between;
+}
+
+.theme-mini-pos--light .mini-catalog-actions {
+    width: 20px;
+    height: 16px;
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.theme-mini-pos--light .mini-category-tabs {
+    display: flex;
+    gap: 3px;
+    padding: 6px 8px 4px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.theme-mini-pos--light .mini-tab {
+    flex: 1;
+    height: 16px;
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.theme-mini-pos--light .mini-tab.active {
+    background: #0284c7;
+}
+
+.theme-mini-pos--light .mini-menu-grid {
+    flex: 1;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--light .mini-menu-item {
+    aspect-ratio: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   DARK MIDNIGHT — Hardcoded Sisig-Inspired Colors
+   ========================================================= */
+.theme-mini-pos--dark {
+    background: #171412;
+}
+
+/* Sidebar */
+.theme-mini-pos--dark .mini-sidebar {
+    grid-area: sidebar;
+    background: #171412;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 6px 10px;
+    gap: 3px;
+    border-right: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.theme-mini-pos--dark .mini-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.theme-mini-pos--dark .mini-nav-item.active {
+    background: rgba(245, 158, 11, 0.18);
+}
+
+/* Main area */
+.theme-mini-pos--dark .mini-main {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    background: #171412;
+}
+
+/* Topbar */
+.theme-mini-pos--dark .mini-topbar {
+    grid-area: topbar;
+    height: 32px;
+    background: #211B17;
+    border-bottom: 1px solid #49382D;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    gap: 8px;
+}
+
+.theme-mini-pos--dark .mini-search {
+    width: 70px;
+    height: 20px;
+    background: #171412;
+    border: 1px solid #49382D;
+    border-radius: 6px;
+}
+
+.theme-mini-pos--dark .mini-user {
+    width: 20px;
+    height: 20px;
+    background: #F59E0B;
+    border-radius: 50%;
+}
+
+/* Admin Grid - 2 column cards */
+.theme-mini-pos--dark .mini-pos-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 6px;
+    padding: 8px;
+    min-height: 0;
+}
+
+/* Cards */
+.theme-mini-pos--dark .mini-card {
+    background: #2A211B;
+    border: 1px solid #49382D;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Dashboard Card (left) */
+.theme-mini-pos--dark .mini-order-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--dark .mini-card-header {
+    height: 28px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #49382D;
+}
+
+.theme-mini-pos--dark .mini-card-title {
+    color: #FFF7ED;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--dark .mini-cart-area {
+    flex: 1;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--dark .mini-cart-item {
+    height: 18px;
+    background: #211B17;
+    border-radius: 4px;
+    border: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-cart-footer {
+    height: 36px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #49382D;
+    background: #211B17;
+}
+
+.theme-mini-pos--dark .mini-cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.theme-mini-pos--dark .mini-summary-label {
+    color: #B6A08D;
+    font-size: 7px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.theme-mini-pos--dark .mini-summary-value {
+    color: #F59E0B;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* Inventory Card (right) */
+.theme-mini-pos--dark .mini-menu-card {
+    min-width: 0;
+}
+
+.theme-mini-pos--dark .mini-menu-card .mini-card-header {
+    justify-content: space-between;
+}
+
+.theme-mini-pos--dark .mini-catalog-actions {
+    width: 20px;
+    height: 16px;
+    background: #211B17;
+    border-radius: 3px;
+    border: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-category-tabs {
+    display: flex;
+    gap: 3px;
+    padding: 6px 8px 4px;
+    border-bottom: 1px solid #49382D;
+}
+
+.theme-mini-pos--dark .mini-tab {
+    flex: 1;
+    height: 16px;
+    background: #211B17;
+    border-radius: 3px;
+    border: 1px solid #3B2D24;
+}
+
+.theme-mini-pos--dark .mini-tab.active {
+    background: #3D2B10;
+    border-color: #F59E0B;
+}
+
+.theme-mini-pos--dark .mini-menu-grid {
+    flex: 1;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    overflow: hidden;
+}
+
+.theme-mini-pos--dark .mini-menu-item {
+    aspect-ratio: 1;
+    background: #171412;
+    border: 1px solid #3B2D24;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   THEME PREVIEW INFO
+   ========================================================= */
+.theme-preview-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.theme-preview-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--slate-text);
+    margin: 0;
+}
+
+.theme-preview-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--slate-muted);
+    margin: 0;
+}
+
+/* Checkmark Indicator */
+.theme-preview-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--border-color);
+    color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.theme-preview-card.selected .theme-preview-check {
+    background: var(--primary);
+    color: var(--btn-primary-text);
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Hidden input for form */
+#themeModeInput {
+    display: none;
+}
+
+/* Cancel button visible when theme changed */
+.form-actions .btn-secondary {
+    display: inline-flex;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+/* Cancel button for theme preview - secondary style */
+#cancelGeneralBtn {
+    background-color: var(--btn-secondary-bg);
+    color: var(--slate-text);
+    border: 1px solid var(--btn-secondary-border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+#cancelGeneralBtn:hover:not(:disabled) {
+    background-color: var(--btn-secondary-hover);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+#cancelGeneralBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   SECTION DIVIDER & DANGER ZONE (Staff Style)
+   ========================================================= */
+
+.section-divider {
+    margin: 32px 0 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.danger-zone h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #dc2626;
+}
+
+.danger-zone p {
+    font-size: 12px;
+    color: var(--slate-muted);
+    margin-bottom: 12px;
+}
+
+.danger-zone .btn-danger {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Danger Button */
+.btn-danger {
+    background-color: var(--btn-danger-bg);
+    color: var(--btn-danger-text);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: var(--btn-danger-hover);
+}
+
+.btn-danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1024px) {
+    .settings-layout-grid {
+        grid-template-columns: 240px 1fr;
+    }
 }
 
 @media (max-width: 768px) {
+    .settings-dashboard-body {
+        padding: 20px;
+    }
+
     .settings-layout-grid {
         grid-template-columns: 1fr;
+    }
+
+    .settings-menu-list {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 8px;
+    }
+
+    .settings-menu-item {
+        white-space: nowrap;
+        padding: 10px 14px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-actions .btn-primary,
+    .form-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .theme-preview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .theme-preview-visual {
+        max-width: 100%;
+    }
+
+    .toast {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-dashboard-body {
+        padding: 16px;
+    }
+
+    .page-header h1 {
+        font-size: 20px;
+    }
+
+    .card-box {
+        padding: 16px;
+    }
+
+    .card-header h2 {
+        font-size: 16px;
     }
 }

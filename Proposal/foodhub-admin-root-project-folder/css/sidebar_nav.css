@@ -1,7 +1,12 @@
+/* =========================================================
+   FOODHUB ADMIN — SIDEBAR NAVIGATION
+   Uses centralized theme variables from themes.css
+   ========================================================= */
+
 /* Sidebar */
 .sidebar {
-    background-color: var(--navy-dark);
-    color: #ffffff;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -12,6 +17,7 @@
     top: 0;
     left: 0;
     z-index: 100;
+    border-right: 1px solid var(--sidebar-border);
 }
 
 .sidebar-brand {
@@ -22,11 +28,11 @@
     font-weight: 800;
     letter-spacing: -0.5px;
     padding: 0 12px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--sidebar-border);
 }
 
 .brand-logo-icon {
-    color: #38bdf8;
+    color: var(--primary);
 }
 
 .sidebar-nav {
@@ -42,7 +48,7 @@
     align-items: center;
     gap: 14px;
     padding: 12px 16px;
-    color: #94a3b8;
+    color: var(--sidebar-text-muted);
     text-decoration: none;
     font-size: 15px;
     font-weight: 500;
@@ -52,24 +58,25 @@
 
 .nav-item:hover,
 .nav-item.active {
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    background: var(--sidebar-hover-bg);
+    color: var(--sidebar-text);
 }
 
 .nav-item.active {
-    background: var(--primary);
-    color: #ffffff;
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-text);
     font-weight: 600;
 }
 
 .sidebar-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--sidebar-border);
     padding-top: 16px;
 }
 
 .admin-profile-link {
     transition: opacity 0.2s ease;
 }
+
 .admin-profile-link:hover {
     opacity: 0.8;
 }
@@ -85,15 +92,17 @@
 }
 
 .admin-profile-link:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--sidebar-hover-bg);
     opacity: 0.9;
 }
 
-/* Magkakaroon ng light background kapag nasa Settings page ang admin */
+/* Active profile link state */
 .admin-profile-link.active-profile {
-    background-color: rgba(2, 132, 199, 0.15);
-    border: 1px solid rgba(2, 132, 199, 0.3);
+    background-color: var(--sidebar-active-bg);
+    border: 1px solid var(--primary);
+    opacity: 1;
 }
+
 .admin-profile-mini {
     display: flex;
     align-items: center;
@@ -104,7 +113,7 @@
 .admin-avatar {
     width: 38px;
     height: 38px;
-    background: #1e293b;
+    background: var(--bg-tertiary);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -119,10 +128,79 @@
 .admin-name {
     font-size: 14px;
     font-weight: 600;
-    color: #ffffff !important;
+    color: var(--sidebar-text) !important;
 }
 
 .admin-role {
     font-size: 12px;
-    color: #94a3b8;
+    color: var(--sidebar-text-muted);
+}
+
+/* Sidebar Nav Dropdown Styles */
+.nav-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.nav-item-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Chevron arrow rotation */
+.chevron-icon {
+    transition: transform 0.3s ease;
+    color: var(--sidebar-text-muted);
+}
+
+.nav-group.open .chevron-icon {
+    transform: rotate(180deg);
+}
+
+/* Sub-menu container smooth toggle */
+.sub-nav-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 32px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, margin 0.3s ease;
+    gap: 2px;
+}
+
+.nav-group.open .sub-nav-container {
+    max-height: 150px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.sub-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sidebar-text-muted);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.sub-nav-item:hover {
+    color: var(--sidebar-text);
+    background: var(--sidebar-hover-bg);
+}
+
+.sub-nav-item.active-sub {
+    color: var(--primary);
+    background: var(--primary-light);
+    font-weight: 700;
 }
