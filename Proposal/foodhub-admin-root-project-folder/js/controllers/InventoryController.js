@@ -3,6 +3,7 @@ import { C45AlgorithmService } from '../services/C45AlgorithmService.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { formatQuantity, formatQuantityWithUnit } from '../utils/format.js';
+import { API_BASE_URL } from '../utils/config.js';
 
 class InventoryController {
 
@@ -511,7 +512,7 @@ class InventoryController {
             try {
                 const fullUrl = new URL(
                     url,
-                    'http://127.0.0.1:8000'
+                    API_BASE_URL.replace('/api', '')
                 );
 
                 const params = Object.fromEntries(
@@ -829,7 +830,7 @@ class InventoryController {
         this.showLoading(true);
 
         try {
-            const fullUrl = new URL(url, 'http://127.0.0.1:8000');
+            const fullUrl = new URL(url, API_BASE_URL.replace('/api', ''));
             const params = Object.fromEntries(fullUrl.searchParams.entries());
 
             const data = await this.service.getIngredients(params);

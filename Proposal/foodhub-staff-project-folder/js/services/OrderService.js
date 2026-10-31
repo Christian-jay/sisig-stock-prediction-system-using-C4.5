@@ -1,5 +1,5 @@
 import { MenuItem } from '../models/OrderModel.js';
-import { apiGet } from '../utils/api.js';
+import { apiGet, apiPost } from '../utils/api.js';
 
 /**
  * FOODHUB
@@ -102,21 +102,7 @@ export class OrderService {
      */
     async createOrder(orderData) {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/orders/orders/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.detail || 'Failed to create order');
-            }
-
-            return await response.json();
+            return await apiPost('/orders/orders/', orderData);
         } catch (error) {
             console.error('Failed to create order:', error);
             throw error;

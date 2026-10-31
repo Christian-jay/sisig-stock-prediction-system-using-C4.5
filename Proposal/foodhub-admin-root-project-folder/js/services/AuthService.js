@@ -1,4 +1,5 @@
 import { setTokens, clearTokens } from '../utils/api.js';
+import { AUTH_ENDPOINTS } from '../utils/config.js';
 
 /**
  * AuthService
@@ -29,7 +30,7 @@ export default class AuthService {
      */
     async authenticate(userModel) {
         const response = await fetch(
-            'http://127.0.0.1:8000/api/auth/token/',
+            AUTH_ENDPOINTS.login,
             {
                 method: 'POST',
                 headers: {
@@ -76,7 +77,7 @@ export default class AuthService {
      */
     async requestPasswordReset(email) {
         const response = await fetch(
-            'http://127.0.0.1:8000/api/accounts/password-reset/',
+            AUTH_ENDPOINTS.passwordReset,
             {
                 method: 'POST',
                 headers: {
@@ -102,9 +103,9 @@ export default class AuthService {
     /**
      * Reset password with token.
      */
-    async resetPassword(token, newPassword) {
+    async resetPassword(token, newPassword, uid) {
         const response = await fetch(
-            'http://127.0.0.1:8000/api/accounts/password-reset/confirm/',
+            AUTH_ENDPOINTS.passwordResetConfirm,
             {
                 method: 'POST',
                 headers: {
@@ -112,7 +113,9 @@ export default class AuthService {
                 },
                 body: JSON.stringify({
                     token,
-                    new_password: newPassword
+                    new_password: newPassword,
+                    new_password_confirm: newPassword,
+                    uid
                 })
             }
         );

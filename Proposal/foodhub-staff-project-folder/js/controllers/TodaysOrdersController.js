@@ -27,13 +27,13 @@ export class TodaysOrdersController {
     }
 
     initLayout() {
-       
+
         loadSidebarNav();
 
-     
+
         loadTopNavbar();
 
-      
+
         const dateInput = document.getElementById('orderDateFilter');
         if (dateInput) {
             // Set default to today (local date)
@@ -344,13 +344,13 @@ export class TodaysOrdersController {
                 itemsList.innerHTML = '<p class="text-muted" style="text-align: center; padding: 20px;">No items</p>';
             } else {
                 itemsList.innerHTML = items.map(item => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border: 1px solid var(--slate-200); border-radius: 8px;">
-                        <div style="flex: 1;">
-                            <div style="font-weight: 500;">${item.menu_item_name}</div>
-                            <div style="font-size: 13px; color: var(--slate-500);">Qty: ${item.quantity} × ${TodaysOrdersService.formatCurrency(item.unit_price)}</div>
-                            ${item.notes ? `<div style="font-size: 12px; color: var(--slate-500); font-style: italic;">${item.notes}</div>` : ''}
+                    <div class="order-item">
+                        <div class="order-item-info">
+                            <div class="order-item-name">${item.menu_item_name}</div>
+                            <div class="order-item-details">Qty: ${item.quantity} × ${TodaysOrdersService.formatCurrency(item.unit_price)}</div>
+                            ${item.notes ? `<div class="order-item-notes">${item.notes}</div>` : ''}
                         </div>
-                        <div style="font-weight: 600; color: var(--primary);">
+                        <div class="order-item-total">
                             ${TodaysOrdersService.formatCurrency(item.line_total)}
                         </div>
                     </div>
@@ -396,12 +396,12 @@ export class TodaysOrdersController {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    background: rgba(255, 255, 255, 0.9);
+                    background: var(--modal-backdrop);
                     z-index: 10;
                     border-radius: inherit;
                 `;
                 overlay.innerHTML = `
-                    <div class="spinner" style="width: 32px; height: 32px; border: 3px solid var(--slate-200); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div class="spinner" style="width: 32px; height: 32px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
                 `;
                 // Make body relative positioned for absolute overlay
                 body.style.position = 'relative';

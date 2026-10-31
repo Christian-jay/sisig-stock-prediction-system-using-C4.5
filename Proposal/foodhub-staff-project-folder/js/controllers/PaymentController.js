@@ -23,7 +23,12 @@ class PaymentController {
         try {
             const raw = sessionStorage.getItem('foodhub_cart_for_payment');
             if (raw) {
-                return JSON.parse(raw);
+                const parsed = JSON.parse(raw);
+                // Ensure items is always an array
+                return {
+                    orderType: parsed.orderType || 'Takeout',
+                    items: Array.isArray(parsed.items) ? parsed.items : []
+                };
             }
         } catch (e) {
             console.error('Failed to load cart data from sessionStorage', e);

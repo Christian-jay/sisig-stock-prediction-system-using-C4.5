@@ -2,12 +2,15 @@
  * Settings Controller - UI rendering, event handling, validation, loading states.
  */
 import { SettingsService } from '../services/SettingsService.js';
+import { ThemeManager } from '../utils/ThemeManager.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 
 export class SettingsController {
     constructor() {
         this.settingsService = new SettingsService();
+        // Initialize ThemeManager with SettingsService for backend sync capability
+        this.themeManager = new ThemeManager({ settingsService: this.settingsService });
         this.currentSettings = null;
         this.activeTab = 'general';
 
@@ -16,6 +19,9 @@ export class SettingsController {
         this._menuEventListenersBound = false;
         this._backupInProgress = false;
         this._saveInProgress = false;
+
+        // Track saved theme reference for Cancel functionality
+        this._savedThemeRef = 'light';
 
         // DOM element references
         this._elements = {
@@ -52,18 +58,20 @@ export class SettingsController {
     /**
      * Initialize theme from localStorage immediately (before API load)
      * to prevent flash of wrong theme.
+     * Uses ThemeManager for consistent no-flash initialization.
      */
-    initTheme() {
-        const localTheme = this.settingsService.getLocalThemeMode();
-        this.applyTheme(localTheme);
+    async initTheme() {
+        await this.themeManager.init();
+        // Store initial theme as saved reference for Cancel
+        this._savedThemeRef = this.themeManager.get();
     }
 
+    /**
+     * Apply theme via ThemeManager (single source of truth).
+     * @param {string} mode - 'light' or 'dark'
+     */
     applyTheme(mode) {
-        if (mode === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
-        }
+        this.themeManager.apply(mode);
     }
 
     /**
@@ -142,7 +150,10 @@ export class SettingsController {
 
         try {
             this.currentSettings = await this.settingsService.getSettings();
+            // Apply theme via ThemeManager (single source of truth)
             this.applyTheme(this.currentSettings.themeMode);
+            // Update saved theme reference after successful load from backend
+            this._savedThemeRef = this.currentSettings.themeMode || 'light';
             this._showContent();
             this.renderTabContent(this.activeTab);
         } catch (error) {
@@ -189,7 +200,7 @@ export class SettingsController {
      * Render General Settings tab.
      */
     _renderGeneralTab(s) {
-        const isDarkMode = s.themeMode === 'dark';
+        const currentTheme = s.themeMode || 'light';
 
         return `
             <div class="tab-pane">
@@ -211,20 +222,170 @@ export class SettingsController {
                 </div>
 
                 <div class="form-group">
-                    <div class="toggle-row">
-                        <div class="toggle-info">
-                            <strong>Dark Appearance Mode</strong>
-                            <p class="text-muted font-12">Switch between clean light interface and dark theme.</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleThemeMode" ${isDarkMode ? 'checked' : ''}>
-                            <span class="slider round"></span>
-                        </label>
+                    <label>Theme Appearance</label>
+                    <p class="form-hint">Choose your preferred interface theme. Changes apply immediately for preview.</p>
+
+                    <div class="theme-preview-grid" id="themePreviewGrid" data-current-theme="${currentTheme}">
+                        <!-- Light Classic Card -->
+                        <article class="theme-preview-card ${currentTheme === 'light' ? 'selected' : ''}"
+                            data-theme="light" role="button" tabindex="0" aria-pressed="${currentTheme === 'light'}">
+                            <div class="theme-preview-visual">
+                                <div class="theme-mini-pos theme-mini-pos--light">
+                                    <!-- Sidebar -->
+                                    <aside class="mini-sidebar">
+                                        <nav class="mini-nav">
+                                            <a class="mini-nav-item active" href="#"></a>
+                                            <a class="mini-nav-item" href="#"></a>
+                                            <a class="mini-nav-item" href="#"></a>
+                                            <a class="mini-nav-item" href="#"></a>
+                                        </nav>
+                                    </aside>
+                                    <!-- Main Content -->
+                                    <main class="mini-main">
+                                        <!-- Topbar -->
+                                        <header class="mini-topbar">
+                                            <div class="mini-search"></div>
+                                            <div class="mini-user"></div>
+                                        </header>
+                                        <!-- POS Layout: 2-column cards -->
+                                        <div class="mini-pos-grid">
+                                            <!-- Left: Current Order Card -->
+                                            <section class="mini-card mini-order-card">
+                                                <header class="mini-card-header">
+                                                    <span class="mini-card-title">Current Order</span>
+                                                </header>
+                                                <div class="mini-cart-area">
+                                                    <div class="mini-cart-item"></div>
+                                                    <div class="mini-cart-item"></div>
+                                                    <div class="mini-cart-item"></div>
+                                                </div>
+                                                <footer class="mini-cart-footer">
+                                                    <div class="mini-cart-summary">
+                                                        <span class="mini-summary-label">Total</span>
+                                                        <span class="mini-summary-value">₱0.00</span>
+                                                    </div>
+                                                   
+                                                </footer>
+                                            </section>
+                                            <!-- Right: Menu Catalog Card -->
+                                            <section class="mini-card mini-menu-card">
+                                                <header class="mini-card-header">
+                                                    <span class="mini-card-title">Menu</span>
+                                                    <div class="mini-catalog-actions"></div>
+                                                </header>
+                                                <div class="mini-category-tabs">
+                                                    <span class="mini-tab active"></span>
+                                                    <span class="mini-tab"></span>
+                                                    <span class="mini-tab"></span>
+                                                </div>
+                                                <div class="mini-menu-grid">
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </main>
+                                </div>
+                            </div>
+                            <div class="theme-preview-info">
+                                <h4 class="theme-preview-name">Light Classic</h4>
+                                <p class="theme-preview-desc">Light gray workspace, dark navy sidebar, FOODHUB blue accents</p>
+                            </div>
+                            <div class="theme-preview-check" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </article>
+
+                        <!-- Dark Midnight Card -->
+                        <article class="theme-preview-card ${currentTheme === 'dark' ? 'selected' : ''}"
+                            data-theme="dark" role="button" tabindex="0" aria-pressed="${currentTheme === 'dark'}">
+                            <div class="theme-preview-visual">
+                                <div class="theme-mini-pos theme-mini-pos--dark">
+                                    <!-- Sidebar -->
+                                    <aside class="mini-sidebar">
+                                        <nav class="mini-nav">
+                                            <a class="mini-nav-item active" href="#"></a>
+                                            <a class="mini-nav-item" href="#"></a>
+                                            <a class="mini-nav-item" href="#"></a>
+                                            <a class="mini-nav-item" href="#"></a>
+                                        </nav>
+                                    </aside>
+                                    <!-- Main Content -->
+                                    <main class="mini-main">
+                                        <!-- Topbar -->
+                                        <header class="mini-topbar">
+                                            <div class="mini-search"></div>
+                                            <div class="mini-user"></div>
+                                        </header>
+                                        <!-- POS Layout: 2-column cards -->
+                                        <div class="mini-pos-grid">
+                                            <!-- Left: Current Order Card -->
+                                            <section class="mini-card mini-order-card">
+                                                <header class="mini-card-header">
+                                                    <span class="mini-card-title">Current Order</span>
+                                                </header>
+                                                <div class="mini-cart-area">
+                                                    <div class="mini-cart-item"></div>
+                                                    <div class="mini-cart-item"></div>
+                                                    <div class="mini-cart-item"></div>
+                                                </div>
+                                                <footer class="mini-cart-footer">
+                                                    <div class="mini-cart-summary">
+                                                        <span class="mini-summary-label">Total</span>
+                                                        <span class="mini-summary-value">₱0.00</span>
+                                                    </div>
+                                                  
+                                                </footer>
+                                            </section>
+                                            <!-- Right: Menu Catalog Card -->
+                                            <section class="mini-card mini-menu-card">
+                                                <header class="mini-card-header">
+                                                    <span class="mini-card-title">Menu</span>
+                                                    <div class="mini-catalog-actions"></div>
+                                                </header>
+                                                <div class="mini-category-tabs">
+                                                    <span class="mini-tab active"></span>
+                                                    <span class="mini-tab"></span>
+                                                    <span class="mini-tab"></span>
+                                                </div>
+                                                <div class="mini-menu-grid">
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                    <div class="mini-menu-item"></div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </main>
+                                </div>
+                            </div>
+                            <div class="theme-preview-info">
+                                <h4 class="theme-preview-name">Dark Midnight</h4>
+                                <p class="theme-preview-desc">Warm charcoal workspace, sisig-inspired palette, golden amber accents</p>
+                            </div>
+                            <div class="theme-preview-check" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </article>
                     </div>
+
+                    <!-- Hidden input for form submission (Phase 5) -->
+                    <input type="hidden" id="themeModeInput" name="theme_mode" value="${currentTheme}">
                 </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn-primary" id="saveGeneralBtn">Save Changes</button>
+                    <button type="button" class="btn-secondary" id="cancelGeneralBtn" style="display: none;">Cancel</button>
                 </div>
             </div>
         `;
@@ -355,6 +516,31 @@ export class SettingsController {
             }
         }
 
+        // General tab: Theme preview cards + Cancel button
+        if (tabName === 'general') {
+            // Theme preview cards
+            const themeCards = document.querySelectorAll('.theme-preview-card');
+            themeCards.forEach(card => {
+                if (!card.dataset.bound) {
+                    card.dataset.bound = 'true';
+                    card.addEventListener('click', (e) => this._handleThemeCardClick(card));
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this._handleThemeCardClick(card);
+                        }
+                    });
+                }
+            });
+
+            // Cancel button
+            const cancelBtn = document.getElementById('cancelGeneralBtn');
+            if (cancelBtn && !cancelBtn.dataset.bound) {
+                cancelBtn.dataset.bound = 'true';
+                cancelBtn.addEventListener('click', () => this._handleCancelGeneral());
+            }
+        }
+
         // Backup Now button
         if (tabName === 'backup') {
             const backupBtn = document.getElementById('backupNowBtn');
@@ -368,28 +554,87 @@ export class SettingsController {
                 logoutBtn.dataset.bound = 'true';
                 logoutBtn.addEventListener('click', () => this._handleLogout());
             }
-
-            // Theme toggle (in general tab but need to handle here too)
-            const themeToggle = document.getElementById('toggleThemeMode');
-            if (themeToggle && !themeToggle.dataset.bound) {
-                themeToggle.dataset.bound = 'true';
-                themeToggle.addEventListener('change', (e) => this._handleThemeChange(e.target.checked));
-            }
         }
     }
 
     /**
-     * Handle theme change immediately (before save).
+     * Handle theme preview card click.
+     * Updates visual selection, applies live preview via ThemeManager, shows Cancel button.
+     * Does NOT persist to backend on selection.
      */
-    _handleThemeChange(isDark) {
-        const themeMode = isDark ? 'dark' : 'light';
-        this.applyTheme(themeMode);
-        this.settingsService.saveLocalThemeMode(themeMode);
+    _handleThemeCardClick(card) {
+        const theme = card.getAttribute('data-theme');
+        if (!theme || (theme !== 'light' && theme !== 'dark')) return;
+
+        // Update visual selection
+        document.querySelectorAll('.theme-preview-card').forEach(c => {
+            c.classList.remove('selected');
+            c.setAttribute('aria-pressed', 'false');
+        });
+        card.classList.add('selected');
+        card.setAttribute('aria-pressed', 'true');
+
+        // Update hidden input
+        const hiddenInput = document.getElementById('themeModeInput');
+        if (hiddenInput) hiddenInput.value = theme;
+
+        // Live preview via ThemeManager (applies to DOM, updates localStorage)
+        this.themeManager.apply(theme);
 
         // Update current settings optimistically
         if (this.currentSettings) {
-            this.currentSettings.themeMode = themeMode;
+            this.currentSettings.themeMode = theme;
         }
+
+        // Show cancel button
+        const cancelBtn = document.getElementById('cancelGeneralBtn');
+        if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+
+        // Update grid's current theme attribute
+        const grid = document.getElementById('themePreviewGrid');
+        if (grid) grid.setAttribute('data-current-theme', theme);
+    }
+
+    /**
+     * Handle Cancel in General tab.
+     * Reverts to last successfully saved theme (from backend).
+     * Does NOT send API request.
+     */
+    _handleCancelGeneral() {
+        // Use the saved theme reference captured after successful load/save
+        const savedTheme = this._savedThemeRef || 'light';
+
+        // Update visual selection
+        document.querySelectorAll('.theme-preview-card').forEach(c => {
+            c.classList.remove('selected');
+            c.setAttribute('aria-pressed', 'false');
+        });
+        const activeCard = document.querySelector(`.theme-preview-card[data-theme="${savedTheme}"]`);
+        if (activeCard) {
+            activeCard.classList.add('selected');
+            activeCard.setAttribute('aria-pressed', 'true');
+        }
+
+        // Update hidden input
+        const hiddenInput = document.getElementById('themeModeInput');
+        if (hiddenInput) hiddenInput.value = savedTheme;
+
+        // Revert live preview via ThemeManager
+        this.themeManager.apply(savedTheme);
+
+        if (this.currentSettings) {
+            this.currentSettings.themeMode = savedTheme;
+        }
+
+        // Hide cancel button
+        const cancelBtn = document.getElementById('cancelGeneralBtn');
+        if (cancelBtn) cancelBtn.style.display = 'none';
+
+        // Update grid
+        const grid = document.getElementById('themePreviewGrid');
+        if (grid) grid.setAttribute('data-current-theme', savedTheme);
+
+        this.showToast('Theme selection cancelled', 'info');
     }
 
     /**
@@ -406,7 +651,11 @@ export class SettingsController {
 
         if (tabName === 'general') {
             updates.language = document.getElementById('sysLanguage').value;
-            // themeMode already updated via _handleThemeChange
+            // Read theme from hidden input (set by theme preview cards)
+            const themeInput = document.getElementById('themeModeInput');
+            if (themeInput) {
+                updates.themeMode = themeInput.value;
+            }
         } else if (tabName === 'notification') {
             updates.emailAlertsForNewOrders = document.getElementById('notifEmailOrders').checked;
             updates.inAppSoundAlerts = document.getElementById('notifSoundAlerts').checked;
@@ -433,6 +682,20 @@ export class SettingsController {
         try {
             const updatedSettings = await this.settingsService.updateSettings(tempModel);
             this.currentSettings = updatedSettings;
+
+            // Update saved theme reference for Cancel functionality (general tab)
+            if (tabName === 'general' && updatedSettings.themeMode) {
+                this._savedThemeRef = updatedSettings.themeMode;
+                // Persist theme to localStorage via ThemeManager for immediate page-load consistency
+                this.themeManager.save(updatedSettings.themeMode);
+            }
+
+            // Hide cancel button after successful save (general tab)
+            if (tabName === 'general') {
+                const cancelBtn = document.getElementById('cancelGeneralBtn');
+                if (cancelBtn) cancelBtn.style.display = 'none';
+            }
+
             this.showToast('Settings saved successfully!', 'success');
         } catch (error) {
             console.error('[SettingsController] Save failed:', error);

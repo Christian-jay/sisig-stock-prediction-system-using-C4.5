@@ -5,7 +5,9 @@
  * automatic token refresh, and error handling.
  */
 
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE_URL } from '../utils/config.js';
+
+const API_BASE = API_BASE_URL;
 const REFRESH_ENDPOINT = '/auth/token/refresh/';
 
 /**

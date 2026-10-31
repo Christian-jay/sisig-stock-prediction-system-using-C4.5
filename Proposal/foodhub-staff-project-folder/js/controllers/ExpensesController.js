@@ -1,6 +1,7 @@
 import { ExpensesService } from '../services/ExpensesService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { initDatePickers } from '../components/DatePicker.js';
 
 /**
  * Category label to value mapping for API calls
@@ -332,7 +333,7 @@ export class ExpensesController {
                     </div>
                     <div class="form-group">
                         <label for="expenseDate">Date <span class="required">*</span></label>
-                        <input type="date" id="expenseDate" name="date" required value="${new Date().toISOString().split('T')[0]}">
+                        <input type="text" id="expenseDate" name="date" required value="${new Date().toISOString().split('T')[0]}" data-datepicker placeholder="Select date">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-secondary" id="cancelAddExpense">Cancel</button>
@@ -343,6 +344,9 @@ export class ExpensesController {
         `;
 
         document.body.appendChild(modal);
+
+        // Initialize custom date picker
+        initDatePickers(modal.querySelectorAll('[data-datepicker]'));
 
         // Focus first input
         setTimeout(() => modal.querySelector('#expenseDescription').focus(), 100);
@@ -500,6 +504,9 @@ export class ExpensesController {
 
         document.body.appendChild(modal);
 
+        // Initialize custom date picker
+        initDatePickers(modal.querySelectorAll('[data-datepicker]'));
+
         // Event listeners
         modal.querySelector('.modal-close').addEventListener('click', () => this.closeAllModals());
 
@@ -570,7 +577,7 @@ export class ExpensesController {
                 </div>
                 <div class="form-group">
                     <label for="editDate">Date <span class="required">*</span></label>
-                    <input type="date" id="editDate" name="date" required value="${formatDateInput(expense.timestamp)}">
+                    <input type="text" id="editDate" name="date" required value="${formatDateInput(expense.timestamp)}" data-datepicker placeholder="Select date">
                 </div>
             </form>
         `;
