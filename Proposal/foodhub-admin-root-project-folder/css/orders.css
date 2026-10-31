@@ -559,7 +559,7 @@ body {
 }
 
 .dot-indicator.blue {
-    border-color: var(--primary);
+    border-color: var(--processing);
 }
 
 .dot-indicator.yellow {
@@ -665,6 +665,18 @@ body {
 
 .action-btn.secondary:hover {
     background: var(--border-color);
+}
+
+.action-btn-danger {
+    background: var(--bg-main);
+    color: var(--danger);
+    border: 1px solid var(--danger-border);
+}
+
+.action-btn-danger:hover {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    border-color: var(--danger-border);
 }
 
 /* Orders Table Pagination */
@@ -975,7 +987,274 @@ body {
     margin-top: 16px;
 }
 
-/* Responsive modal */
+/* =========================================================
+   DARK THEME OVERRIDES
+   ========================================================= */
+
+[data-theme="dark"] .card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .card-header h4 {
+    color: var(--slate-dark);
+}
+
+[data-theme="dark"] .page-header-row h2 {
+    color: var(--slate-dark);
+}
+
+[data-theme="dark"] .page-header-row p {
+    color: var(--slate-muted);
+}
+
+[data-theme="dark"] .orders-main-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .orders-header-flex h3 {
+    color: var(--slate-dark);
+}
+
+[data-theme="dark"] .orders-tabs .tab-item {
+    color: var(--slate-muted);
+}
+
+[data-theme="dark"] .orders-tabs .tab-item.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+[data-theme="dark"] .search-panel-card,
+[data-theme="dark"] .order-stats-panel,
+[data-theme="dark"] .weekly-summary-card {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .search-bar-mini {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--slate-placeholder);
+}
+
+[data-theme="dark"] .search-bar-mini input {
+    color: var(--input-text);
+}
+
+[data-theme="dark"] .stat-mini-box {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .mini-icon-circle {
+    background: var(--primary-light);
+}
+
+[data-theme="dark"] .mini-val {
+    color: var(--slate-dark);
+}
+
+[data-theme="dark"] .mini-label {
+    color: var(--slate-muted);
+}
+
+[data-theme="dark"] .stats-breakdown-list {
+    color: var(--slate-text);
+}
+
+[data-theme="dark"] .dot-indicator.green {
+    border-color: var(--success-text);
+}
+
+[data-theme="dark"] .dot-indicator.blue {
+    border-color: var(--processing);
+}
+
+[data-theme="dark"] .dot-indicator.yellow {
+    border-color: var(--warning-text);
+}
+
+[data-theme="dark"] .weekly-text {
+    color: var(--slate-text);
+}
+
+[data-theme="dark"] .weekly-val {
+    color: var(--primary);
+}
+
+[data-theme="dark"] .data-table th {
+    color: var(--table-header-text);
+    background: var(--table-header-bg);
+    border-color: var(--table-border);
+}
+
+[data-theme="dark"] .data-table td {
+    color: var(--slate-dark);
+    border-color: var(--table-border);
+}
+
+[data-theme="dark"] .btn-sm,
+[data-theme="dark"] .btn-sm-view {
+    background: var(--btn-secondary-bg);
+    border-color: var(--btn-secondary-border);
+    color: var(--btn-secondary-text);
+}
+
+[data-theme="dark"] .btn-sm:hover,
+[data-theme="dark"] .btn-sm-view:hover {
+    background: var(--btn-secondary-hover);
+}
+
+[data-theme="dark"] .pagination-footer {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] #ordersPageInfo {
+    color: var(--slate-muted);
+}
+
+[data-theme="dark"] .action-btn.primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    box-shadow: var(--shadow-hover);
+}
+
+[data-theme="dark"] .action-btn.primary:hover {
+    background: var(--btn-primary-hover);
+    box-shadow: var(--shadow-dropdown);
+}
+
+[data-theme="dark"] .action-btn.secondary {
+    background: var(--btn-secondary-bg);
+    color: var(--slate-text);
+    border-color: var(--btn-secondary-border);
+}
+
+[data-theme="dark"] .action-btn.secondary:hover {
+    background: var(--btn-secondary-hover);
+    border-color: var(--btn-secondary-border);
+    color: var(--slate-text);
+}
+
+[data-theme="dark"] .action-btn-danger {
+    background: var(--btn-secondary-bg);
+    color: var(--danger);
+    border: 1px solid var(--danger-border);
+}
+
+[data-theme="dark"] .action-btn-danger:hover {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    border-color: var(--danger-border);
+}
+
+[data-theme="dark"] .modal-overlay {
+    background: var(--modal-backdrop);
+}
+
+[data-theme="dark"] .modal-container {
+    background: var(--modal-bg);
+    border-color: var(--modal-border);
+    box-shadow: var(--shadow-modal);
+}
+
+[data-theme="dark"] .modal-header {
+    border-color: var(--modal-border);
+}
+
+[data-theme="dark"] .modal-header h3 {
+    color: var(--slate-dark);
+}
+
+[data-theme="dark"] .modal-close {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+}
+
+[data-theme="dark"] .modal-close:hover {
+    background: var(--btn-secondary-hover);
+    color: var(--btn-secondary-text);
+}
+
+[data-theme="dark"] .modal-footer {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .form-group label {
+    color: var(--slate-text);
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--input-text);
+}
+
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group select:focus,
+[data-theme="dark"] .form-group textarea:focus {
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px var(--primary-focus);
+}
+
+[data-theme="dark"] .form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239A8672' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] .order-item-row {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+}
+
+[data-theme="dark"] .btn-remove-item {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+}
+
+[data-theme="dark"] .btn-remove-item:hover {
+    background: var(--btn-danger-bg);
+    color: var(--btn-danger-text);
+}
+
+[data-theme="dark"] #addItemBtn {
+    border-color: var(--border-color);
+    color: var(--slate-muted);
+}
+
+[data-theme="dark"] #addItemBtn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+[data-theme="dark"] .order-detail-header {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .detail-label {
+    color: var(--slate-muted);
+}
+
+[data-theme="dark"] .detail-value {
+    color: var(--slate-dark);
+}
+
+[data-theme="dark"] .order-detail-footer {
+    border-color: var(--border-color);
+}
+
+/* =========================================================
+   RESPONSIVE MODAL
+   ========================================================= */
 @media (max-width: 640px) {
     .modal-container {
         width: 95%;
