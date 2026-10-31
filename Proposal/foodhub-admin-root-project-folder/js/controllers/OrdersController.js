@@ -85,7 +85,7 @@ class OrdersController {
             String(order.status).slice(1)}
                     </span>
                 </td>
-                <td style="color: #64748b; font-size: 13px;">
+                <td style="color: var(--slate-muted); font-size: 13px;">
                     ${order.date}
                 </td>
                 <td>
@@ -98,17 +98,15 @@ class OrdersController {
                     </button>
                     <button
                         type="button"
-                        class="btn-sm-edit"
+                        class="btn-sm btn-sm-edit"
                         data-id="${order.id}"
-                        style="margin-left: 4px; padding: 4px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--primary);"
                     >
                         Edit
                     </button>
                     <button
                         type="button"
-                        class="btn-sm-delete"
+                        class="btn-sm btn-sm-delete"
                         data-id="${order.id}"
-                        style="margin-left: 4px; padding: 4px 12px; border: 1px solid var(--border-color); border-radius: 6px; background: #ffffff; font-size: 12px; font-weight: 600; cursor: pointer; color: #b91c1c;"
                     >
                         Delete
                     </button>
@@ -564,14 +562,14 @@ class OrdersController {
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="order-detail-actions" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; justify-content: flex-end;">
-                        <button type="button" class="action-btn secondary" data-action="edit" style="padding: 8px 16px; font-size: 13px;">
+                    <div class="order-detail-actions">
+                        <button type="button" class="action-btn secondary" data-action="edit">
                             Edit
                         </button>
-                        <button type="button" class="action-btn secondary" data-action="update-status" style="padding: 8px 16px; font-size: 13px;">
+                        <button type="button" class="action-btn secondary" data-action="update-status">
                             Update Status
                         </button>
-                        <button type="button" class="action-btn secondary" data-action="delete" style="padding: 8px 16px; font-size: 13px; color: #b91c1c; border-color: #fecaca;">
+                        <button type="button" class="action-btn secondary action-btn-danger" data-action="delete">
                             Delete
                         </button>
                     </div>
@@ -735,7 +733,7 @@ class OrdersController {
     confirmDeleteOrder(orderId) {
         const content = `
             <div style="text-align: center; padding: 20px;">
-                <svg xmlns="http://w3.org" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://w3.org" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="12" y1="8" x2="12" y2="12"/>
                     <line x1="12" y1="16" x2="12.01" y2="16"/>

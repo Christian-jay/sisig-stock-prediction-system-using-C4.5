@@ -5,9 +5,7 @@ import { loadSidebarNav } from '../components/SidebarNav.js';
 export class AdminProfileController {
 
     constructor() {
-
         this.adminProfileService = new AdminProfileService();
-
         this.initLayout();
         this.loadProfileView();
     }
@@ -17,37 +15,38 @@ export class AdminProfileController {
        ===================================================== */
 
     initLayout() {
-
         loadSidebarNav();
         loadTopNavbar();
-
     }
 
     /* =====================================================
        LOAD ADMIN PROFILE
        ===================================================== */
 
-    loadProfileView() {
+    async loadProfileView() {
+        try {
+            const data = await this.adminProfileService.getAdminProfileData();
+            const profile = data.profile;
 
-        const data = this.adminProfileService.getAdminProfileData();
+            // Profile card
+            document.getElementById('profileHeaderName').textContent =
+                profile.fullName;
 
-        const profile = data.profile;
+            document.getElementById('displayRole').textContent =
+                profile.role;
 
-        // Profile card
-        document.getElementById('profileHeaderName').textContent =
-            profile.fullName;
+            // Form fields
+            document.getElementById('inputFullName').value =
+                profile.fullName;
 
-        document.getElementById('displayRole').textContent =
-            profile.role;
+            document.getElementById('inputEmail').value =
+                profile.email;
 
-        // Form fields
-        document.getElementById('inputFullName').value =
-            profile.fullName;
-
-        document.getElementById('inputEmail').value =
-            profile.email;
-
-        this.attachEventListeners();
+            this.attachEventListeners();
+        } catch (error) {
+            console.error('[AdminProfileController] Failed to load profile:', error);
+            alert('Failed to load profile: ' + error.message);
+        }
     }
 
     /* =====================================================
@@ -65,29 +64,42 @@ export class AdminProfileController {
 
         if (profileForm) {
 
-            profileForm.addEventListener('submit', (event) => {
+            profileForm.addEventListener('submit', async (event) => {
 
                 event.preventDefault();
 
-                const updatedProfile = {
+                const submitBtn = profileForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
 
-                    fullName:
-                        document.getElementById('inputFullName').value.trim(),
+                try {
+                    const updatedProfile = {
 
-                    email:
-                        document.getElementById('inputEmail').value.trim()
+                        fullName:
+                            document.getElementById('inputFullName').value.trim(),
 
-                };
+                        email:
+                            document.getElementById('inputEmail').value.trim()
 
-                const result =
-                    this.adminProfileService.updateProfile(
-                        updatedProfile
-                    );
+                    };
 
-                document.getElementById('profileHeaderName').textContent =
-                    result.fullName;
+                    const result =
+                        await this.adminProfileService.updateProfile(
+                            updatedProfile
+                        );
 
-                alert('Administrator profile updated successfully!');
+                    document.getElementById('profileHeaderName').textContent =
+                        result.fullName;
+
+                    alert('Administrator profile updated successfully!');
+
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
 
             });
 
@@ -103,7 +115,7 @@ export class AdminProfileController {
 
         if (securityForm) {
 
-            securityForm.addEventListener('submit', (event) => {
+            securityForm.addEventListener('submit', async (event) => {
 
                 event.preventDefault();
 
@@ -132,17 +144,27 @@ export class AdminProfileController {
                     return;
                 }
 
+                const submitBtn = securityForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Changing...';
 
-                const result =
-                    this.adminProfileService.updatePassword(
-                        currentPassword,
-                        newPassword
-                    );
+                try {
+                    const result =
+                        await this.adminProfileService.updatePassword(
+                            currentPassword,
+                            newPassword
+                        );
 
+                    alert(result.message);
+                    securityForm.reset();
 
-                alert(result.message);
-
-                securityForm.reset();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
 
             });
 

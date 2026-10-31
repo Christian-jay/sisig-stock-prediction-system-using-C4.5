@@ -87,15 +87,15 @@ export function loadSidebarNav(customTitle = '') {
                     <div class="admin-profile-mini">
                         <div class="admin-avatar">
                             <!-- SVG User Profile Icon -->
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sidebar-text-muted)" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </div>
                         <div class="admin-info">
-                            <span class="admin-name" style="color: #ffffff;">Admin</span>
-                            <span class="admin-role" style="color: #94a3b8;">Administrator</span>
+                            <span class="admin-name"  style="color: #ffffff;">Admin</span>
+                            <span class="admin-role">Administrator</span>
                         </div>
                     </div>
                 </a>
