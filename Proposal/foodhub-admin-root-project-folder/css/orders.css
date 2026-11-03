@@ -359,21 +359,71 @@ body {
     color: var(--warning-text);
 }
 
+/* =========================================================
+   TABLE ACTION BUTTONS
+   Consistent with .action-btn design system - muted tones
+   ========================================================= */
 .btn-sm,
-.btn-sm-view {
-    padding: 4px 12px;
+.btn-sm-view,
+.btn-sm-edit,
+.btn-sm-delete {
+    padding: 6px 12px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    background: var(--card-bg);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    background: var(--card-bg);
     color: var(--slate-text);
 }
 
 .btn-sm:hover,
-.btn-sm-view:hover {
+.btn-sm-view:hover,
+.btn-sm-edit:hover,
+.btn-sm-delete:hover {
     background: var(--bg-main);
+    border-color: var(--border-dark);
+}
+
+/* View button - muted info accent */
+.btn-sm-view {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+}
+
+.btn-sm-view:hover {
+    background: var(--info-bg);
+    color: var(--info);
+    border-color: var(--info);
+}
+
+/* Edit button - muted primary accent */
+.btn-sm-edit {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-sm-edit:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Delete button - muted danger style */
+.btn-sm-delete {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-text);
+}
+
+.btn-sm-delete:hover {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger);
 }
 
 /* --- ORDERS PAGE SPECIFIC LAYOUT STYLES --- */
@@ -1099,15 +1149,60 @@ body {
 }
 
 [data-theme="dark"] .btn-sm,
-[data-theme="dark"] .btn-sm-view {
+[data-theme="dark"] .btn-sm-view,
+[data-theme="dark"] .btn-sm-edit,
+[data-theme="dark"] .btn-sm-delete {
     background: var(--btn-secondary-bg);
     border-color: var(--btn-secondary-border);
     color: var(--btn-secondary-text);
 }
 
 [data-theme="dark"] .btn-sm:hover,
-[data-theme="dark"] .btn-sm-view:hover {
+[data-theme="dark"] .btn-sm-view:hover,
+[data-theme="dark"] .btn-sm-edit:hover,
+[data-theme="dark"] .btn-sm-delete:hover {
     background: var(--btn-secondary-hover);
+    border-color: var(--btn-secondary-border);
+    color: var(--btn-secondary-text);
+}
+
+/* View button - dark theme (muted info accent) */
+[data-theme="dark"] .btn-sm-view {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+}
+
+[data-theme="dark"] .btn-sm-view:hover {
+    background: var(--info-bg);
+    color: var(--info);
+    border-color: var(--info);
+}
+
+/* Edit button - dark theme (muted primary accent) */
+[data-theme="dark"] .btn-sm-edit {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+[data-theme="dark"] .btn-sm-edit:hover {
+    background: var(--primary-light);
+    color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+/* Delete button - dark theme (muted danger style) */
+[data-theme="dark"] .btn-sm-delete {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-text);
+}
+
+[data-theme="dark"] .btn-sm-delete:hover {
+    background: var(--danger-bg);
+    color: var(--danger-hover);
+    border-color: var(--danger-hover);
 }
 
 [data-theme="dark"] .pagination-footer {
