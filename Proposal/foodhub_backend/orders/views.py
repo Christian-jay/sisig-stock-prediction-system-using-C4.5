@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum, Count, F, DecimalField, ExpressionWrapper
 from django.db.models.functions import TruncDate, Coalesce
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from decimal import Decimal
 from django.db.models import Q
 from django.db import transaction
@@ -296,17 +296,64 @@ class OrderViewSet(viewsets.ModelViewSet):
         })
 
     @action(detail=False, methods=['get'])
-    def sales_overview(self, request):
-        """Get sales overview for charts (last N days)."""
-        try:
-            days = int(request.query_params.get('days', 7))
-            if days not in [7, 30, 90]:
-                days = 7
-        except (TypeError, ValueError):
-            days = 7
+    def overall_stats(self, request):
+        """Get all-time order statistics by status."""
+        # All-time counts by status
+        all_stats = Order.objects.aggregate(
+            total_orders=Count('id'),
+            total_revenue=Coalesce(Sum('total_amount', output_field=DecimalField()), Decimal('0')),
+            completed_orders=Count('id', filter=Q(status=OrderStatus.COMPLETED)),
+            processing_orders=Count('id', filter=Q(status=OrderStatus.PROCESSING)),
+            pending_orders=Count('id', filter=Q(status=OrderStatus.PENDING)),
+            cancelled_orders=Count('id', filter=Q(status=OrderStatus.CANCELLED)),
+        )
 
-        end_date = timezone.now().date()
-        start_date = end_date - timedelta(days=days - 1)
+        total_revenue = all_stats['total_revenue'] or Decimal('0')
+        total_orders = all_stats['total_orders'] or 0
+
+        # New this week (last 7 days)
+        week_ago = timezone.now().date() - timedelta(days=7)
+        new_this_week = Order.objects.filter(created_at__date__gte=week_ago).count()
+
+        return Response({
+            'total_orders': total_orders,
+            'total_revenue': float(total_revenue),
+            'completed': all_stats['completed_orders'] or 0,
+            'processing': all_stats['processing_orders'] or 0,
+            'pending': all_stats['pending_orders'] or 0,
+            'cancelled': all_stats['cancelled_orders'] or 0,
+            'new_this_week': new_this_week,
+            'avg_order_value': float(total_revenue / total_orders) if total_orders > 0 else 0,
+        })
+
+    @action(detail=False, methods=['get'])
+    def sales_overview(self, request):
+        """Get sales overview for charts (last N days or custom date range)."""
+        # Support custom date range
+        start_date_param = request.query_params.get('start_date')
+        end_date_param = request.query_params.get('end_date')
+
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_param, '%Y-%m-%d').date()
+                # Validate max 7 days
+                if (end_date - start_date).days > 6:
+                    return Response({'error': 'Date range cannot exceed 7 days'}, status=400)
+                days = (end_date - start_date).days + 1
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD'}, status=400)
+        else:
+            # Default to last 7 days
+            try:
+                days = int(request.query_params.get('days', 7))
+                if days not in [7, 30, 90]:
+                    days = 7
+            except (TypeError, ValueError):
+                days = 7
+
+            end_date = timezone.now().date()
+            start_date = end_date - timedelta(days=days - 1)
 
         # Get daily sales
         daily_sales = Order.objects.filter(
@@ -322,13 +369,16 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         # Fill missing dates with 0
         sales_dict = {item['date']: float(item['total']) for item in daily_sales}
+        count_dict = {item['date']: item['count'] for item in daily_sales}
         labels = []
         values = []
+        counts = []
 
         for i in range(days):
             current_date = start_date + timedelta(days=i)
             labels.append(current_date.strftime('%b %d'))
             values.append(sales_dict.get(current_date, 0.0))
+            counts.append(count_dict.get(current_date, 0))
 
         max_value = max(values) if values and max(values) > 0 else 10000
 
@@ -338,6 +388,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             'end_date': end_date.isoformat(),
             'labels': labels,
             'values': values,
+            'counts': counts,
             'max_value': float(max_value),
         })
 
@@ -353,7 +404,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         top_items = OrderItem.objects.filter(
             order__status=OrderStatus.COMPLETED
         ).values(
-            'menu_item__name'
+            'menu_item__id',
+            'menu_item__name',
+            'menu_item__image'
         ).annotate(
             total_sold=Sum('quantity'),
             total_revenue=Sum('line_total')
@@ -368,7 +421,9 @@ class OrderViewSet(viewsets.ModelViewSet):
             percentage = round((sold / total_sold_all * 100), 1) if total_sold_all > 0 else 0
             result.append({
                 'rank': f'{i+1}.',
+                'id': item['menu_item__id'],
                 'name': item['menu_item__name'],
+                'image': item['menu_item__image'],
                 'percentage': f'{percentage}%',
                 'total_sold': sold,
                 'revenue': f'₱{float(item["total_revenue"] or 0):,.2f}',
