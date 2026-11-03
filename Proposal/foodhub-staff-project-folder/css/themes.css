@@ -83,6 +83,12 @@ body[data-theme="light"] {
     --info-border: #7dd3fc;
     --info-hover: #0369a1;
 
+    --purple: #9333ea;
+    --purple-bg: #f3e8ff;
+    --purple-text: #9333ea;
+    --purple-border: #d8b4fe;
+    --purple-hover: #7c3aed;
+
     /* ---- Processing / In-progress (Original) ---- */
     --processing: #2563eb;
     --processing-bg: #dbeafe;
@@ -241,6 +247,12 @@ body[data-theme="dark"] {
     --info-text: #BAE6FD;
     --info-border: #0EA5E9;
     --info-hover: #0EA5E9;
+
+    --purple: #A855F7;
+    --purple-bg: #3B1E5C;
+    --purple-text: #D8B4FE;
+    --purple-border: #7E22CE;
+    --purple-hover: #9333EA;
 
     /* ---- Processing / In-progress (Warm amber) ---- */
     --processing: #F59E0B;
