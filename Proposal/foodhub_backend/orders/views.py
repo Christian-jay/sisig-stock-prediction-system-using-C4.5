@@ -11,6 +11,7 @@ from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal
 from django.db.models import Q
+from django.db import transaction
 
 from .models import Order, OrderItem, OrderStatus, PaymentMethod
 from .serializers import (
@@ -18,6 +19,7 @@ from .serializers import (
     OrderUpdateSerializer, DashboardOrderSerializer
 )
 from core.permissions import CanManageOrders
+from inventory.models import Ingredient, StockMovement, StockMovementReason
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -68,20 +70,133 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['patch'])
     def update_status(self, request, pk=None):
-        """Update order status."""
+        """Update order status with inventory deduction on completion."""
         order = self.get_object()
         serializer = OrderStatusSerializer(order, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
         new_status = serializer.validated_data.get('status')
-        if new_status == OrderStatus.COMPLETED and order.status != OrderStatus.COMPLETED:
-            order.completed_at = timezone.now()
-        elif new_status == OrderStatus.CANCELLED:
-            # TODO: Restore inventory
-            pass
+        old_status = order.status
 
+        # Check if we're completing the order (first time)
+        completing_order = new_status == OrderStatus.COMPLETED and old_status != OrderStatus.COMPLETED
+        # Check if we're cancelling a completed order (need to restore inventory)
+        cancelling_completed = new_status == OrderStatus.CANCELLED and old_status == OrderStatus.COMPLETED
+
+        if completing_order:
+            order.completed_at = timezone.now()
+
+        if completing_order or cancelling_completed:
+            # Use transaction to ensure all ingredient deductions succeed together
+            with transaction.atomic():
+                order = serializer.save()
+
+                if completing_order:
+                    # Deduct inventory for each order item
+                    self._deduct_inventory_for_order(order)
+                elif cancelling_completed:
+                    # Restore inventory for cancelled completed order
+                    self._restore_inventory_for_order(order)
+
+                return Response(OrderSerializer(order).data)
+
+        # For other status changes, just save normally
         order = serializer.save()
         return Response(OrderSerializer(order).data)
+
+    def _deduct_inventory_for_order(self, order):
+        """
+        Deduct inventory ingredients based on order items and their recipes.
+        Creates StockMovement records for audit trail.
+        """
+        from menu.models import RecipeIngredient
+
+        for order_item in order.items.select_related('menu_item').all():
+            menu_item = order_item.menu_item
+            quantity_ordered = order_item.quantity
+
+            # Get recipe ingredients for this menu item
+            recipe_ingredients = RecipeIngredient.objects.select_related('ingredient').filter(
+                menu_item=menu_item,
+                is_optional=False  # Only required ingredients
+            )
+
+            for recipe_ing in recipe_ingredients:
+                ingredient = recipe_ing.ingredient
+                quantity_per_serving = recipe_ing.quantity
+                unit = recipe_ing.unit
+
+                # Calculate total quantity needed
+                total_quantity = quantity_per_serving * quantity_ordered
+
+                # Check if ingredient has sufficient stock
+                if ingredient.quantity < total_quantity:
+                    raise ValueError(
+                        f'Insufficient stock for {ingredient.name}: '
+                        f'required {total_quantity} {unit}, available {ingredient.quantity} {unit}'
+                    )
+
+                quantity_before = ingredient.quantity
+                quantity_after = quantity_before - total_quantity
+
+                # Update ingredient quantity
+                ingredient.quantity = quantity_after
+                ingredient.save(update_fields=['quantity', 'updated_at'])
+
+                # Create stock movement record
+                StockMovement.objects.create(
+                    ingredient=ingredient,
+                    quantity_before=quantity_before,
+                    quantity_change=-total_quantity,  # Negative for deduction
+                    quantity_after=quantity_after,
+                    reason=StockMovementReason.ORDER_DEDUCTION,
+                    reference_id=order.order_number,
+                    notes=f'Order {order.order_number}: {menu_item.name} x{quantity_ordered}',
+                    created_by=order.created_by
+                )
+
+    def _restore_inventory_for_order(self, order):
+        """
+        Restore inventory ingredients when a completed order is cancelled.
+        Creates StockMovement records for audit trail.
+        """
+        from menu.models import RecipeIngredient
+
+        for order_item in order.items.select_related('menu_item').all():
+            menu_item = order_item.menu_item
+            quantity_ordered = order_item.quantity
+
+            # Get recipe ingredients for this menu item
+            recipe_ingredients = RecipeIngredient.objects.select_related('ingredient').filter(
+                menu_item=menu_item,
+                is_optional=False
+            )
+
+            for recipe_ing in recipe_ingredients:
+                ingredient = recipe_ing.ingredient
+                quantity_per_serving = recipe_ing.quantity
+                unit = recipe_ing.unit
+
+                total_quantity = quantity_per_serving * quantity_ordered
+
+                quantity_before = ingredient.quantity
+                quantity_after = quantity_before + total_quantity
+
+                # Update ingredient quantity
+                ingredient.quantity = quantity_after
+                ingredient.save(update_fields=['quantity', 'updated_at'])
+
+                # Create stock movement record (positive for restoration)
+                StockMovement.objects.create(
+                    ingredient=ingredient,
+                    quantity_before=quantity_before,
+                    quantity_change=total_quantity,  # Positive for restoration
+                    quantity_after=quantity_after,
+                    reason=StockMovementReason.RETURN,
+                    reference_id=order.order_number,
+                    notes=f'Cancelled order {order.order_number}: {menu_item.name} x{quantity_ordered}',
+                    created_by=order.created_by
+                )
 
     @action(detail=True, methods=['patch'])
     def update_details(self, request, pk=None):

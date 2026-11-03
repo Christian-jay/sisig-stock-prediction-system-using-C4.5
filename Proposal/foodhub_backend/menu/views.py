@@ -1,7 +1,7 @@
 """
 Menu views - API endpoints for menu categories and items.
 """
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, SAFE_METHODS
@@ -49,6 +49,32 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return MenuItemSimpleSerializer
         return MenuItemSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Soft delete if item has order history, otherwise hard delete.
+        Preserves order history while allowing cleanup of unused items.
+        """
+        instance = self.get_object()
+
+        # Check if item has order history
+        has_orders = instance.order_items.exists()
+
+        if has_orders:
+            # Soft delete: mark as discontinued instead of hard delete
+            instance.is_active = False
+            instance.status = MenuItem.Status.DISCONTINUED
+            instance.save(update_fields=['is_active', 'status', 'updated_at'])
+            return Response({
+                'message': 'Menu item has order history. Marked as discontinued instead of deleted.',
+                'id': instance.id,
+                'status': instance.status,
+                'is_active': instance.is_active
+            }, status=status.HTTP_200_OK)
+
+        # No order history - safe to hard delete
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_queryset(self):
         qs = super().get_queryset()

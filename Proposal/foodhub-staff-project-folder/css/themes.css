@@ -174,10 +174,11 @@ body[data-theme="light"] {
 }
 
 /* ---------------------------------------------------------
-   2. DARK MIDNIGHT — body[data-theme="dark"]
+   2. DARK MIDNIGHT — [data-theme="dark"] on html/body
    Sisig-inspired palette (Filipino food identity)
    Warm charcoal, roasted brown, golden amber, chili-orange
    --------------------------------------------------------- */
+:root[data-theme="dark"],
 body[data-theme="dark"] {
     /* ---- Brand & Primary (Golden Amber - Sisig crisp) ---- */
     --primary: #F59E0B;

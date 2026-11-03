@@ -9,6 +9,7 @@ from django.db.models import Sum, Count, F, Q, DecimalField
 from django.db.models.functions import TruncDate, Coalesce
 from django.utils import timezone
 from datetime import timedelta
+from django.conf import settings
 from decimal import Decimal
 
 from inventory.models import Ingredient, StockMovement, StockMovementReason
@@ -136,10 +137,15 @@ class DashboardViewSet(viewsets.ViewSet):
             limit = 5
 
         # Get top selling items from completed orders
+        # Exclude discontinued/inactive menu items
         top_items = OrderItem.objects.filter(
-            order__status=OrderStatus.COMPLETED
+            order__status=OrderStatus.COMPLETED,
+            menu_item__is_active=True,
+            menu_item__status=MenuItem.Status.AVAILABLE
         ).values(
-            'menu_item__name'
+            'menu_item__id',
+            'menu_item__name',
+            'menu_item__image'
         ).annotate(
             total_sold=Sum('quantity'),
             total_revenue=Sum('line_total')
@@ -152,9 +158,16 @@ class DashboardViewSet(viewsets.ViewSet):
         for i, item in enumerate(top_items):
             sold = item['total_sold'] or 0
             percentage = round((sold / total_sold_all * 100), 1) if total_sold_all > 0 else 0
+
+            # Build image_url using MEDIA_URL
+            image_url = None
+            if item['menu_item__image']:
+                image_url = request.build_absolute_uri(f"{settings.MEDIA_URL}{item['menu_item__image']}")
+
             result.append({
                 'rank': f'{i+1}.',
                 'name': item['menu_item__name'],
+                'image_url': image_url,
                 'percentage': f'{percentage}%',
                 'total_sold': sold,
                 'revenue': f'₱{float(item["total_revenue"] or 0):,.2f}',
