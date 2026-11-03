@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'orders',
     'expenses',
     'settings_app',
+    'history',
     # 'payments',
     # 'c45',
 ]

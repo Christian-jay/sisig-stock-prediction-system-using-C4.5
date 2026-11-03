@@ -20,6 +20,7 @@ from .serializers import (
 )
 from core.permissions import CanManageOrders
 from inventory.models import Ingredient, StockMovement, StockMovementReason
+from history.services import record_activity
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -47,6 +48,19 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = serializer.save(created_by=request.user)
+
+        record_activity(
+            user=request.user,
+            category='orders',
+            action='Order created',
+            reference=order.order_number,
+            details=(
+                f'Created order with {order.item_count} item(s) '
+                f'for ₱{order.total_amount:,.2f}.'
+            ),
+            metadata={'order_id': order.id, 'status': order.status},
+        )
+
         # Return full order data using OrderSerializer
         return Response(
             OrderSerializer(order).data,
@@ -98,10 +112,43 @@ class OrderViewSet(viewsets.ModelViewSet):
                     # Restore inventory for cancelled completed order
                     self._restore_inventory_for_order(order)
 
-                return Response(OrderSerializer(order).data)
+            action = 'Order completed' if completing_order else 'Completed order cancelled'
+            details = (
+                'Order completed and required inventory was deducted.'
+                if completing_order
+                else 'Completed order cancelled and inventory was restored.'
+            )
+            record_activity(
+                user=request.user,
+                category='orders',
+                action=action,
+                reference=order.order_number,
+                details=details,
+                metadata={
+                    'order_id': order.id,
+                    'old_status': old_status,
+                    'new_status': new_status,
+                },
+            )
+            return Response(OrderSerializer(order).data)
 
         # For other status changes, just save normally
         order = serializer.save()
+        if new_status != old_status or 'payment_status' in serializer.validated_data:
+            action = 'Order status updated' if new_status != old_status else 'Payment status updated'
+            record_activity(
+                user=request.user,
+                category='orders',
+                action=action,
+                reference=order.order_number,
+                details=f'{old_status} → {order.status}.',
+                metadata={
+                    'order_id': order.id,
+                    'old_status': old_status,
+                    'new_status': order.status,
+                    'payment_status': order.payment_status,
+                },
+            )
         return Response(OrderSerializer(order).data)
 
     def _deduct_inventory_for_order(self, order):
@@ -154,6 +201,21 @@ class OrderViewSet(viewsets.ModelViewSet):
                     notes=f'Order {order.order_number}: {menu_item.name} x{quantity_ordered}',
                     created_by=order.created_by
                 )
+                record_activity(
+                    user=order.created_by,
+                    category='inventory',
+                    action='Stock deducted',
+                    reference=order.order_number,
+                    details=(
+                        f'{ingredient.name}: -{total_quantity} {unit} '
+                        f'for {menu_item.name}.'
+                    ),
+                    metadata={
+                        'order_id': order.id,
+                        'ingredient_id': ingredient.id,
+                        'reason': StockMovementReason.ORDER_DEDUCTION,
+                    },
+                )
 
     def _restore_inventory_for_order(self, order):
         """
@@ -197,6 +259,21 @@ class OrderViewSet(viewsets.ModelViewSet):
                     notes=f'Cancelled order {order.order_number}: {menu_item.name} x{quantity_ordered}',
                     created_by=order.created_by
                 )
+                record_activity(
+                    user=order.created_by,
+                    category='inventory',
+                    action='Stock restored',
+                    reference=order.order_number,
+                    details=(
+                        f'{ingredient.name}: +{total_quantity} {unit} '
+                        f'from cancelled {menu_item.name} order.'
+                    ),
+                    metadata={
+                        'order_id': order.id,
+                        'ingredient_id': ingredient.id,
+                        'reason': StockMovementReason.RETURN,
+                    },
+                )
 
     @action(detail=True, methods=['patch'])
     def update_details(self, request, pk=None):
@@ -221,8 +298,37 @@ class OrderViewSet(viewsets.ModelViewSet):
                 # Recalculate totals from items
                 order.save()  # This triggers the save() method which recalculates subtotal/total
 
+        record_activity(
+            user=request.user,
+            category='orders',
+            action='Order details updated',
+            reference=order.order_number,
+            details=(
+                'Updated order items and details.'
+                if items_data is not None
+                else 'Updated order payment, discount, tax, or notes.'
+            ),
+            metadata={'order_id': order.id, 'items_updated': items_data is not None},
+        )
+
         # Return full updated order with items
         return Response(OrderSerializer(order).data)
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an order and record the action after a successful delete."""
+        order = self.get_object()
+        reference = order.order_number
+        order_id = order.id
+        response = super().destroy(request, *args, **kwargs)
+        record_activity(
+            user=request.user,
+            category='orders',
+            action='Order deleted',
+            reference=reference,
+            details='Order record was permanently deleted.',
+            metadata={'order_id': order_id},
+        )
+        return response
 
     def _update_order_items(self, order, items_data):
         """Update order items: create new, update existing, delete removed."""

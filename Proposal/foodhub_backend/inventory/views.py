@@ -16,6 +16,7 @@ from .serializers import (
     StockMovementReasonSerializer, StockStatusSerializer
 )
 from core.permissions import CanManageInventory, IsAdminUser
+from history.services import record_activity
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
@@ -43,7 +44,40 @@ class IngredientViewSet(viewsets.ModelViewSet):
         return [CanManageInventory()]
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        ingredient = serializer.save(created_by=self.request.user)
+        record_activity(
+            user=self.request.user,
+            category='inventory',
+            action='Ingredient created',
+            reference=f'ING-{ingredient.id}',
+            details=f'Added {ingredient.name} to inventory.',
+            metadata={'ingredient_id': ingredient.id},
+        )
+
+    def perform_update(self, serializer):
+        ingredient = serializer.save()
+        record_activity(
+            user=self.request.user,
+            category='inventory',
+            action='Ingredient updated',
+            reference=f'ING-{ingredient.id}',
+            details=f'Updated inventory details for {ingredient.name}.',
+            metadata={'ingredient_id': ingredient.id},
+        )
+
+    def perform_destroy(self, instance):
+        reference = f'ING-{instance.id}'
+        ingredient_name = instance.name
+        ingredient_id = instance.id
+        super().perform_destroy(instance)
+        record_activity(
+            user=self.request.user,
+            category='inventory',
+            action='Ingredient deleted',
+            reference=reference,
+            details=f'Removed {ingredient_name} from inventory.',
+            metadata={'ingredient_id': ingredient_id},
+        )
 
     @action(detail=True, methods=['post'], permission_classes=[CanManageInventory])
     def adjust_stock(self, request, pk=None):
@@ -100,6 +134,21 @@ class IngredientViewSet(viewsets.ModelViewSet):
                 reference_id=reference_id,
                 notes=notes,
                 created_by=request.user
+            )
+            record_activity(
+                user=request.user,
+                category='inventory',
+                action='Stock adjusted',
+                reference=reference_id or f'ING-{ingredient.id}',
+                details=(
+                    f'{ingredient.name}: {quantity_change:+.3f} {ingredient.unit} '
+                    f'({dict(StockMovementReason.choices).get(reason, reason)}).'
+                ),
+                metadata={
+                    'ingredient_id': ingredient.id,
+                    'quantity_change': str(quantity_change),
+                    'reason': reason,
+                },
             )
 
         serializer = IngredientSerializer(ingredient)

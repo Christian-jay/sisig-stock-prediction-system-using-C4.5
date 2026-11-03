@@ -12,6 +12,7 @@ from django.conf import settings
 from django.db import connection
 from .models import UserSettings
 from .serializers import UserSettingsSerializer, UserSettingsUpdateSerializer
+from history.services import record_activity
 
 
 class UserSettingsViewSet(viewsets.GenericViewSet):
@@ -45,7 +46,19 @@ class UserSettingsViewSet(viewsets.GenericViewSet):
         settings_obj = self.get_object()
         serializer = self.get_serializer(settings_obj, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        changed_fields = list(serializer.validated_data.keys())
         serializer.save()
+        record_activity(
+            user=request.user,
+            category='settings',
+            action='Settings updated',
+            reference=f'USER-{request.user.id}',
+            details=(
+                'Updated: ' + ', '.join(changed_fields)
+                if changed_fields else 'Opened settings without changes.'
+            ),
+            metadata={'user_id': request.user.id, 'fields': changed_fields},
+        )
         return Response(UserSettingsSerializer(settings_obj).data)
 
     @action(detail=False, methods=['post'])
@@ -59,6 +72,14 @@ class UserSettingsViewSet(viewsets.GenericViewSet):
             # Only update timestamp AFTER successful backup
             settings_obj.last_successful_backup = timezone.now()
             settings_obj.save(update_fields=['last_successful_backup'])
+            record_activity(
+                user=request.user,
+                category='settings',
+                action='Database backup completed',
+                reference=os.path.basename(backup_path),
+                details='User settings backup completed successfully.',
+                metadata={'user_id': request.user.id},
+            )
 
             serializer = self.get_serializer(settings_obj)
             return Response({
@@ -130,6 +151,14 @@ class SystemBackupViewSet(viewsets.ViewSet):
 
         try:
             backup_path = self._create_database_backup()
+            record_activity(
+                user=request.user,
+                category='system',
+                action='System backup completed',
+                reference=os.path.basename(backup_path),
+                details='Administrator created a full system backup.',
+                metadata={'user_id': request.user.id},
+            )
 
             return Response({
                 'detail': 'System backup completed successfully.',

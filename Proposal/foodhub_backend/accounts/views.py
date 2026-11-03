@@ -19,6 +19,7 @@ from .serializers import (
     PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer
 )
 from core.permissions import IsAdminUser
+from history.services import record_activity
 
 User = get_user_model()
 
@@ -56,6 +57,42 @@ class UserViewSet(viewsets.ModelViewSet):
         # Staff can only see themselves
         return User.objects.filter(id=user.id).select_related('profile')
 
+    def perform_create(self, serializer):
+        user = serializer.save()
+        record_activity(
+            user=self.request.user,
+            category='system',
+            action='User account created',
+            reference=f'USER-{user.id}',
+            details=f'Created account for {user.email}.',
+            metadata={'user_id': user.id, 'role': user.role},
+        )
+
+    def perform_update(self, serializer):
+        user = serializer.save()
+        record_activity(
+            user=self.request.user,
+            category='system',
+            action='User account updated',
+            reference=f'USER-{user.id}',
+            details=f'Updated account for {user.email}.',
+            metadata={'user_id': user.id, 'role': user.role},
+        )
+
+    def perform_destroy(self, instance):
+        reference = f'USER-{instance.id}'
+        email = instance.email
+        user_id = instance.id
+        super().perform_destroy(instance)
+        record_activity(
+            user=self.request.user,
+            category='system',
+            action='User account deleted',
+            reference=reference,
+            details=f'Deleted account for {email}.',
+            metadata={'user_id': user_id},
+        )
+
     @action(detail=False, methods=['get', 'put', 'patch'])
     def me(self, request):
         """Get or update current user's profile."""
@@ -66,6 +103,14 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        record_activity(
+            user=request.user,
+            category='settings',
+            action='Profile updated',
+            reference=f'USER-{user.id}',
+            details=f'Updated own profile.',
+            metadata={'user_id': user.id, 'fields': list(serializer.validated_data.keys())},
+        )
         return Response(serializer.data)
 
     @action(detail=False, methods=['post'])
@@ -74,6 +119,14 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        record_activity(
+            user=request.user,
+            category='settings',
+            action='Password changed',
+            reference=f'USER-{request.user.id}',
+            details='Account password was changed successfully.',
+            metadata={'user_id': request.user.id},
+        )
         return Response({'detail': 'Password changed successfully.'})
 
     @action(detail=False, methods=['get'])
@@ -96,6 +149,17 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def get_object(self):
         profile, created = UserProfile.objects.get_or_create(user=self.request.user)
         return profile
+
+    def perform_update(self, serializer):
+        profile = serializer.save()
+        record_activity(
+            user=self.request.user,
+            category='settings',
+            action='Profile details updated',
+            reference=f'USER-{profile.user_id}',
+            details=f'Updated profile details.',
+            metadata={'user_id': profile.user_id, 'fields': list(serializer.validated_data.keys())},
+        )
 
 
 @api_view(['POST'])

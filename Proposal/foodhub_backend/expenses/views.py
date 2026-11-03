@@ -14,6 +14,7 @@ from .serializers import (
     ExpenseCategorySerializer, ExpenseSummarySerializer
 )
 from core.permissions import IsStaffUser
+from history.services import record_activity
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
@@ -56,7 +57,40 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        expense = serializer.save(created_by=self.request.user)
+        record_activity(
+            user=self.request.user,
+            category='sales',
+            action='Expense recorded',
+            reference=f'EXP-{expense.id}',
+            details=f'Recorded {expense.description} for ₱{expense.amount:,.2f}.',
+            metadata={'expense_id': expense.id, 'category': expense.category},
+        )
+
+    def perform_update(self, serializer):
+        expense = serializer.save()
+        record_activity(
+            user=self.request.user,
+            category='sales',
+            action='Expense updated',
+            reference=f'EXP-{expense.id}',
+            details=f'Updated expense {expense.description}.',
+            metadata={'expense_id': expense.id, 'category': expense.category},
+        )
+
+    def perform_destroy(self, instance):
+        reference = f'EXP-{instance.id}'
+        description = instance.description
+        expense_id = instance.id
+        super().perform_destroy(instance)
+        record_activity(
+            user=self.request.user,
+            category='sales',
+            action='Expense deleted',
+            reference=reference,
+            details=f'Deleted expense {description}.',
+            metadata={'expense_id': expense_id},
+        )
 
     def create(self, request, *args, **kwargs):
         """Create expense and return full object with ID."""
