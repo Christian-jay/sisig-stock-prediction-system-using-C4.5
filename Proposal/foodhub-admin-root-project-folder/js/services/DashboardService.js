@@ -117,6 +117,7 @@ export default class DashboardService {
         return topSelling.map(item => ({
             rank: item.rank || '1.',
             name: item.name || 'Unknown',
+            image_url: item.image_url || '',  // Add image_url
             percentage: item.percentage || '0%',
             totalSold: item.total_sold ?? 0,
             revenue: item.revenue || '₱0.00',

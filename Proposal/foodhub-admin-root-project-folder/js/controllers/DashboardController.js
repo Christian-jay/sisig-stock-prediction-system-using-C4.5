@@ -26,8 +26,6 @@ class DashboardController {
             this.renderTopSelling(data.topSellingItems, 'topSellingList');
             this.renderTopSelling(data.topSellingItems, 'revenueItemsList'); // Reused for revenue list side
             this.renderRecentOrders(data.recentOrders);
-            this.renderLowStock(data.lowStockItems);
-
             this.renderLowStock(data.lowStockItems.slice(0, 4));
             this.renderTopSelling(data.topSellingItems.slice(0, 5), 'topSellingList');
             this.renderTopSelling(data.topSellingItems.slice(0, 5), 'revenueItemsList');
@@ -622,8 +620,9 @@ class DashboardController {
                     <span class="item-rank">${item.rank}</span>
                     <div class="item-thumb">
                          <img
-                            src="https://picsum.photos/id/237/200/300"
-                            alt="Top selling item"
+                            src="${item.image_url || 'https://picsum.photos/id/237/200/300'}"
+                            alt="${item.name}"
+                            onerror="this.src='https://picsum.photos/id/237/200/300'"
                         >
                     </div>
                     <span class="item-name">${item.name}</span>

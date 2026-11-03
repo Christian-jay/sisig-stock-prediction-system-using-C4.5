@@ -90,14 +90,14 @@ class SalesReportController {
                         <svg class="trend-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Sales trend chart">
                             <defs>
                                 <linearGradient id="salesAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.25" />
-                                    <stop offset="100%" stop-color="#0284c7" stop-opacity="0.00" />
+                                    <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.25" />
+                                    <stop offset="100%" stop-color="var(--primary)" stop-opacity="0.00" />
                                 </linearGradient>
                             </defs>
                             <path class="trend-area" d="${areaPath}" />
-                            <path class="trend-line" d="${linePath}" />
+                            <path class="trend-line" d="${linePath}" style="stroke: #0284c7; stroke-width: 3px;" />
                             ${points.map((point, index) => `
-                                <circle class="trend-point" cx="${point.x}" cy="${point.y}" r="4.5" data-index="${index}" />
+                                <circle class="trend-point" cx="${point.x}" cy="${point.y}" r="4.5" data-index="${index}" style="fill: #0284c7;" />
                             `).join('')}
                         </svg>
                     </div>
