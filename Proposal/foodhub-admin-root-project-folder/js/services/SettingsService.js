@@ -11,7 +11,7 @@ export class SettingsService {
         const savedTheme = localStorage.getItem('foodhub_theme') || 'light';
         return {
             general: new GeneralSettings("FOODHUB", "English", savedTheme),
-            business: new BusinessInfoSettings("Juan Dela Cruz", "Biñan, Laguna, Philippines", "000-123-456-789", "09:00 AM - 10:00 PM"),
+            business: new BusinessInfoSettings("Juan Dela Cruz", "Biñan, Laguna, Philippines", "09:00 AM - 10:00 PM"),
             notification: new NotificationSettings(true, true, false),
             payment: new PaymentSettings(
                 true,

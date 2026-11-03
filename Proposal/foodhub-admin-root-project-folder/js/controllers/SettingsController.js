@@ -247,10 +247,6 @@ class SettingsController {
                             <input type="text" id="address" class="form-control" value="${this.settingsData.business.address}">
                         </div>
                         <div class="form-group">
-                            <label for="tinNumber">TIN Number</label>
-                            <input type="text" id="tinNumber" class="form-control" value="${this.settingsData.business.tinNumber}">
-                        </div>
-                        <div class="form-group">
                             <label for="operatingHours">Operating Hours</label>
                             <input type="text" id="operatingHours" class="form-control" value="${this.settingsData.business.operatingHours}">
                         </div>
@@ -259,7 +255,7 @@ class SettingsController {
                         </div>
                     </div>
                 `;
-                break;
+                break;;
 
             case 'notification':
                 container.innerHTML = `
@@ -422,7 +418,6 @@ class SettingsController {
                 updatedData = new BusinessInfoSettings(
                     document.getElementById('ownerName').value,
                     document.getElementById('address').value,
-                    document.getElementById('tinNumber').value,
                     document.getElementById('operatingHours').value
                 );
                 this.settingsData.business = updatedData;

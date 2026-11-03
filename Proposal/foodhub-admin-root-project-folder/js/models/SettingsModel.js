@@ -7,10 +7,9 @@ export class GeneralSettings {
 }
 
 export class BusinessInfoSettings {
-    constructor(ownerName, address, tinNumber, operatingHours) {
+    constructor(ownerName, address, operatingHours) {
         this.ownerName = ownerName;
         this.address = address;
-        this.tinNumber = tinNumber;
         this.operatingHours = operatingHours;
     }
 }

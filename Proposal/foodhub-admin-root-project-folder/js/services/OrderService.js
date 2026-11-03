@@ -83,26 +83,15 @@ export class OrderService {
 
     async fetchOrderStatistics() {
         try {
-            // Use today_stats for real-time today's data
-            const todayStats = await apiGet(`${ORDERS_API_BASE}/today_stats/`);
-
-            // Get all-time total orders count
-            const allStats = await apiGet(`${ORDERS_API_BASE}/?page_size=1`);
-            const totalOrdersAllTime = allStats.count || 0;
-
-            // Calculate new this week (last 7 days) - use Manila timezone
-            const weekAgo = new Date();
-            weekAgo.setDate(weekAgo.getDate() - 7);
-            const weekAgoManila = weekAgo.toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
-            const weekStats = await apiGet(`${ORDERS_API_BASE}/?date_from=${weekAgoManila}&page_size=1`);
-            const newThisWeek = weekStats.count || 0;
+            // Use overall_stats for all-time data (not just today)
+            const stats = await apiGet(`${ORDERS_API_BASE}/overall_stats/`);
 
             return {
-                totalOrders: totalOrdersAllTime,
-                completed: todayStats.completed_orders_today || 0,
-                processing: todayStats.processing_orders_today || 0,
-                pending: todayStats.pending_orders_today || 0,
-                newThisWeek: newThisWeek
+                totalOrders: stats.total_orders || 0,
+                completed: stats.completed || 0,
+                processing: stats.processing || 0,
+                pending: stats.pending || 0,
+                newThisWeek: stats.new_this_week || 0
             };
         } catch (error) {
             console.error('[OrderService] Failed to fetch statistics:', error);

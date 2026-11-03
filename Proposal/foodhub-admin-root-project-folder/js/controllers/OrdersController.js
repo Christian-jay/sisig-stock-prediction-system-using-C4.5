@@ -341,28 +341,34 @@ class OrdersController {
             <form id="newOrderForm">
                 <div class="form-group">
                     <label>Order Type</label>
-                    <select name="order_type">
-                        <option value="DINE_IN">Dine In</option>
-                        <option value="TAKEOUT">Takeout</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select name="order_type">
+                            <option value="DINE_IN">Dine In</option>
+                            <option value="TAKEOUT">Takeout</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Payment Method</label>
-                    <select name="payment_method">
-                        <option value="CASH">Cash</option>
-                        <option value="GCASH">GCash</option>
-                        <option value="MAYA">Maya</option>
-                        <option value="FOODPANDA">Foodpanda</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select name="payment_method">
+                            <option value="CASH">Cash</option>
+                            <option value="GCASH">GCash</option>
+                            <option value="MAYA">Maya</option>
+                            <option value="FOODPANDA">Foodpanda</option>
+                        </select>
+                    </div>
                 </div>
 
                 <h4 style="margin: 16px 0 8px;">Order Items</h4>
                 <div id="orderItemsContainer">
                     <div class="order-item-row">
-                        <select name="menu_item[]" class="item-select" required>
-                            <option value="">Select Menu Item</option>
-                            ${menuOptions}
-                        </select>
+                        <div class="item-select-wrapper">
+                            <select name="menu_item[]" class="item-select" required>
+                                <option value="">Select Menu Item</option>
+                                ${menuOptions}
+                            </select>
+                        </div>
                         <input type="number" name="quantity[]" class="item-qty" value="1" min="1" max="99" required>
                         <span class="item-price">₱0.00</span>
                         <button type="button" class="btn-remove-item" aria-label="Remove item">&times;</button>
@@ -428,10 +434,12 @@ class OrdersController {
                 const row = document.createElement('div');
                 row.className = 'order-item-row';
                 row.innerHTML = `
-                    <select name="menu_item[]" class="item-select" required>
-                        <option value="">Select Menu Item</option>
-                        ${container.querySelector('.item-select').innerHTML}
-                    </select>
+                    <div class="item-select-wrapper">
+                        <select name="menu_item[]" class="item-select" required>
+                            <option value="">Select Menu Item</option>
+                            ${container.querySelector('.item-select').innerHTML}
+                        </select>
+                    </div>
                     <input type="number" name="quantity[]" class="item-qty" value="1" min="1" max="99" required>
                     <span class="item-price">₱0.00</span>
                     <button type="button" class="btn-remove-item" aria-label="Remove item">&times;</button>
@@ -610,16 +618,20 @@ class OrdersController {
             <form id="quickStatusForm">
                 <div class="form-group">
                     <label>New Status</label>
-                    <select name="status">
-                        ${statusOptions}
-                    </select>
+                    <div class="select-wrapper">
+                        <select name="status">
+                            ${statusOptions}
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Payment Status</label>
-                    <select name="payment_status">
-                        <option value="UNPAID">Unpaid</option>
-                        <option value="PAID">Paid</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select name="payment_status">
+                            <option value="UNPAID">Unpaid</option>
+                            <option value="PAID">Paid</option>
+                        </select>
+                    </div>
                 </div>
             </form>
         `;
@@ -660,37 +672,45 @@ class OrdersController {
 
                     <div class="form-group">
                         <label>Order Type</label>
-                        <select name="order_type">
-                            <option value="DINE_IN" ${order.order_type === 'DINE_IN' ? 'selected' : ''}>Dine In</option>
-                            <option value="TAKEOUT" ${order.order_type === 'TAKEOUT' ? 'selected' : ''}>Takeout</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select name="order_type">
+                                <option value="DINE_IN" ${order.order_type === 'DINE_IN' ? 'selected' : ''}>Dine In</option>
+                                <option value="TAKEOUT" ${order.order_type === 'TAKEOUT' ? 'selected' : ''}>Takeout</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label>Status</label>
-                        <select name="status">
-                            <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
-                            <option value="PROCESSING" ${order.status === 'PROCESSING' ? 'selected' : ''}>Processing</option>
-                            <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select name="status">
+                                <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                <option value="PROCESSING" ${order.status === 'PROCESSING' ? 'selected' : ''}>Processing</option>
+                                <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label>Payment Status</label>
-                        <select name="payment_status">
-                            <option value="UNPAID" ${order.payment_status === 'UNPAID' ? 'selected' : ''}>Unpaid</option>
-                            <option value="PAID" ${order.payment_status === 'PAID' ? 'selected' : ''}>Paid</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select name="payment_status">
+                                <option value="UNPAID" ${order.payment_status === 'UNPAID' ? 'selected' : ''}>Unpaid</option>
+                                <option value="PAID" ${order.payment_status === 'PAID' ? 'selected' : ''}>Paid</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label>Payment Method</label>
-                        <select name="payment_method">
-                            <option value="CASH" ${order.payment_method === 'CASH' ? 'selected' : ''}>Cash</option>
-                            <option value="GCASH" ${order.payment_method === 'GCASH' ? 'selected' : ''}>GCash</option>
-                            <option value="MAYA" ${order.payment_method === 'MAYA' ? 'selected' : ''}>Maya</option>
-                            <option value="FOODPANDA" ${order.payment_method === 'FOODPANDA' ? 'selected' : ''}>Foodpanda</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select name="payment_method">
+                                <option value="CASH" ${order.payment_method === 'CASH' ? 'selected' : ''}>Cash</option>
+                                <option value="GCASH" ${order.payment_method === 'GCASH' ? 'selected' : ''}>GCash</option>
+                                <option value="MAYA" ${order.payment_method === 'MAYA' ? 'selected' : ''}>Maya</option>
+                                <option value="FOODPANDA" ${order.payment_method === 'FOODPANDA' ? 'selected' : ''}>Foodpanda</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
