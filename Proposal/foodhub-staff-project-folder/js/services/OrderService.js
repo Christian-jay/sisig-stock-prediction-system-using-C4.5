@@ -10,11 +10,12 @@ import { apiGet, apiPost } from '../utils/api.js';
 export class OrderService {
 
     /**
-     * Get all menu items from Django backend.
+     * Get all AVAILABLE menu items from Django backend.
+     * Uses available_only=true to filter out DISCONTINUED items.
      */
     async getMenuItems() {
         try {
-            const response = await apiGet('/menu/menu-items/');
+            const response = await apiGet('/menu/menu-items/?available_only=true');
 
             // Handle paginated response
             const items = response.results || response;

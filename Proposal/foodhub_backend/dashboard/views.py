@@ -159,10 +159,16 @@ class DashboardViewSet(viewsets.ViewSet):
             sold = item['total_sold'] or 0
             percentage = round((sold / total_sold_all * 100), 1) if total_sold_all > 0 else 0
 
-            # Build image_url using MEDIA_URL
+            # Build image_url - handle both relative paths and absolute URLs
             image_url = None
-            if item['menu_item__image']:
-                image_url = request.build_absolute_uri(f"{settings.MEDIA_URL}{item['menu_item__image']}")
+            raw_image = item['menu_item__image']
+            if raw_image:
+                if raw_image.startswith('http://') or raw_image.startswith('https://'):
+                    # External URL - use as-is
+                    image_url = raw_image
+                else:
+                    # Relative path - prepend MEDIA_URL
+                    image_url = request.build_absolute_uri(f"{settings.MEDIA_URL}{raw_image}")
 
             result.append({
                 'rank': f'{i+1}.',

@@ -16,10 +16,12 @@ class MenuItemSimpleSerializer(serializers.ModelSerializer):
 
     def get_image_url(self, obj):
         if obj.image:
-            # If image is already an absolute URL (external), return as-is
+            # Check raw field value first - if it's already an absolute URL, return as-is
+            raw_value = str(obj.image)
+            if raw_value.startswith('http://') or raw_value.startswith('https://'):
+                return raw_value
+            # Otherwise use Django's .url property for relative paths
             image_url = obj.image.url
-            if image_url.startswith('http://') or image_url.startswith('https://'):
-                return image_url
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(image_url)
