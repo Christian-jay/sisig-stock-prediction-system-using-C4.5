@@ -2,6 +2,7 @@ import { TodaysOrdersService } from '../services/TodaysOrdersService.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { apiGet, apiPatch, apiDelete } from '../utils/api.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 export class TodaysOrdersController {
     constructor() {
@@ -9,12 +10,11 @@ export class TodaysOrdersController {
         this.currentPage = 1;
         this.pageSize = 10; // 10 items per page
         this.currentOrderDbId = null; // Store current order DB ID for edit/update/delete
+    }
 
-        this.initLayout();
-
+    async init() {
+        await this.initLayout();
         this.loadOrders();
-
-
         this.initEventListeners();
     }
 
@@ -26,12 +26,13 @@ export class TodaysOrdersController {
         return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
     }
 
-    initLayout() {
+    async initLayout() {
+        const userData = await waitForCurrentUser();
 
-        loadSidebarNav();
+        loadSidebarNav('', userData);
 
 
-        loadTopNavbar();
+        loadTopNavbar(userData);
 
 
         const dateInput = document.getElementById('orderDateFilter');
@@ -920,6 +921,7 @@ export class TodaysOrdersController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new TodaysOrdersController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new TodaysOrdersController();
+    await controller.init();
 });

@@ -102,24 +102,7 @@ export class AuthGuard {
             return { role: 'GUEST' };
         }
 
-        // Get role from token (quick check)
-        const tokenRole = this.getUserRoleFromToken();
-
-        // If we have a role from token, do quick authorization check
-        if (tokenRole) {
-            if (!allowedRoles.includes(tokenRole)) {
-                console.warn(`[AuthGuard] Role ${tokenRole} not allowed for this page`);
-                this.handleUnauthorized();
-                return null;
-            }
-            // Quick check passed, return user info from token
-            return {
-                role: tokenRole,
-                userId: this.getUserIdFromToken()
-            };
-        }
-
-        // If we couldn't get role from token, validate with backend
+        // Always validate with backend to get full user data (including first_name, last_name, username)
         const userData = await this.validateToken();
         if (!userData) {
             console.warn('[AuthGuard] Token validation failed, redirecting to login');

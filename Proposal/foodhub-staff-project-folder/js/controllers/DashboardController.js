@@ -2,6 +2,7 @@ import { DashboardService } from '../services/DashboardService.js';
 import { DashboardModel } from '../models/DashboardModel.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 class DashboardController {
     constructor() {
@@ -17,13 +18,12 @@ class DashboardController {
         this.orderModalBody = document.getElementById('orderModalBody');
         this.orderModalClose = document.getElementById('orderModalClose');
         this.orderModalCloseBtn = document.getElementById('orderModalCloseBtn');
-
-        this.init();
     }
 
     async init() {
-        loadSidebarNav();
-        loadTopNavbar();
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
 
         this.bindModalEvents();
         this.showLoadingStates();
@@ -513,6 +513,7 @@ class DashboardController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new DashboardController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new DashboardController();
+    await controller.init();
 });

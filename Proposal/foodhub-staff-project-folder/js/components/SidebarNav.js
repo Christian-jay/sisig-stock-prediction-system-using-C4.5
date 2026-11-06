@@ -1,4 +1,4 @@
-export function loadSidebarNav(customTitle = '') {
+export function loadSidebarNav(customTitle = '', userData = null) {
     const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
 
     const pageConfig = {
@@ -23,6 +23,11 @@ export function loadSidebarNav(customTitle = '') {
     }
 
     const isOrdersRoute = ['orders.html', 'payment.html', 'todays_orders.html'].includes(currentPath);
+
+    // Get user name from userData or fallback to 'Staff'
+    const userName = userData?.first_name
+        ? `${userData.first_name} ${userData.last_name || ''}`.trim()
+        : (userData?.username || 'Staff');
 
     // 1. Suriin kung ang kasalukuyang pahina ay nasa inventory routes para bumukas ang dropdown nito
     const isInventoryRoute = ['inventory.html', 'inventory_prediction.html'].includes(currentPath);
@@ -143,7 +148,7 @@ export function loadSidebarNav(customTitle = '') {
                             </svg>
                         </div>
                         <div class="admin-info">
-                            <span class="admin-name" style="color: #ffffff;">Staff</span>
+                            <span class="admin-name" style="color: #ffffff;">${userName}</span>
                             <span class="admin-role" style="color: #94a3b8;">Staff Member</span>
                         </div>
                     </div>

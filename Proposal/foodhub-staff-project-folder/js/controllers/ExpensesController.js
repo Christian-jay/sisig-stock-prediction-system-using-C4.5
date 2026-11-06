@@ -2,6 +2,7 @@ import { ExpensesService } from '../services/ExpensesService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { initDatePickers } from '../components/DatePicker.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 /**
  * Category label to value mapping for API calls
@@ -38,13 +39,19 @@ export class ExpensesController {
         this.currentExpense = null;
         this.isEditMode = false;
 
+        // Modal references for proper lifecycle management
+        this.detailsModal = null;
+        this.editModal = null;
+        this.deleteConfirmModal = null;
+
         this.initLayout();
         this.loadExpensesView();
     }
 
-    initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+    async initLayout() {
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
     }
 
     async loadExpensesView() {
@@ -293,12 +300,8 @@ export class ExpensesController {
         // Global view expense details handler
         window.viewExpenseDetails = (id) => this.openViewExpenseModal(id);
 
-        // Close modals on overlay click
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                this.closeAllModals();
-            }
-        });
+        // Note: Click-outside handling is now done per-modal in each create method
+        // to avoid closing all modals when only the top one should close
     }
 
     openAddExpenseModal() {
@@ -351,10 +354,18 @@ export class ExpensesController {
         // Focus first input
         setTimeout(() => modal.querySelector('#expenseDescription').focus(), 100);
 
-        // Event listeners
-        modal.querySelector('.modal-close').addEventListener('click', () => this.closeAllModals());
-        modal.querySelector('#cancelAddExpense').addEventListener('click', () => this.closeAllModals());
+        // Event listeners - close only this modal
+        const closeModal = () => modal.remove();
+        modal.querySelector('.modal-close').addEventListener('click', closeModal);
+        modal.querySelector('#cancelAddExpense').addEventListener('click', closeModal);
         modal.querySelector('#addExpenseForm').addEventListener('submit', (e) => this.handleAddExpense(e, modal));
+
+        // Click outside to close
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
     }
 
     async handleAddExpense(e, modal) {
@@ -413,7 +424,7 @@ export class ExpensesController {
         `;
 
         document.body.appendChild(loadingModal);
-        loadingModal.querySelector('.modal-close').addEventListener('click', () => this.closeAllModals());
+        loadingModal.querySelector('.modal-close').addEventListener('click', () => loadingModal.remove());
 
         try {
             const expense = await this.expensesService.getExpense(id);
@@ -421,16 +432,16 @@ export class ExpensesController {
             this.isEditMode = false;
 
             // Replace loading modal with detail modal
-            this.closeAllModals();
-            this.showExpenseDetailModal(expense);
+            loadingModal.remove();
+            this.createDetailsModal(expense);
         } catch (error) {
             console.error('[ExpensesController] Error viewing expense:', error);
-            this.closeAllModals();
+            loadingModal.remove();
             this.showToast('Failed to load expense details: ' + error.message, 'error');
         }
     }
 
-    showExpenseDetailModal(expense) {
+    createDetailsModal(expense) {
         const formatDateTime = (dateStr) => {
             if (!dateStr) return 'N/A';
             try {
@@ -479,46 +490,91 @@ export class ExpensesController {
             ? Object.keys(this.categoryMap)
             : ['Supplies', 'Utilities', 'Others', 'Ingredients'];
 
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
+        // Create the details modal if it doesn't exist
+        if (!this.detailsModal) {
+            this.detailsModal = document.createElement('div');
+            this.detailsModal.className = 'modal-overlay';
+            document.body.appendChild(this.detailsModal);
+        }
+
+        // Set content
+        this.detailsModal.innerHTML = `
             <div class="modal" style="max-width: 450px;">
                 <div class="modal-header">
-                    <h3>${this.isEditMode ? 'Edit Expense' : 'Expense Details'}</h3>
+                    <h3>Expense Details</h3>
                     <button class="modal-close" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body">
-                    ${this.isEditMode ? this.renderEditForm(expense, categories, formatDateInput) : this.renderDetailView(expense, formatDateTime, formatDate)}
+                    ${this.renderDetailView(expense, formatDateTime, formatDate)}
                 </div>
                 <div class="modal-footer">
-                    ${this.isEditMode
-                        ? `<button type="button" class="btn-secondary" id="cancelEdit">Cancel</button>
-                           <button type="button" class="btn-primary" id="saveEdit">Save Changes</button>`
-                        : `<button type="button" class="btn-secondary" id="editExpense">Edit</button>
-                           <button type="button" class="btn-danger" id="deleteExpense">Delete</button>
-                           <button type="button" class="btn-primary" id="closeViewExpense">Close</button>`
-                    }
+                    <button type="button" class="btn-secondary" id="editExpense">Edit</button>
+                    <button type="button" class="btn-danger" id="deleteExpense">Delete</button>
+                    <button type="button" class="btn-primary" id="closeViewExpense">Close</button>
                 </div>
             </div>
         `;
 
-        document.body.appendChild(modal);
-
-        // Initialize custom date picker
-        initDatePickers(modal.querySelectorAll('[data-datepicker]'));
-
         // Event listeners
-        modal.querySelector('.modal-close').addEventListener('click', () => this.closeAllModals());
+        this.detailsModal.querySelector('.modal-close').addEventListener('click', () => this.closeDetailsModal());
+        this.detailsModal.querySelector('#editExpense').addEventListener('click', () => this.enterEditMode());
+        this.detailsModal.querySelector('#deleteExpense').addEventListener('click', () => this.confirmDelete());
+        this.detailsModal.querySelector('#closeViewExpense').addEventListener('click', () => this.closeDetailsModal());
 
-        if (this.isEditMode) {
-            modal.querySelector('#cancelEdit').addEventListener('click', () => this.cancelEdit());
-            modal.querySelector('#saveEdit').addEventListener('click', () => this.saveEdit(modal));
-            // Focus first input
-            setTimeout(() => modal.querySelector('#editDescription').focus(), 100);
-        } else {
-            modal.querySelector('#editExpense').addEventListener('click', () => this.enterEditMode());
-            modal.querySelector('#deleteExpense').addEventListener('click', () => this.confirmDelete());
-            modal.querySelector('#closeViewExpense').addEventListener('click', () => this.closeAllModals());
+        // Click outside to close
+        this.detailsModal.addEventListener('click', (e) => {
+            if (e.target === this.detailsModal) {
+                this.closeDetailsModal();
+            }
+        });
+    }
+
+    updateDetailsModal(expense) {
+        const formatDateTime = (dateStr) => {
+            if (!dateStr) return 'N/A';
+            try {
+                const d = new Date(dateStr);
+                return d.toLocaleString('en-US', {
+                    timeZone: 'Asia/Manila',
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            } catch (e) {
+                return dateStr;
+            }
+        };
+
+        const formatDate = (dateStr) => {
+            if (!dateStr) return 'N/A';
+            try {
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('en-US', {
+                    timeZone: 'Asia/Manila',
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return dateStr;
+            }
+        };
+
+        if (this.detailsModal) {
+            const body = this.detailsModal.querySelector('.modal-body');
+            if (body) {
+                body.innerHTML = this.renderDetailView(expense, formatDateTime, formatDate);
+            }
+        }
+    }
+
+    closeDetailsModal() {
+        if (this.detailsModal) {
+            this.detailsModal.remove();
+            this.detailsModal = null;
         }
     }
 
@@ -585,16 +641,83 @@ export class ExpensesController {
 
     enterEditMode() {
         this.isEditMode = true;
-        this.showExpenseDetailModal(this.currentExpense);
+        this.createEditModal(this.currentExpense);
     }
 
     cancelEdit() {
         this.isEditMode = false;
-        this.showExpenseDetailModal(this.currentExpense);
+        this.closeEditModal();
+        // Details modal is already there, just ensure it's visible
     }
 
-    async saveEdit(modal) {
-        const form = modal.querySelector('#editExpenseForm');
+    createEditModal(expense) {
+        const formatDateInput = (dateStr) => {
+            if (!dateStr) return '';
+            try {
+                const d = new Date(dateStr);
+                return d.toISOString().split('T')[0];
+            } catch (e) {
+                return '';
+            }
+        };
+
+        // Build categories for edit dropdown
+        const categories = Object.keys(this.categoryMap).length > 0
+            ? Object.keys(this.categoryMap)
+            : ['Supplies', 'Utilities', 'Others', 'Ingredients'];
+
+        // Create the edit modal
+        this.editModal = document.createElement('div');
+        this.editModal.className = 'modal-overlay';
+        this.editModal.style.zIndex = '1100'; // Higher than details modal
+        this.editModal.innerHTML = `
+            <div class="modal" style="max-width: 450px;">
+                <div class="modal-header">
+                    <h3>Edit Expense</h3>
+                    <button class="modal-close" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    ${this.renderEditForm(expense, categories, formatDateInput)}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelEdit">Cancel</button>
+                    <button type="button" class="btn-primary" id="saveEdit">Save Changes</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(this.editModal);
+
+        // Initialize custom date picker
+        initDatePickers(this.editModal.querySelectorAll('[data-datepicker]'));
+
+        // Event listeners - close only the edit modal
+        this.editModal.querySelector('.modal-close').addEventListener('click', () => this.cancelEdit());
+        this.editModal.querySelector('#cancelEdit').addEventListener('click', () => this.cancelEdit());
+        this.editModal.querySelector('#saveEdit').addEventListener('click', () => this.saveEdit());
+
+        // Click outside to close (only edit modal)
+        this.editModal.addEventListener('click', (e) => {
+            if (e.target === this.editModal) {
+                this.cancelEdit();
+            }
+        });
+
+        // Focus first input
+        setTimeout(() => this.editModal.querySelector('#editDescription')?.focus(), 100);
+    }
+
+    closeEditModal() {
+        if (this.editModal) {
+            this.editModal.remove();
+            this.editModal = null;
+        }
+    }
+
+    async saveEdit() {
+        if (!this.editModal) return;
+
+        const form = this.editModal.querySelector('#editExpenseForm');
         const formData = new FormData(form);
 
         const expenseData = {
@@ -615,7 +738,7 @@ export class ExpensesController {
             return;
         }
 
-        const saveBtn = modal.querySelector('#saveEdit');
+        const saveBtn = this.editModal.querySelector('#saveEdit');
         saveBtn.disabled = true;
         saveBtn.textContent = 'Saving...';
 
@@ -623,8 +746,15 @@ export class ExpensesController {
             const updatedExpense = await this.expensesService.updateExpense(this.currentExpense.id, expenseData);
             this.currentExpense = updatedExpense;
             this.isEditMode = false;
-            this.showExpenseDetailModal(updatedExpense);
-            await this.loadExpensesView(); // Refresh table and summary
+
+            // Update details modal with new data
+            this.updateDetailsModal(updatedExpense);
+
+            // Close edit modal
+            this.closeEditModal();
+
+            // Refresh table and summary
+            await this.loadExpensesView();
             this.showToast('Expense updated successfully!', 'success');
         } catch (error) {
             console.error('[ExpensesController] Error updating expense:', error);
@@ -636,9 +766,11 @@ export class ExpensesController {
     }
 
     confirmDelete() {
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
+        // Create the delete confirmation modal on top of everything
+        this.deleteConfirmModal = document.createElement('div');
+        this.deleteConfirmModal.className = 'modal-overlay';
+        this.deleteConfirmModal.style.zIndex = '1150'; // Higher than edit modal
+        this.deleteConfirmModal.innerHTML = `
             <div class="modal" style="max-width: 450px;">
                 <div class="modal-header">
                     <h3>Confirm Delete</h3>
@@ -669,23 +801,42 @@ export class ExpensesController {
             </div>
         `;
 
-        document.body.appendChild(modal);
-        modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
-        modal.querySelector('#cancelDelete').addEventListener('click', () => modal.remove());
-        modal.querySelector('#confirmDeleteBtn').addEventListener('click', () => this.deleteExpense(modal));
+        document.body.appendChild(this.deleteConfirmModal);
+        this.deleteConfirmModal.querySelector('.modal-close').addEventListener('click', () => this.closeDeleteConfirmModal());
+        this.deleteConfirmModal.querySelector('#cancelDelete').addEventListener('click', () => this.closeDeleteConfirmModal());
+        this.deleteConfirmModal.querySelector('#confirmDeleteBtn').addEventListener('click', () => this.deleteExpense());
+
+        // Click outside to close
+        this.deleteConfirmModal.addEventListener('click', (e) => {
+            if (e.target === this.deleteConfirmModal) {
+                this.closeDeleteConfirmModal();
+            }
+        });
     }
 
-    async deleteExpense(confirmModal) {
-        const deleteBtn = confirmModal.querySelector('#confirmDeleteBtn');
+    closeDeleteConfirmModal() {
+        if (this.deleteConfirmModal) {
+            this.deleteConfirmModal.remove();
+            this.deleteConfirmModal = null;
+        }
+    }
+
+    async deleteExpense() {
+        if (!this.deleteConfirmModal) return;
+
+        const deleteBtn = this.deleteConfirmModal.querySelector('#confirmDeleteBtn');
         deleteBtn.disabled = true;
         deleteBtn.textContent = 'Deleting...';
 
         try {
             await this.expensesService.deleteExpense(this.currentExpense.id);
-            this.closeAllModals();
 
-            // Adjust page if we deleted the last item on the current page
-            // The loadExpensesView will handle pagination correctly
+            // Close all modals
+            this.closeDeleteConfirmModal();
+            this.closeEditModal();
+            this.closeDetailsModal();
+
+            // Refresh table and summary
             await this.loadExpensesView();
             this.showToast('Expense deleted successfully!', 'success');
         } catch (error) {
@@ -698,7 +849,9 @@ export class ExpensesController {
     }
 
     closeAllModals() {
-        document.querySelectorAll('.modal-overlay').forEach(modal => modal.remove());
+        this.closeDeleteConfirmModal();
+        this.closeEditModal();
+        this.closeDetailsModal();
     }
 
     showToast(message, type = 'info') {
@@ -738,6 +891,7 @@ export class ExpensesController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new ExpensesController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new ExpensesController();
+    await controller.initLayout();
 });

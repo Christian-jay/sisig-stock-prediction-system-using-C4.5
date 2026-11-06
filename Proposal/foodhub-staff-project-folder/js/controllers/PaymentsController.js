@@ -2,6 +2,7 @@ import { PaymentService } from '../services/PaymentsService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { apiGet } from '../utils/api.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 export class PaymentsController {
     constructor() {
@@ -14,16 +15,19 @@ export class PaymentsController {
         this.dateFrom = '';
         this.dateTo = '';
         this.dateFilterActive = false;  // Track if user has explicitly set date filter
-
-        this.initLayout();
-        this.initListeners();
-        this.setDefaultDateInputs();  // Set input values to today and activate filter for today
-        this.renderView();
     }
 
-    initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+    async init() {
+        await this.initLayout();
+        this.initListeners();
+        this.setDefaultDateInputs();
+        await this.renderView();
+    }
+
+    async initLayout() {
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
     }
 
     setDefaultDateInputs() {
@@ -575,6 +579,7 @@ export class PaymentsController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     window.paymentsControllerInstance = new PaymentsController();
+    await window.paymentsControllerInstance.init();
 });

@@ -1,6 +1,7 @@
 import { InventoryService } from '../services/InventoryService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 export class InventoryController {
 
@@ -30,9 +31,10 @@ export class InventoryController {
        LAYOUT
        ========================================================= */
 
-    initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+    async initLayout() {
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
     }
 
     /* =========================================================
@@ -1258,7 +1260,8 @@ export class InventoryController {
 
 document.addEventListener(
     'DOMContentLoaded',
-    () => {
+    async () => {
         window.inventoryControllerInstance = new InventoryController();
+        await window.inventoryControllerInstance.initLayout();
     }
 );

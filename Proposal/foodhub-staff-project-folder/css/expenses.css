@@ -225,6 +225,12 @@ body {
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-add-primary:hover {
+    background: var(--btn-primary-hover);
+    transform: translateY(-1px);
 }
 
 .btn-action-view {
@@ -386,7 +392,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 1050;
     padding: 20px;
     animation: fadeIn 0.2s ease;
 }
@@ -447,6 +453,9 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 6px;
+    z-index: 1060;
+    pointer-events: auto;
+    position: relative;
 }
 
 .modal-close:hover {

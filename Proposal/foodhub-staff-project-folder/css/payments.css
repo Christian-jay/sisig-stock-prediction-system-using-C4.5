@@ -310,11 +310,12 @@ body[data-theme="dark"] #dateToFilter::-webkit-calendar-picker-indicator {
 .badge-status {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 11px;
+    padding: 2px 3px;
+    border-radius: 5px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: capitalize;
+    align-self: flex-start;
 }
 
 .badge-status.method-cash {

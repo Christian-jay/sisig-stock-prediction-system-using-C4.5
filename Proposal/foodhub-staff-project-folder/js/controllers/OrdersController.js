@@ -3,6 +3,7 @@ import { CartItem, MenuItem } from '../models/OrderModel.js';
 
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 
 /**
@@ -902,9 +903,9 @@ document.addEventListener(
     'DOMContentLoaded',
     async () => {
 
-        loadSidebarNav();
-
-        loadTopNavbar();
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
 
 
         const controller =

@@ -1,17 +1,22 @@
 import { StaffProfileService } from '../services/StaffProfileService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 export class StaffProfileController {
     constructor() {
         this.staffProfileService = new StaffProfileService();
-        this.initLayout();
+    }
+
+    async init() {
+        await this.initLayout();
         this.loadProfileView();
     }
 
-    initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+    async initLayout() {
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
     }
 
     /**
@@ -200,6 +205,7 @@ export class StaffProfileController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new StaffProfileController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new StaffProfileController();
+    await controller.init();
 });

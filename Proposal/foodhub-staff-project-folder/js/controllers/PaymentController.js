@@ -1,6 +1,7 @@
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { apiPost, apiPatch, apiGet } from '../utils/api.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 /**
  * FOODHUB
@@ -42,8 +43,9 @@ class PaymentController {
     }
 
     async init() {
-        loadSidebarNav();
-        loadTopNavbar();
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
 
         console.log('PaymentController constructor - editOrderId from sessionStorage:', this.editOrderId, 'isEditMode:', this.isEditMode, 'cart items:', this.cartData.items.length);
 

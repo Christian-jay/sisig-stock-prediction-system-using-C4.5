@@ -283,9 +283,18 @@ export class DatePicker {
 
 /**
  * Initialize date pickers on all inputs with [data-datepicker] attribute
+ * Accepts either a selector string or a NodeList/Array of elements
  */
 export function initDatePickers(selector = '[data-datepicker]') {
-    const inputs = document.querySelectorAll(selector);
+    let inputs;
+    if (typeof selector === 'string') {
+        inputs = document.querySelectorAll(selector);
+    } else if (selector instanceof NodeList || Array.isArray(selector)) {
+        inputs = selector;
+    } else {
+        inputs = [selector];
+    }
+
     const pickers = [];
 
     inputs.forEach(input => {

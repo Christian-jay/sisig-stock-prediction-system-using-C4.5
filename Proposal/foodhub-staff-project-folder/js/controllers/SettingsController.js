@@ -5,6 +5,7 @@ import { SettingsService } from '../services/SettingsService.js';
 import { ThemeManager } from '../utils/ThemeManager.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
 export class SettingsController {
     constructor() {
@@ -34,16 +35,19 @@ export class SettingsController {
             menuItems: null,
             form: null,
         };
-
-        this.initLayout();
-        this.initTheme();
-        this.initMenu();
-        this.loadSettings();
     }
 
-    initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+    async init() {
+        await this.initLayout();
+        this.initTheme();
+        this.initMenu();
+        await this.loadSettings();
+    }
+
+    async initLayout() {
+        const userData = await waitForCurrentUser();
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
 
         // Cache DOM elements
         this._elements.loadingState = document.getElementById('settingsLoadingState');
@@ -805,6 +809,7 @@ export class SettingsController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new SettingsController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new SettingsController();
+    await controller.init();
 });
