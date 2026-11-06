@@ -13,7 +13,8 @@ export class DashboardModel {
 
         // Orders (Today's Orders table - 5 columns)
         this.orders = recentOrders.map(order => ({
-            id: order.order_number || `ORD-${order.id}`,
+            id: order.id, // database ID for API calls
+            orderNumber: order.order_number || `ORD-${order.id}`,
             item: order.items_summary || 'Unknown item',
             total: this.formatCurrency(order.total_amount),
             status: order.status || 'PENDING'
@@ -22,7 +23,8 @@ export class DashboardModel {
         // Popular Menu Items
         this.popularItems = topSelling.map(item => ({
             name: item.name || 'Unknown',
-            count: `${item.total_sold || 0} orders`
+            count: `${item.total_sold || 0} orders`,
+            image: item.image || item.image_url || null
         }));
 
         // Low Stock Ingredients

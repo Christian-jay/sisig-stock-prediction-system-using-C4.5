@@ -68,4 +68,10 @@ export class DashboardService {
             out_of_stock_count: 0
         };
     }
+
+    async getOrderDetails(orderId) {
+        const response = await apiGet(`/orders/orders/${orderId}/`);
+        console.log('[DashboardService] getOrderDetails response:', response);
+        return response;
+    }
 }

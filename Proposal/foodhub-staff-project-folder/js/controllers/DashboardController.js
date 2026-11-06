@@ -12,6 +12,12 @@ class DashboardController {
         this.lowStockItemsPerPage = 3;
         this.allLowStockIngredients = []; // Store all ingredients for pagination
 
+        // Modal elements
+        this.orderModal = document.getElementById('orderDetailModal');
+        this.orderModalBody = document.getElementById('orderModalBody');
+        this.orderModalClose = document.getElementById('orderModalClose');
+        this.orderModalCloseBtn = document.getElementById('orderModalCloseBtn');
+
         this.init();
     }
 
@@ -19,6 +25,7 @@ class DashboardController {
         loadSidebarNav();
         loadTopNavbar();
 
+        this.bindModalEvents();
         this.showLoadingStates();
 
         try {
@@ -34,6 +41,131 @@ class DashboardController {
             console.error('Dashboard initialization failed:', error);
             this.showErrorStates('Failed to load dashboard data');
         }
+    }
+
+    bindModalEvents() {
+        if (this.orderModalClose) {
+            this.orderModalClose.addEventListener('click', () => this.closeOrderModal());
+        }
+        if (this.orderModalCloseBtn) {
+            this.orderModalCloseBtn.addEventListener('click', () => this.closeOrderModal());
+        }
+        if (this.orderModal) {
+            // Close on backdrop click
+            this.orderModal.addEventListener('click', (e) => {
+                if (e.target === this.orderModal) {
+                    this.closeOrderModal();
+                }
+            });
+            // Close on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !this.orderModal.hidden) {
+                    this.closeOrderModal();
+                }
+            });
+        }
+    }
+
+    openOrderModal() {
+        if (this.orderModal) {
+            this.orderModal.hidden = false;
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    closeOrderModal() {
+        if (this.orderModal) {
+            this.orderModal.hidden = true;
+            document.body.style.overflow = '';
+            this.orderModalBody.innerHTML = '';
+        }
+    }
+
+    async viewOrder(orderId) {
+        console.log('[DashboardController] View order:', orderId);
+
+        // Show loading state in modal
+        this.orderModalBody.innerHTML = `
+            <div class="loading-item">
+                <div class="loading-spinner"></div>
+                <span>Loading order details...</span>
+            </div>
+        `;
+        this.openOrderModal();
+
+        try {
+            const order = await this.dashboardService.getOrderDetails(orderId);
+            this.renderOrderModal(order);
+        } catch (error) {
+            console.error('[DashboardController] Failed to load order details:', error);
+            this.orderModalBody.innerHTML = `
+                <div class="error-text">
+                    Failed to load order details. Please try again.
+                </div>
+            `;
+        }
+    }
+
+    renderOrderModal(order) {
+        if (!order || !this.orderModalBody) return;
+
+        const statusClass = this.getStatusClass(order.status).replace('badge-', '');
+
+        this.orderModalBody.innerHTML = `
+            <div class="order-detail-section">
+                <h4>Order Information</h4>
+                <div class="order-detail-grid">
+                    <span class="label">Order ID</span>
+                    <span class="value">${this.escapeHtml(order.order_number || order.id)}</span>
+                    <span class="label">Status</span>
+                    <span class="value"><span class="order-status-badge ${statusClass}">${this.escapeHtml(order.status_display || order.status)}</span></span>
+                    <span class="label">Payment Method</span>
+                    <span class="value">${this.escapeHtml(order.payment_method_display || order.payment_method)}</span>
+                    <span class="label">Payment Status</span>
+                    <span class="value">${this.escapeHtml(order.payment_status)}</span>
+                    <span class="label">Order Type</span>
+                    <span class="value">${this.escapeHtml(order.order_type || 'Dine In')}</span>
+                    <span class="label">Created</span>
+                    <span class="value">${this.formatDateTime(order.created_at)}</span>
+                    <span class="label">Customer</span>
+                    <span class="value">${this.escapeHtml(order.created_by_name || 'Walk-in')}</span>
+                </div>
+            </div>
+            <div class="order-detail-section">
+                <h4>Items</h4>
+                <div class="order-items-list">
+                    ${(order.items || []).map(item => `
+                        <div class="order-item-row">
+                            ${item.menu_item?.image_url ? `<img class="order-item-image" src="${this.escapeHtml(item.menu_item.image_url)}" alt="${this.escapeHtml(item.menu_item_name)}" loading="lazy">` : `<div class="order-item-image-placeholder" style="width:44px;height:44px;border-radius:8px;background:var(--bg-tertiary);border:1px solid var(--border-color);"></div>`}
+                            <div class="order-item-info">
+                                <div class="order-item-name">${this.escapeHtml(item.menu_item_name)}</div>
+                                <div class="order-item-qty">Qty: ${item.quantity}</div>
+                            </div>
+                            <div class="order-item-price">${this.formatCurrency(item.line_total)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="order-total-row">
+                <span class="label">Total Amount</span>
+                <span class="value">${this.escapeHtml(order.total_amount)}</span>
+            </div>
+        `;
+    }
+
+    formatDateTime(dateString) {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        if (!Number.isFinite(date.getTime())) return '—';
+        return new Intl.DateTimeFormat('en-PH', {
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        }).format(date);
     }
 
     showLoadingStates() {
@@ -223,7 +355,7 @@ class DashboardController {
 
         tbody.innerHTML = orders.map(order => `
             <tr>
-                <td><strong>${this.escapeHtml(order.id)}</strong></td>
+                <td><strong>${this.escapeHtml(order.orderNumber)}</strong></td>
                 <td>${this.escapeHtml(order.item)}</td>
                 <td>${this.escapeHtml(order.total)}</td>
                 <td><span class="badge ${this.getStatusClass(order.status)}">${this.escapeHtml(order.status)}</span></td>
@@ -240,13 +372,6 @@ class DashboardController {
                 this.viewOrder(orderId);
             });
         });
-    }
-
-    viewOrder(orderId) {
-        // Navigate to orders.html with order ID, or open modal if implemented
-        console.log('View order:', orderId);
-        // For now, navigate to orders page
-        window.location.href = `orders.html?order=${encodeURIComponent(orderId)}`;
     }
 
     renderPopularItems(items) {
@@ -266,7 +391,7 @@ class DashboardController {
         listContainer.innerHTML = items.map(item => `
             <div class="popular-item-row">
                 <div class="popular-item-left">
-                    <div class="popular-item-image-placeholder"></div>
+                    ${item.image ? `<img class="popular-item-image" src="${this.escapeHtml(item.image)}" alt="${this.escapeHtml(item.name)}" loading="lazy">` : `<div class="popular-item-image-placeholder"></div>`}
                     <span class="popular-name">${this.escapeHtml(item.name)}</span>
                 </div>
                 <span class="popular-count">${this.escapeHtml(item.count)}</span>
@@ -378,6 +503,13 @@ class DashboardController {
             .replace(/>/g, '>')
             .replace(/"/g, '"')
             .replace(/'/g, '&#039;');
+    }
+
+    formatCurrency(value) {
+        if (!value) return '₱0.00';
+        const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9.-]+/g, '')) : Number(value);
+        if (isNaN(num)) return '₱0.00';
+        return `₱${num.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 }
 

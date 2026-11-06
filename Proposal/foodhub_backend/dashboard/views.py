@@ -178,7 +178,7 @@ class DashboardViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def recent_orders(self, request):
         """
-        Get recent orders.
+        Get today's orders.
         Query params: limit=5|10
         """
         try:
@@ -186,7 +186,8 @@ class DashboardViewSet(viewsets.ViewSet):
         except (TypeError, ValueError):
             limit = 10
 
-        orders = Order.objects.select_related('created_by').prefetch_related('items__menu_item').order_by('-created_at')[:limit]
+        today = timezone.now().date()
+        orders = Order.objects.filter(created_at__date=today).select_related('created_by').prefetch_related('items__menu_item').order_by('-created_at')[:limit]
 
         data = []
         for order in orders:
