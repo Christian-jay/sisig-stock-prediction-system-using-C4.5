@@ -1,6 +1,7 @@
 import { HistoryService } from '../services/HistoryService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 class HistoryController {
     constructor() {
@@ -29,6 +30,17 @@ class HistoryController {
         if (this.nextBtn) this.nextBtn.disabled = true;
 
         this.bindEvents();
+    }
+
+    async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
         this.refresh();
     }
 
@@ -282,8 +294,7 @@ class HistoryController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new HistoryController();
-    loadSidebarNav();
-    loadTopNavbar();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new HistoryController();
+    await controller.init();
 });

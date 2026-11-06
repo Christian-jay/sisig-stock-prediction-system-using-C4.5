@@ -1,4 +1,4 @@
-export function loadSidebarNav(customTitle = '') {
+export function loadSidebarNav(customTitle = '', userData = null) {
     // 1. Kunin ang pangalan ng kasalukuyang html file mula sa URL
     const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
 
@@ -24,7 +24,19 @@ export function loadSidebarNav(customTitle = '') {
         pageHeaderTitle.textContent = finalTitle;
     }
 
-    // 4. I-render ang Navbar Menu na may dynamic active class
+    // 4. Extract admin name from userData (first_name + last_name, fallback to username, then "Admin")
+    let adminName = 'Admin';
+    if (userData) {
+        const firstName = userData.first_name || '';
+        const lastName = userData.last_name || '';
+        if (firstName || lastName) {
+            adminName = `${firstName} ${lastName}`.trim();
+        } else if (userData.username) {
+            adminName = userData.username;
+        }
+    }
+
+    // 5. I-render ang Navbar Menu na may dynamic active class
     const navHTML = `
         <!-- SIDEBAR NAVIGATION -->
         <aside class="sidebar">
@@ -103,7 +115,7 @@ export function loadSidebarNav(customTitle = '') {
                             </svg>
                         </div>
                         <div class="admin-info">
-                            <span class="admin-name"  style="color: #ffffff;">Admin</span>
+                            <span class="admin-name" style="color: #ffffff;">${adminName}</span>
                             <span class="admin-role">Administrator</span>
                         </div>
                     </div>
@@ -112,7 +124,7 @@ export function loadSidebarNav(customTitle = '') {
         </aside>
     `;
 
-    // 5. I-inject sa container ng HTML
+    // 6. I-inject sa container ng HTML
     const container = document.getElementById('sidebar-nav-container');
     if (container) {
         container.innerHTML = navHTML;

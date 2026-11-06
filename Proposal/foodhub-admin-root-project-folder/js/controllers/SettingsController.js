@@ -9,6 +9,7 @@ import {
     PaymentSettings,
     BackupSettings
 } from '../models/SettingsModel.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 class SettingsController {
     constructor() {
@@ -20,8 +21,18 @@ class SettingsController {
 
         // Track saved theme reference for Cancel functionality
         this._savedThemeRef = 'light';
+    }
 
-        this.initSettings();
+    async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
+        await this.initSettings();
     }
 
     async initSettings() {
@@ -636,8 +647,7 @@ class SettingsController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadSidebarNav();
-    loadTopNavbar();
-    new SettingsController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new SettingsController();
+    await controller.init();
 });

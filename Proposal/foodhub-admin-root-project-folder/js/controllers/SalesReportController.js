@@ -2,6 +2,7 @@ import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { apiGet } from '../utils/api.js';
 import { API_BASE_URL } from '../utils/config.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 const ORDERS_API_BASE = '/orders/orders';
 const BACKEND_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
@@ -9,12 +10,17 @@ const BACKEND_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
 class SalesReportController {
     constructor() {
         this.dateRange = { start: null, end: null };
-        this.init();
     }
 
     async init() {
-        await loadSidebarNav();
-        await loadTopNavbar();
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
         this.setupDatePicker();
         this.setupEventListeners();
         await this.loadSalesReport();
@@ -739,6 +745,7 @@ class SalesReportController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new SalesReportController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new SalesReportController();
+    await controller.init();
 });

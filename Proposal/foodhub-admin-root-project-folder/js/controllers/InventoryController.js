@@ -4,6 +4,7 @@ import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { formatQuantity, formatQuantityWithUnit } from '../utils/format.js';
 import { API_BASE_URL } from '../utils/config.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 class InventoryController {
 
@@ -33,8 +34,18 @@ class InventoryController {
         this.initAlertPagination();
         this.initPriorityPagination();
         this.initFilters();
+    }
 
-        this.loadAllData();
+    async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
+        await this.loadAllData();
     }
 
 
@@ -1253,8 +1264,7 @@ class InventoryController {
 // INITIALIZE
 // =========================================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadSidebarNav();
-    loadTopNavbar();
-    new InventoryController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new InventoryController();
+    await controller.init();
 });

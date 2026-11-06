@@ -2,6 +2,7 @@ import { OrderService } from '../services/OrderService.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { formatQuantity } from '../utils/format.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 class OrdersController {
     constructor() {
@@ -26,10 +27,17 @@ class OrdersController {
         this.orderService = new OrderService();
 
         this.initOrdersPagination();
-        this.init();
     }
 
     async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
         await this.loadOrders();
         await this.loadStatistics();
         this.setupEventListeners();
@@ -778,8 +786,7 @@ class OrdersController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new OrdersController();
-    loadSidebarNav();
-    loadTopNavbar();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new OrdersController();
+    await controller.init();
 });

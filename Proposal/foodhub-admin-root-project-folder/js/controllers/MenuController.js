@@ -1,6 +1,7 @@
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { MenuService } from '../services/MenuService.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 class MenuController {
     constructor() {
@@ -12,15 +13,19 @@ class MenuController {
         this.currentEditId = null;
         this.currentViewId = null;
         this.currentDeleteId = null;
-
-        this.initLayout();
-        this.loadInitialData();
-        this.setupEventListeners();
     }
 
-    initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+    async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
+        await this.loadInitialData();
+        this.setupEventListeners();
     }
 
     async loadInitialData() {
@@ -615,6 +620,7 @@ window.deleteMenu = function(id) {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     window.menuController = new MenuController();
+    await window.menuController.init();
 });

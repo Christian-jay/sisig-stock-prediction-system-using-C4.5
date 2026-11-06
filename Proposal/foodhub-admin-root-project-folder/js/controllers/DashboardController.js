@@ -2,6 +2,7 @@ import DashboardService from '../services/DashboardService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { formatQuantity } from '../utils/format.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 /**
  * DashboardController
@@ -10,14 +11,17 @@ import { formatQuantity } from '../utils/format.js';
 class DashboardController {
     constructor() {
         this.dashboardService = new DashboardService();
-        this.initDashboard();
     }
 
-    async initDashboard() {
+    async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
         try {
             // Load sidebar and topbar FIRST before fetching data
-            await loadSidebarNav();
-            await loadTopNavbar();
+            loadSidebarNav('', userData);
+            loadTopNavbar(userData);
 
             const data = await this.dashboardService.fetchDashboardData();
             this.renderMetrics(data.metrics);
@@ -677,6 +681,7 @@ class DashboardController {
 }
 
 // Initialize on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    new DashboardController();
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new DashboardController();
+    await controller.init();
 });

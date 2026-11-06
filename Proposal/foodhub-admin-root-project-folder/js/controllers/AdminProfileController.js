@@ -1,22 +1,33 @@
 import { AdminProfileService } from '../services/AdminProfileService.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
+import { protectPage } from '../utils/AuthGuard.js';
 
 export class AdminProfileController {
 
     constructor() {
         this.adminProfileService = new AdminProfileService();
-        this.initLayout();
+    }
+
+    async init() {
+        // Protect page and get user data
+        const userData = await protectPage({ allowedRoles: ['ADMIN'] });
+        if (!userData) return; // Redirected to login
+
+        // Load sidebar and topbar with user data
+        loadSidebarNav('', userData);
+        loadTopNavbar(userData);
+
         this.loadProfileView();
     }
 
     /* =====================================================
-       INITIALIZE LAYOUT
+       INITIALIZE LAYOUT (legacy - now called from init())
        ===================================================== */
 
     initLayout() {
-        loadSidebarNav();
-        loadTopNavbar();
+        // This is now called from init() after userData is available
+        // Kept for compatibility but no longer loads nav without userData
     }
 
     /* =====================================================
@@ -179,8 +190,7 @@ export class AdminProfileController {
    PAGE INITIALIZATION
    ========================================================= */
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    new AdminProfileController();
-
+document.addEventListener('DOMContentLoaded', async () => {
+    const controller = new AdminProfileController();
+    await controller.init();
 });

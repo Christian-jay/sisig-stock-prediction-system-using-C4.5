@@ -1,4 +1,16 @@
-export function loadTopNavbar() {
+export function loadTopNavbar(userData = null) {
+    // Extract admin name from userData (first_name + last_name, fallback to username, then "Admin")
+    let adminName = 'Admin';
+    if (userData) {
+        const firstName = userData.first_name || '';
+        const lastName = userData.last_name || '';
+        if (firstName || lastName) {
+            adminName = `${firstName} ${lastName}`.trim();
+        } else if (userData.username) {
+            adminName = userData.username;
+        }
+    }
+
     const topNavbarHTML = `
     <header class="top-navbar">
         <div class="navbar-left">
@@ -27,7 +39,7 @@ export function loadTopNavbar() {
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </span>
-                <span class="profile-name">Admin ▼</span>
+                <span class="profile-name">${adminName}</span>
             </div>
         </div>
     </header>
