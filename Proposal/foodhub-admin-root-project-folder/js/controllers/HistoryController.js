@@ -24,6 +24,10 @@ class HistoryController {
         this.toInput = document.getElementById('historyToDate');
         this.exportButton = document.getElementById('exportHistoryBtn');
 
+        // Initially disable pagination buttons until data loads
+        if (this.prevBtn) this.prevBtn.disabled = true;
+        if (this.nextBtn) this.nextBtn.disabled = true;
+
         this.bindEvents();
         this.refresh();
     }
