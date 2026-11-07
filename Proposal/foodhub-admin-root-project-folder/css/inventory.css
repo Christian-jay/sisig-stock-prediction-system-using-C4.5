@@ -107,34 +107,24 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 40px;
-    padding: 0 16px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 9px;
+    border-radius: 8px;
     font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
     cursor: pointer;
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 .action-btn.primary {
     background: var(--primary);
-
     color: white;
-
-    box-shadow:
-        0 4px 12px rgba(2, 132, 199, 0.18);
 }
 
 .action-btn.primary:hover {
     background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow:
-        0 7px 16px rgba(2, 132, 199, 0.22);
 }
 
 .action-buttons {
@@ -172,7 +162,7 @@ body {
     display: grid;
 
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(3, minmax(0, 1fr));
 
     gap: 16px;
 }
@@ -245,6 +235,11 @@ body {
     color: var(--danger-text);
 }
 
+.metric-icon.blue-dark {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
 .metric-content {
     min-width: 0;
 }
@@ -294,6 +289,10 @@ body {
 
 .metric-description.danger {
     color: var(--danger-text);
+}
+
+.text-primary {
+    color: var(--primary) !important;
 }
 
 

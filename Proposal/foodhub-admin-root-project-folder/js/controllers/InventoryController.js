@@ -82,6 +82,7 @@ class InventoryController {
         this.inStockCount = document.getElementById('inStockCount');
         this.lowStockCount = document.getElementById('lowStockCount');
         this.outStockCount = document.getElementById('outStockCount');
+        this.totalStockValue = document.getElementById('totalStockValue');
 
         // Donut chart
         this.chartTotal = document.getElementById('chartTotal');
@@ -557,6 +558,10 @@ class InventoryController {
         if (this.inStockCount) this.inStockCount.textContent = summary.in_stock ?? 0;
         if (this.lowStockCount) this.lowStockCount.textContent = summary.low_stock ?? 0;
         if (this.outStockCount) this.outStockCount.textContent = summary.out_of_stock ?? 0;
+        if (this.totalStockValue) {
+            const value = summary.total_value ?? 0;
+            this.totalStockValue.textContent = `₱${Number(value).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
         if (this.chartTotal) this.chartTotal.textContent = summary.total_items ?? 0;
     }
 
