@@ -1,12 +1,14 @@
 import { InventoryService } from '../services/InventoryService.js';
 import { C45AlgorithmService } from '../services/C45AlgorithmService.js';
+import { InventoryPredictionService } from '../services/InventoryPredictionService.js';
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
 import { formatQuantity, formatQuantityWithUnit } from '../utils/format.js';
 import { API_BASE_URL } from '../utils/config.js';
 import { protectPage } from '../utils/AuthGuard.js';
+import { waitForCurrentUser } from '../utils/authWait.js';
 
-class InventoryController {
+export class InventoryController {
 
     constructor() {
         this.service = new InventoryService();
@@ -28,6 +30,9 @@ class InventoryController {
         this.currentPriorityItems = [];
 
         this.allIngredients = []; // For C4.5, filters, donut chart
+
+        // Prediction service for C4.5 analysis
+        this.predictionService = new InventoryPredictionService();
 
         this.initDOM();
         this.initPagination();
@@ -104,11 +109,22 @@ class InventoryController {
         this.alertList = document.getElementById('inventoryAlertList');
         this.alertCount = document.getElementById('alertCount');
 
-        // C4.5
+        // C4.5 (Dashboard)
         this.highRiskCount = document.getElementById('highRiskCount');
         this.mediumRiskCount = document.getElementById('mediumRiskCount');
         this.lowRiskCount = document.getElementById('lowRiskCount');
         this.c45Recommendation = document.getElementById('c45Recommendation');
+
+        // C4.5 (Prediction Page)
+        this.c45CriticalCount = document.getElementById('c45CriticalCount');
+        this.c45RiskCount = document.getElementById('c45RiskCount');
+        this.c45MonitoredCount = document.getElementById('c45MonitoredCount');
+        this.c45AlertBanner = document.getElementById('c45AlertBanner');
+        this.c45AlertTitle = document.getElementById('c45AlertTitle');
+        this.c45AlertDescription = document.getElementById('c45AlertDescription');
+        this.c45PredictionTableBody = document.getElementById('c45PredictionTableBody');
+        this.runC45AnalysisBtn = document.getElementById('runC45AnalysisBtn');
+        this.c45StatusText = document.getElementById('c45StatusText');
 
         // Loading overlay
         this.loadingOverlay = document.getElementById('loadingOverlay');
@@ -990,6 +1006,130 @@ class InventoryController {
             } else {
                 this.c45Recommendation.textContent = 'All ingredients are currently at healthy stock levels.';
             }
+        }
+    }
+
+    // =========================================================
+    // C4.5 PREDICTION PAGE (for inventory_prediction.html)
+    // =========================================================
+
+    loadC45MockData() {
+        // This method is called from inventory_prediction.html page
+        // It uses the already-loaded this.allIngredients from loadAllData
+        // or fetches fresh data if not available
+
+        const analyzeInventory = () => {
+            const ingredients = this.allIngredients.length > 0
+                ? this.allIngredients
+                : [];
+
+            // Use prediction service for C4.5 analysis
+            const result = this.predictionService.analyzeInventory(ingredients);
+            const { criticalCount, highRiskCount, totalMonitored, assessments } = result;
+
+            // Update summary cards
+            if (this.c45CriticalCount) {
+                this.c45CriticalCount.textContent = criticalCount;
+            }
+
+            if (this.c45RiskCount) {
+                this.c45RiskCount.textContent = highRiskCount;
+            }
+
+            if (this.c45MonitoredCount) {
+                this.c45MonitoredCount.textContent = totalMonitored;
+            }
+
+            // Update alert banner using service
+            if (this.c45AlertBanner && this.c45AlertTitle && this.c45AlertDescription) {
+                const alertState = this.predictionService.getAlertState(criticalCount, highRiskCount);
+                this.c45AlertBanner.classList.remove('is-critical', 'is-warning');
+
+                if (alertState.type) {
+                    this.c45AlertBanner.classList.add(alertState.type);
+                }
+
+                this.c45AlertTitle.textContent = alertState.title;
+                this.c45AlertDescription.textContent = alertState.description;
+            }
+
+            // Render prediction table
+            if (this.c45PredictionTableBody) {
+                if (assessments.length === 0) {
+                    this.c45PredictionTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-table">
+                            No ingredients available for analysis.
+                        </td>
+                    </tr>
+                `;
+                } else {
+                    this.c45PredictionTableBody.innerHTML = assessments.map(item => {
+                        const riskClass = {
+                            Critical: 'critical',
+                            High: 'high',
+                            Medium: 'medium',
+                            Low: 'low'
+                        }[item.risk];
+
+                        return `
+                        <tr>
+                            <td>
+                                <strong>${this.predictionService.escapeHtml(item.name)}</strong>
+                                <small style="display:block;color:#64748b;margin-top:4px">
+                                    ${this.predictionService.escapeHtml(item.category_display || item.category)}
+                                </small>
+                            </td>
+                            <td>
+                                ${this.predictionService.formatQuantity(item.quantity, item.unit_display || item.unit)}
+                            </td>
+                            <td>
+                                ${this.predictionService.formatQuantity(item.reorder_level, item.unit_display || item.unit)}
+                            </td>
+                            <td>${this.predictionService.escapeHtml(item.daily_usage_display || item.daily_usage)}</td>
+                            <td>
+                                <span class="c45-risk ${riskClass}">
+                                    ${item.risk}
+                                </span>
+                                <small style="display:block;color:#64748b;margin-top:5px;white-space:normal">
+                                    ${this.predictionService.escapeHtml(item.reason)}
+                                </small>
+                            </td>
+                            <td>
+                                <span class="c45-action-text">
+                                    ${this.predictionService.escapeHtml(item.action)}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                    }).join('');
+                }
+            }
+
+            // Update status text
+            if (this.c45StatusText) {
+                this.c45StatusText.textContent =
+                    `Analysis complete · ${assessments.length} ingredients evaluated`;
+            }
+        };
+
+        // If we don't have ingredients yet, fetch them first
+        if (this.allIngredients.length === 0) {
+            this.fetchAllIngredients().then(() => {
+                analyzeInventory();
+            });
+        } else {
+            analyzeInventory();
+        }
+
+        // Bind refresh button
+        if (this.runC45AnalysisBtn) {
+            this.runC45AnalysisBtn.onclick = () => {
+                // Re-fetch fresh data on refresh
+                this.fetchAllIngredients().then(() => {
+                    analyzeInventory();
+                });
+            };
         }
     }
 

@@ -1,6 +1,6 @@
 // InventoryPredictionController - Admin version
 // Minimal controller: only loads SidebarNav and TopNavbar
-// The C4.5 logic runs in InventoryController.loadC45MockData() on the main inventory page
+// C4.5 logic will be implemented later (similar to staff side)
 
 import { loadSidebarNav } from '../components/SidebarNav.js';
 import { loadTopNavbar } from '../components/TopbarNav.js';
