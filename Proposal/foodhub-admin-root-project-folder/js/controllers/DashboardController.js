@@ -463,7 +463,7 @@ class DashboardController {
                 const width = Math.round(entries[0]?.contentRect.width || 0);
                 if (!width || width === this.dashboardTrendWidth) return;
                 this.dashboardTrendWidth = width;
-                this.renderSalesTrendChart(this.dashboardTrendData);
+                this.renderSalesChart(this.dashboardTrendData);
             });
             this.dashboardTrendResizeObserver.observe(trendContainer);
         }
