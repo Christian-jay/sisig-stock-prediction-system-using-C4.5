@@ -1,20 +1,42 @@
 /**
- * Auth Wait Utility - Polls for window.currentUser to be set by AuthGuard
- * Useful for controllers that need user data before rendering navigation
+ * Auth Wait Utility
+ * Provides a promise that resolves when window.currentUser is available.
+ * This handles the race condition between AuthGuard (module script) and
+ * controllers (DOMContentLoaded).
+ * Uses polling approach - no HTML modifications needed.
  */
 
+/**
+ * Wait for currentUser to be available, with optional timeout
+ * @param {number} timeoutMs - Optional timeout in milliseconds (default: 5000)
+ * @returns {Promise<Object|null>} userData or null if timeout
+ */
 export async function waitForCurrentUser(timeoutMs = 5000) {
-    const startTime = Date.now();
-    const pollInterval = 50;
-
-    while (Date.now() - startTime < timeoutMs) {
-        if (window.currentUser) {
-            return window.currentUser;
-        }
-        await new Promise(resolve => setTimeout(resolve, pollInterval));
+    // If already available, return immediately
+    if (window.currentUser) {
+        return window.currentUser;
     }
 
-    // Timeout - return whatever we have (may be null)
-    console.warn('[authWait] Timeout waiting for currentUser, proceeding with:', window.currentUser);
+    return new Promise((resolve) => {
+        const startTime = Date.now();
+
+        const check = setInterval(() => {
+            if (window.currentUser) {
+                clearInterval(check);
+                resolve(window.currentUser);
+            } else if (Date.now() - startTime > timeoutMs) {
+                clearInterval(check);
+                console.warn('[authWait] Timeout waiting for currentUser');
+                resolve(null);
+            }
+        }, 50);
+    });
+}
+
+/**
+ * Synchronous check - returns currentUser if available, undefined otherwise
+ * Use this in synchronous contexts where you can't await
+ */
+export function getCurrentUserSync() {
     return window.currentUser;
 }

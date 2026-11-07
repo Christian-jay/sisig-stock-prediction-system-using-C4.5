@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="css/inventory_prediction.css">
     <link rel="stylesheet" href="css/sidebar_nav.css">
     <link rel="stylesheet" href="css/topbar_nav.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
     <!-- No-flash theme initialization (runs before paint) -->
     <script>
         (function() {
@@ -56,21 +58,36 @@
 
                         <div class="c45-summary-grid">
                             <div class="c45-summary-card critical">
-                                <span>Critical Items</span>
-                                <strong id="c45CriticalCount">0</strong>
-                                <small>Out of stock</small>
+                                <div class="card-icon">
+                                    <i data-lucide="alert-circle"></i>
+                                </div>
+                                <div class="metric-data">
+                                    <span class="metric-title">Critical Items</span>
+                                    <h3 class="metric-value" id="c45CriticalCount">0</h3>
+                                    <span class="metric-trend positive">Out of stock</span>
+                                </div>
                             </div>
 
                             <div class="c45-summary-card warning">
-                                <span>At-Risk Items</span>
-                                <strong id="c45RiskCount">0</strong>
-                                <small>Low stock or high usage</small>
+                                <div class="card-icon">
+                                    <i data-lucide="alert-triangle"></i>
+                                </div>
+                                <div class="metric-data">
+                                    <span class="metric-title">At-Risk Items</span>
+                                    <h3 class="metric-value" id="c45RiskCount">0</h3>
+                                    <span class="metric-trend warning">Low stock or high usage</span>
+                                </div>
                             </div>
 
                             <div class="c45-summary-card normal">
-                                <span>Items Monitored</span>
-                                <strong id="c45MonitoredCount">0</strong>
-                                <small>Ingredients evaluated</small>
+                                <div class="card-icon">
+                                    <i data-lucide="activity"></i>
+                                </div>
+                                <div class="metric-data">
+                                    <span class="metric-title">Items Monitored</span>
+                                    <h3 class="metric-value" id="c45MonitoredCount">0</h3>
+                                    <span class="metric-trend positive">Ingredients evaluated</span>
+                                </div>
                             </div>
                         </div>
 
@@ -159,7 +176,14 @@
 
     <script type="module" src="js/controllers/InventoryPredictionController.js">
     </script>
-
+    <!-- Initialize Lucide icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 
 </html>

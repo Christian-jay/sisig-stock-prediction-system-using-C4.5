@@ -7,6 +7,7 @@ export function loadSidebarNav(customTitle = '', userData = null) {
         'dashboard.html': { title: 'Dashboard Overview' },
         'orders.html': { title: 'Orders Management' },
         'inventory.html': { title: 'Inventory & Stock Control' },
+        'inventory_prediction.html': { title: 'Predictive Stock Alert' },
         'menu_management.html': { title: 'Menu Management' },
         'sales_report.html': { title: 'Sales Analytics & Reports' },
         'history.html': { title: 'Order History Logs' },
@@ -36,6 +37,9 @@ export function loadSidebarNav(customTitle = '', userData = null) {
         }
     }
 
+    // 4b. Check if current page is an inventory route for auto-expanding dropdown
+    const isInventoryRoute = ['inventory.html', 'inventory_prediction.html'].includes(currentPath);
+
     // 5. I-render ang Navbar Menu na may dynamic active class
     const navHTML = `
         <!-- SIDEBAR NAVIGATION -->
@@ -63,14 +67,31 @@ export function loadSidebarNav(customTitle = '', userData = null) {
                     </svg>
                     Orders
                 </a>
-                <a href="inventory.html" class="nav-item ${currentPath === 'inventory.html' ? 'active' : ''}">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                        <line x1="12" y1="22.08" x2="12" y2="12" />
-                    </svg>
-                    Inventory
-                </a>
+                <!-- Inventory Dropdown Group -->
+                <div class="nav-group ${isInventoryRoute ? 'open' : ''}">
+                    <div class="nav-item dropdown-btn ${isInventoryRoute ? 'active' : ''}" id="inventoryDropdownBtn">
+                        <div class="nav-item-content">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                                <line x1="12" y1="22.08" x2="12" y2="12" />
+                            </svg>
+                            <span>Inventory</span>
+                        </div>
+                        <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+
+                    <div class="sub-nav-container">
+                        <a href="inventory.html" class="sub-nav-item ${currentPath === 'inventory.html' ? 'active-sub' : ''}">
+                            Stock Control
+                        </a>
+                        <a href="inventory_prediction.html" class="sub-nav-item ${currentPath === 'inventory_prediction.html' ? 'active-sub' : ''}">
+                            C4.5 Predictive Alert
+                        </a>
+                    </div>
+                </div>
                 <a href="menu_management.html" class="nav-item ${currentPath === 'menu_management.html' ? 'active' : ''}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
@@ -97,7 +118,7 @@ export function loadSidebarNav(customTitle = '', userData = null) {
                 <a href="settings.html" class="nav-item ${currentPath === 'settings.html' ? 'active' : ''}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3" />
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2-2v.09a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2-2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                     </svg>
                     Settings
                 </a>
@@ -128,5 +149,15 @@ export function loadSidebarNav(customTitle = '', userData = null) {
     const container = document.getElementById('sidebar-nav-container');
     if (container) {
         container.innerHTML = navHTML;
+
+        // 7. Bind click event for Inventory dropdown
+        const inventoryDropdownBtn = document.getElementById('inventoryDropdownBtn');
+        if (inventoryDropdownBtn) {
+            inventoryDropdownBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const navGroup = inventoryDropdownBtn.closest('.nav-group');
+                navGroup.classList.toggle('open');
+            });
+        }
     }
 }

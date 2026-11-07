@@ -172,57 +172,110 @@ svg {
     white-space: nowrap;
 }
 
-/* Summary cards */
+/* Summary cards - Exact copy of Dashboard metric cards */
 
 .c45-summary-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: 20px;
     width: 100%;
     min-width: 0;
     margin: 20px 0;
 }
 
 .c45-summary-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* Metric Icons - Exact copy of Dashboard */
+.c45-summary-card .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.c45-summary-card .card-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* Color variants - matching Dashboard */
+.c45-summary-card.critical .card-icon {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.c45-summary-card.warning .card-icon {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.c45-summary-card.normal .card-icon {
+    background: var(--info-bg);
+    color: var(--info-text);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .c45-summary-card.critical .card-icon {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+[data-theme="dark"] .c45-summary-card.warning .card-icon {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+[data-theme="dark"] .c45-summary-card.normal .card-icon {
+    background: var(--info-bg);
+    color: var(--info-text);
+}
+
+/* Metric Data - Exact copy of Dashboard */
+.c45-summary-card .metric-data {
     display: flex;
     flex-direction: column;
-    gap: 7px;
     min-width: 0;
-    padding: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background: var(--card-bg);
-    overflow-wrap: anywhere;
 }
 
-.c45-summary-card>span {
-    color: var(--slate-muted);
+.c45-summary-card .metric-title {
     font-size: 12px;
-    font-weight: 700;
-}
-
-.c45-summary-card strong {
-    color: var(--slate-text);
-    font-size: 28px;
-    line-height: 1.2;
-}
-
-.c45-summary-card small {
     color: var(--slate-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.c45-summary-card .metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--slate-dark);
+    margin: 4px 0;
+}
+
+.c45-summary-card .metric-trend {
     font-size: 11px;
-    line-height: 1.5;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
-.c45-summary-card.critical {
-    border-left: 4px solid var(--danger);
+.c45-summary-card .metric-trend.positive {
+    color: var(--success-text);
 }
 
-.c45-summary-card.warning {
-    border-left: 4px solid var(--warning);
-}
-
-.c45-summary-card.normal {
-    border-left: 4px solid var(--info);
+.c45-summary-card .metric-trend.warning {
+    color: var(--warning-text);
 }
 
 /* Alert banner */

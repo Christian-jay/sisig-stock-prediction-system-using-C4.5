@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FOODHUB — Admin Predictive Stock Alert</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Theme System (load FIRST to prevent flash) -->
+    <link rel="stylesheet" href="../foodhub-staff-project-folder/css/themes.css">
+    <!-- Page Stylesheets -->
+    <link rel="stylesheet" href="css/inventory_prediction.css">
+    <link rel="stylesheet" href="css/sidebar_nav.css">
+    <link rel="stylesheet" href="css/topbar_nav.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <!-- No-flash theme initialization (runs before paint) -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('foodhub_theme');
+            if (theme === 'light' || theme === 'dark') {
+                document.documentElement.dataset.theme = theme;
+            }
+        })();
+    </script>
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDE NAVBAR -->
+        <div id="sidebar-nav-container"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <div id="top-navbar-container"></div>
+
+            <!-- INVENTORY CONTENT WRAPPER -->
+            <div class="inventory-dashboard-body">
+
+                <!-- PAGE HEADER -->
+                <div class="page-header">
+                    <h1>Predictive Stock Alerts</h1>
+                    <p>
+                        C4.5 Decision Tree · Ingredient risk monitoring
+                    </p>
+                </div>
+
+                <!-- PREDICTIVE STOCK ALERT CENTER -->
+                <section class="c45-prediction-section">
+                    <div class="card-box c45-main-card">
+
+                        <div class="c45-summary-grid">
+                            <div class="c45-summary-card critical">
+                                <div class="card-icon">
+                                    <i data-lucide="alert-circle"></i>
+                                </div>
+                                <div class="metric-data">
+                                    <span class="metric-title">Critical Items</span>
+                                    <h3 class="metric-value" id="c45CriticalCount">0</h3>
+                                    <span class="metric-trend positive">Out of stock</span>
+                                </div>
+                            </div>
+
+                            <div class="c45-summary-card warning">
+                                <div class="card-icon">
+                                    <i data-lucide="alert-triangle"></i>
+                                </div>
+                                <div class="metric-data">
+                                    <span class="metric-title">At-Risk Items</span>
+                                    <h3 class="metric-value" id="c45RiskCount">0</h3>
+                                    <span class="metric-trend warning">Low stock or high usage</span>
+                                </div>
+                            </div>
+
+                            <div class="c45-summary-card normal">
+                                <div class="card-icon">
+                                    <i data-lucide="activity"></i>
+                                </div>
+                                <div class="metric-data">
+                                    <span class="metric-title">Items Monitored</span>
+                                    <h3 class="metric-value" id="c45MonitoredCount">0</h3>
+                                    <span class="metric-trend positive">Ingredients evaluated</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="c45-alert-banner" id="c45AlertBanner" role="status" aria-live="polite">
+                            <span class="c45-alert-symbol">!</span>
+                            <div>
+                                <strong id="c45AlertTitle">Checking inventory risks...</strong>
+                                <p id="c45AlertDescription">
+                                    Reviewing current quantities and usage classifications.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="c45-table-heading">
+                            <div>
+                                <h3>Ingredient Risk Assessment</h3>
+                                <p>Prioritized recommendations for staff and administrators.</p>
+                            </div>
+
+                            <button type="button" id="runC45AnalysisBtn" class="c45-refresh-btn">
+                                ↻ Refresh Analysis
+                            </button>
+                        </div>
+
+                        <div class="table-responsive c45-table-wrapper">
+                            <table class="data-table c45-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ingredient</th>
+                                        <th>Current Stock</th>
+                                        <th>Reorder Level</th>
+                                        <th>Daily Usage</th>
+                                        <th>Risk Assessment</th>
+                                        <th>Recommended Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="c45PredictionTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-table">
+                                            Analyzing inventory...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="c45-footer">
+                            <span id="c45StatusText">
+                                Waiting for inventory analysis.
+                            </span>
+                            <span>Analysis uses current inventory records.</span>
+                        </div>
+
+                    </div>
+                </section>
+
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- Theme Manager - Initialize global theme system -->
+    <script type="module">
+        import { ThemeManager } from './js/utils/ThemeManager.js';
+        import { SettingsService } from './js/services/SettingsService.js';
+
+        const themeManager = new ThemeManager({ settingsService: new SettingsService() });
+        await themeManager.init();
+        window.themeManager = themeManager; // Expose globally for debugging
+    </script>
+
+    <!-- Auth Guard - Must load before InventoryPredictionController -->
+    <script type="module">
+        import { protectPage } from './js/utils/AuthGuard.js';
+
+        // Protect this page - only ADMIN can access
+        protectPage({ allowedRoles: ['ADMIN'] }).then(userData => {
+            if (userData) {
+                // User is authenticated and authorized, store user data for controllers
+                window.currentUser = userData;
+            }
+        });
+    </script>
+
+    <script type="module" src="js/controllers/InventoryPredictionController.js">
+    </script>
+    <!-- Initialize Lucide icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+
+</html>

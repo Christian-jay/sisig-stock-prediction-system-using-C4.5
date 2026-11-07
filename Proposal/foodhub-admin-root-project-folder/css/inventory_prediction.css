@@ -1,0 +1,661 @@
+/* =========================================================
+   FOODHUB ADMIN — INVENTORY PREDICTION PAGE
+   Uses centralized theme variables from themes.css
+   ========================================================= */
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    min-width: 0;
+}
+
+body {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--slate-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+img,
+svg {
+    max-width: 100%;
+}
+
+/* =========================================================
+   CARD BASE CLASS
+   ========================================================= */
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+}
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.admin-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    min-width: 0;
+}
+
+.main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.inventory-dashboard-body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 24px;
+}
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.page-header {
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.page-header h1 {
+    color: var(--slate-text);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+}
+
+.page-header p {
+    margin-top: 4px;
+    color: var(--slate-muted);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* =========================================================
+   C4.5 PREDICTIVE STOCK ALERT CENTER
+   ========================================================= */
+
+.c45-prediction-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 28px;
+}
+
+.c45-main-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 22px !important;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: var(--card-bg) !important;
+    color: var(--slate-text) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+}
+
+.c45-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    min-width: 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.c45-heading-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--info-bg);
+    color: var(--info);
+    font-size: 25px;
+}
+
+.c45-heading h2 {
+    color: var(--slate-text);
+    font-size: 19px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.c45-heading p,
+.c45-table-heading p {
+    margin-top: 5px;
+    color: var(--slate-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.c45-live-label {
+    margin-left: auto;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--slate-muted);
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Summary cards - Exact copy of Dashboard metric cards */
+
+.c45-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    min-width: 0;
+    margin: 20px 0;
+}
+
+.c45-summary-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* Metric Icons - Exact copy of Dashboard */
+.c45-summary-card .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.c45-summary-card .card-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* Color variants - matching Dashboard */
+.c45-summary-card.critical .card-icon {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.c45-summary-card.warning .card-icon {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.c45-summary-card.normal .card-icon {
+    background: var(--info-bg);
+    color: var(--info-text);
+}
+
+/* Dark theme support */
+[data-theme="dark"] .c45-summary-card.critical .card-icon {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+[data-theme="dark"] .c45-summary-card.warning .card-icon {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+[data-theme="dark"] .c45-summary-card.normal .card-icon {
+    background: var(--info-bg);
+    color: var(--info-text);
+}
+
+/* Metric Data - Exact copy of Dashboard */
+.c45-summary-card .metric-data {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.c45-summary-card .metric-title {
+    font-size: 12px;
+    color: var(--slate-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.c45-summary-card .metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--slate-dark);
+    margin: 4px 0;
+}
+
+.c45-summary-card .metric-trend {
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.c45-summary-card .metric-trend.positive {
+    color: var(--success-text);
+}
+
+.c45-summary-card .metric-trend.warning {
+    color: var(--warning-text);
+}
+
+/* Alert banner */
+
+.c45-alert-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 24px;
+    padding: 15px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.c45-alert-symbol {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--info-bg);
+    color: var(--info);
+    font-weight: 800;
+}
+
+.c45-alert-banner>div:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.c45-alert-banner.is-critical {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+}
+
+.c45-alert-banner.is-critical .c45-alert-symbol {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.c45-alert-banner.is-warning {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+}
+
+.c45-alert-banner.is-warning .c45-alert-symbol {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.c45-alert-banner strong {
+    display: block;
+    color: var(--slate-text);
+    font-size: 13px;
+}
+
+.c45-alert-banner p {
+    margin-top: 5px;
+    color: var(--slate-muted);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Prediction table heading */
+
+.c45-table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-width: 0;
+    margin-bottom: 14px;
+}
+
+.c45-table-heading h3 {
+    color: var(--slate-text);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.c45-refresh-btn {
+    max-width: 100%;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary);
+    color: var(--btn-primary-text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: normal;
+}
+
+.c45-refresh-btn:hover {
+    background: var(--primary-dark);
+}
+
+.c45-refresh-btn:focus-visible {
+    outline: 3px solid var(--primary-focus);
+    outline-offset: 3px;
+}
+
+/* Prediction table: fit the card, no horizontal scrollbar */
+
+.c45-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: visible;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.c45-table {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.c45-table thead th,
+.c45-table tbody td {
+    min-width: 0;
+    padding: 10px 6px;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+.c45-table thead th {
+    background: var(--table-header-bg);
+    color: var(--table-header-text);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.c45-table tbody td {
+    border-bottom: 1px solid var(--table-border);
+    color: var(--slate-text);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.c45-table tbody tr:hover {
+    background: var(--table-row-hover);
+}
+
+/* Six prediction columns */
+
+.c45-table th:nth-child(1),
+.c45-table td:nth-child(1) {
+    width: 19%;
+}
+
+.c45-table th:nth-child(2),
+.c45-table td:nth-child(2) {
+    width: 12%;
+}
+
+.c45-table th:nth-child(3),
+.c45-table td:nth-child(3) {
+    width: 12%;
+}
+
+.c45-table th:nth-child(4),
+.c45-table td:nth-child(4) {
+    width: 12%;
+}
+
+.c45-table th:nth-child(5),
+.c45-table td:nth-child(5) {
+    width: 22%;
+}
+
+.c45-table th:nth-child(6),
+.c45-table td:nth-child(6) {
+    width: 23%;
+}
+
+/* Risk badges */
+
+.c45-risk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    padding: 5px 7px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.c45-risk.critical {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.c45-risk.high {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.c45-risk.medium {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.c45-risk.low {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.c45-action-text {
+    display: block;
+    max-width: 100%;
+    color: var(--slate-text);
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* Footer */
+
+.c45-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-width: 0;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+    color: var(--slate-muted);
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================= */
+
+/* Laptop and smaller desktop screens */
+
+@media (min-width: 901px) and (max-width: 1400px) {
+    .inventory-dashboard-body {
+        padding: 20px;
+    }
+
+    .stats-grid-5 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .inventory-tables-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .c45-main-card {
+        padding: 18px !important;
+    }
+
+    .c45-summary-card {
+        padding: 13px;
+    }
+
+    .c45-table thead th,
+    .c45-table tbody td {
+        padding: 9px 5px;
+        font-size: 10px;
+    }
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .inventory-dashboard-body {
+        padding: 18px;
+    }
+
+    .stats-grid-5 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inventory-tables-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .c45-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    .inventory-dashboard-body {
+        padding: 12px;
+    }
+
+    .page-header h1 {
+        font-size: 21px;
+    }
+
+    .stats-grid-5,
+    .c45-summary-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .card-box {
+        padding: 14px;
+    }
+
+    .c45-main-card {
+        padding: 13px !important;
+    }
+
+    .c45-heading {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .c45-heading-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 21px;
+    }
+
+    .c45-heading h2 {
+        font-size: 17px;
+    }
+
+    .c45-live-label {
+        margin-left: 0;
+    }
+
+    .c45-table-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .c45-table thead th,
+    .c45-table tbody td {
+        padding: 7px 3px;
+        font-size: 9px;
+    }
+
+    .c45-risk {
+        padding: 4px;
+        font-size: 9px;
+    }
+
+    .c45-footer {
+        flex-direction: column;
+    }
+
+    .pagination-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
