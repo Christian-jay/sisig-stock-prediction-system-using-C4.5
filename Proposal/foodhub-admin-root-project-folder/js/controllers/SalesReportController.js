@@ -192,9 +192,11 @@ class SalesReportController {
 
             this.updateMetrics(overallStats, salesOverview);
             this.updateSalesTrendChart(salesOverview);
-            this.updateTopSellingList(topSelling.slice(0, 5));
-            this.updateSalesByMenuTable(topSelling);
+            const filteredTopSelling = this.filterConsolidatedItems(topSelling);
+            this.updateTopSellingList(filteredTopSelling.slice(0, 5));
+            this.updateSalesByMenuTable(filteredTopSelling);
             this.updateDailySalesTable(salesOverview);
+            this.updateProductFilter(filteredTopSelling);
 
         } catch (error) {
             console.error('Failed to load sales report:', error);
@@ -715,6 +717,31 @@ class SalesReportController {
 
     showLoading(show) {
         // Could add loading states to charts/tables
+    }
+
+    filterConsolidatedItems(items) {
+        if (!items) return [];
+        return items.filter(item => {
+            const name = (item.name || '').toUpperCase();
+            return !name.includes('CONSOLIDATED');
+        });
+    }
+
+    updateProductFilter(topSelling) {
+        const filterSelect = document.querySelector('.filter-select');
+        if (!filterSelect) return;
+
+        if (!topSelling || topSelling.length === 0) {
+            filterSelect.innerHTML = '<option>All Products</option>';
+            return;
+        }
+
+        // Keep "All Products" as first option, add menu items
+        const options = ['<option value="">All Products</option>'];
+        topSelling.forEach(item => {
+            options.push(`<option value="${item.name}">${item.name}</option>`);
+        });
+        filterSelect.innerHTML = options.join('');
     }
 
     showToast(message, type = 'info') {
