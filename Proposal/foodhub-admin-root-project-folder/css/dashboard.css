@@ -191,7 +191,28 @@ body {
 /* 2. Charts & Top Items Grid */
 .charts-top-grid {
     display: grid;
-    grid-template-columns: 1.6fr 1.2fr 1.2fr;
+    grid-template-columns: 1.6fr 1.4fr;
+    gap: 20px;
+}
+
+/* 3. Recent Orders Full Width */
+.recent-orders-full {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* 3. Recent Orders Full Width */
+.recent-orders-full {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* 4. Sales Trend & Revenue Items Grid */
+.trend-revenue-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
@@ -385,6 +406,17 @@ body {
     margin-bottom: 16px;
 }
 
+.quick-actions-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-bottom: 16px;
+}
+
+.quick-actions-box .card-header {
+    flex-shrink: 0;
+}
+
 .stats-subgrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -429,30 +461,34 @@ body {
 .actions-stack {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    flex: 1;
 }
 
 .action-btn {
+    flex: 1;
     width: 100%;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 18px 20px;
+    border-radius: 10px;
     font-family: inherit;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .action-btn.primary {
     background: var(--btn-primary-bg);
     color: var(--btn-primary-text);
-    box-shadow: var(--shadow-hover);
 }
 
 .action-btn.primary:hover {
     background: var(--btn-primary-hover);
-    box-shadow: var(--shadow-dropdown);
 }
 
 .action-btn.secondary {
@@ -462,7 +498,9 @@ body {
 }
 
 .action-btn.secondary:hover {
-    background: var(--border-color);
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--slate-dark);
 }
 
 /* =========================================================
@@ -752,13 +790,15 @@ body {
 }
 
 [data-theme="dark"] .action-btn.secondary {
-    background: var(--btn-secondary-bg);
-    color: var(--btn-secondary-text);
-    border-color: var(--btn-secondary-border);
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--slate-light);
 }
 
 [data-theme="dark"] .action-btn.secondary:hover {
-    background: var(--btn-secondary-hover);
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--slate-light);
 }
 
 [data-theme="dark"] .modal-close {
@@ -818,6 +858,11 @@ body {
     .metrics-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 12px;
+    }
+
+    .charts-top-grid {
+        grid-template-columns: 1.6fr 1.4fr;
+        gap: 18px;
     }
 
     .metric-card {
@@ -918,6 +963,11 @@ body {
         gap: 12px;
     }
 
+    .charts-top-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
     .metric-card {
         padding: 14px;
     }
@@ -969,6 +1019,11 @@ body {
         gap: 14px;
     }
 
+    .charts-top-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
     .metric-card {
         padding: 12px;
     }
@@ -1011,6 +1066,8 @@ body {
     .dashboard-grid-bottom,
     .charts-top-grid,
     .orders-revenue-grid,
+    .recent-orders-full,
+    .trend-revenue-grid,
     .footer-widgets-grid {
         grid-template-columns: 1fr;
     }
@@ -1085,6 +1142,260 @@ body {
 
     .data-table {
         min-width: 560px;
+    }
+}
+
+/* =========================================================
+   BOUNDED SALES TREND CHART (from Sales Report)
+   Uses isolated class names so legacy chart rules cannot
+   change the plot geometry or label alignment.
+   ========================================================= */
+
+#salesTrendChart {
+    width: 100%;
+    height: 240px;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: linear-gradient(
+        180deg,
+        var(--card-bg) 0%,
+        var(--bg-secondary) 100%
+    );
+}
+
+.report-trend-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--slate-muted);
+    font-size: 12px;
+}
+
+.report-trend-chart {
+    --report-chart-line: #075985;
+    --report-chart-line-soft: #0284c7;
+    --report-chart-area: #38bdf8;
+    --report-chart-grid: #cbd5e1;
+    --report-chart-average: #0f766e;
+    --report-trend-plot-height: 190px;
+    --report-trend-height: 214px;
+
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    grid-template-rows: var(--report-trend-plot-height) 24px;
+    column-gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    height: var(--report-trend-height);
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .report-trend-chart {
+    --report-chart-line: #fbbf24;
+    --report-chart-line-soft: #f59e0b;
+    --report-chart-area: #f59e0b;
+    --report-chart-grid: #6b4a36;
+    --report-chart-average: #fbbf24;
+}
+
+.report-trend-y-axis {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    width: 58px;
+    height: var(--report-trend-plot-height);
+    min-width: 0;
+    color: var(--slate-muted);
+    font-size: 10px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+}
+
+.report-trend-y-axis span {
+    position: absolute;
+    right: 6px;
+    transform: translateY(-50%);
+    white-space: nowrap;
+}
+
+.report-trend-plot {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    width: 100%;
+    height: var(--report-trend-plot-height);
+    min-width: 0;
+    min-height: 0;
+    overflow: visible;
+}
+
+.report-trend-grid,
+.report-trend-svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: var(--report-trend-plot-height);
+    overflow: visible;
+}
+
+.report-trend-grid {
+    z-index: 1;
+    pointer-events: none;
+}
+
+.report-trend-horizontal-lines line,
+.report-trend-vertical-line {
+    fill: none;
+    stroke: var(--report-chart-grid);
+    stroke-width: 0.65;
+    stroke-dasharray: 2.5 3.5;
+    opacity: 0.9;
+}
+
+.report-trend-vertical-line {
+    opacity: 0.2;
+}
+
+.report-trend-average {
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    height: 1px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.65;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--report-chart-average) 0,
+        var(--report-chart-average) 5px,
+        transparent 5px,
+        transparent 10px
+    );
+}
+
+.report-trend-svg {
+    z-index: 3;
+}
+
+.report-trend-area {
+    fill: url(#reportSalesAreaGradient);
+    stroke: none;
+}
+
+.report-trend-line {
+    fill: none;
+    stroke: url(#reportSalesLineGradient);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    filter: url(#reportLineGlow);
+}
+
+.report-trend-point-group {
+    cursor: pointer;
+}
+
+.report-trend-point-ring {
+    fill: transparent;
+    stroke: var(--report-chart-line);
+    stroke-width: 1;
+    opacity: 0.25;
+    transition: opacity 150ms ease;
+}
+
+.report-trend-point-main {
+    fill: var(--card-bg);
+    stroke: var(--report-chart-line);
+    stroke-width: 1.25;
+    filter: url(#reportPointGlow);
+    transition: r 150ms ease;
+}
+
+.report-trend-point-group:hover .report-trend-point-ring {
+    opacity: 1;
+}
+
+.report-trend-point-group:hover .report-trend-point-main {
+    stroke-width: 1.8;
+}
+
+.report-trend-x-axis {
+    grid-column: 2;
+    grid-row: 2;
+    position: relative;
+    width: 100%;
+    height: 24px;
+    min-width: 0;
+    overflow: visible;
+    color: var(--slate-muted);
+    font-size: 10px;
+}
+
+.report-trend-x-axis span {
+    position: absolute;
+    top: 7px;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.report-trend-tooltip {
+    position: absolute;
+    z-index: 20;
+    max-width: min(180px, calc(100% - 8px));
+    padding: 7px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--slate-dark);
+    color: var(--card-bg);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.45;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateZ(0);
+    transition: opacity 150ms ease;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+}
+
+[data-theme="dark"] .report-trend-point-main {
+    fill: var(--card-bg);
+}
+
+@media (max-width: 600px) {
+    #salesTrendChart {
+        height: 250px;
+    }
+
+    .report-trend-chart {
+        grid-template-columns: 46px minmax(0, 1fr);
+        column-gap: 6px;
+    }
+
+    .report-trend-y-axis {
+        width: 46px;
+        font-size: 8px;
+    }
+
+    .report-trend-y-axis span {
+        right: 4px;
+    }
+
+    .report-trend-x-axis {
+        height: 24px;
+        font-size: 8px;
+    }
+
+    .report-trend-x-axis span {
+        top: 7px;
     }
 }
 

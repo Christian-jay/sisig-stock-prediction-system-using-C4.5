@@ -27,12 +27,10 @@ class DashboardController {
             this.renderMetrics(data.metrics);
             this.renderQuickStats(data.metrics);
             this.renderSalesChart(data.salesOverview);
-            this.renderTopSelling(data.topSellingItems, 'topSellingList');
-            this.renderTopSelling(data.topSellingItems, 'revenueItemsList'); // Reused for revenue list side
-            this.renderRecentOrders(data.recentOrders);
-            this.renderLowStock(data.lowStockItems.slice(0, 4));
             this.renderTopSelling(data.topSellingItems.slice(0, 5), 'topSellingList');
             this.renderTopSelling(data.topSellingItems.slice(0, 5), 'revenueItemsList');
+            this.renderRecentOrders(data.recentOrders);
+            this.renderLowStock(data.lowStockItems.slice(0, 4));
 
             this.setupEventListeners();
         } catch (error) {
@@ -302,306 +300,284 @@ class DashboardController {
     `;
 
         /* =====================================================
-           SALES TREND LINE CHART
+           SALES TREND LINE CHART (Bounded - from Sales Report)
            ===================================================== */
 
         const trendContainer = document.getElementById('salesTrendChart');
-        const trendMax = maxValue;
+        if (!trendContainer) return;
 
         /*
          * Convert overview data into numeric values
          */
-        const trendData = overview.map(item => ({
-            date: item.date,
-            amount: item.amount || 0
-        }));
+        const labels = overview.map(item => item.date);
+        const values = overview.map(item => Number(item.amount) || 0);
 
-        /*
-         * SVG dimensions - use container width for responsiveness
-         */
-        const containerRect = trendContainer.getBoundingClientRect();
-        const width = containerRect.width || 500;
-        const height = 210;
-        const paddingX = 40;
-        const paddingY = 20;
-        const chartWidth = width - (paddingX * 2);
-        const chartHeight = height - (paddingY * 2);
-
-        /*
-         * Calculate point positions
-         */
-        const points = trendData.map((item, index) => {
-            const x = trendData.length === 1
-                ? width / 2
-                : paddingX + (index / (trendData.length - 1)) * chartWidth;
-            const y = paddingY + chartHeight - (item.amount / trendMax) * chartHeight;
-            return { x, y, amount: item.amount, date: item.date };
-        });
-
-        /*
-         * Create smooth Catmull-Rom spline for natural curve
-         */
-        function getSmoothPath(points) {
-            if (points.length < 2) return '';
-            let path = `M ${points[0].x} ${points[0].y}`;
-
-            for (let i = 0; i < points.length - 1; i++) {
-                const p0 = points[i > 0 ? i - 1 : i];
-                const p1 = points[i];
-                const p2 = points[i + 1];
-                const p3 = points[i + 2 < points.length ? i + 2 : i + 1];
-
-                // Catmull-Rom to cubic Bezier
-                const cp1x = p1.x + (p2.x - p0.x) / 6;
-                const cp1y = p1.y + (p2.y - p0.y) / 6;
-                const cp2x = p2.x - (p3.x - p1.x) / 6;
-                const cp2y = p2.y - (p3.y - p1.y) / 6;
-
-                path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
-            }
-            return path;
+        if (labels.length === 0 || values.length === 0) {
+            trendContainer.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">No sales data available</div>';
+            return;
         }
 
-        const linePath = getSmoothPath(points);
+        // Store for resize handler
+        this.dashboardTrendData = overview;
+        this.dashboardTrendLabels = labels;
+        this.dashboardTrendValues = values;
 
-        /*
-         * Create filled area underneath line (straight to bottom)
-         */
-        const areaPath = `
-        ${linePath}
-        L ${points[points.length - 1].x} ${paddingY + chartHeight}
-        L ${points[0].x} ${paddingY + chartHeight}
-        Z
-    `;
+        const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+        const dataMax = Math.max(...values, 1);
+        const tickStep = this.roundNice(dataMax / 5);
+        const trendMaxValue = Math.max(tickStep * 5, 1);
 
-        /*
-         * Generate vertical grid lines positions
-         */
-        const verticalGridLines = points.map((p, i) => `
-            <line x1="${p.x}" y1="${paddingY}" x2="${p.x}" y2="${paddingY + chartHeight}"
-                  stroke="var(--border-color, #e2e8f0)" stroke-width="1" stroke-dasharray="4,4"
-                  opacity="${i === 0 || i === points.length - 1 ? 0 : 0.4}"/>
+        // Use the rendered plot dimensions so the SVG keeps a natural aspect ratio.
+        const isNarrow = window.matchMedia('(max-width: 600px)').matches;
+        const axisWidth = isNarrow ? 46 : 58;
+        const columnGap = isNarrow ? 6 : 10;
+        const plotWidth = Math.max(
+            (trendContainer.clientWidth || (isNarrow ? 360 : 700)) - axisWidth - columnGap,
+            120
+        );
+        const chartHeight = trendContainer.clientHeight || (isNarrow ? 250 : 240);
+        const minPlotHeight = isNarrow ? 170 : 190;
+        const plotHeight = Math.max(minPlotHeight, chartHeight - 24);
+        // Keep the endpoint markers inside the clipped chart surface.
+        const plotInset = isNarrow ? 8 : 10;
+        const plotStart = plotInset;
+        const plotEnd = plotWidth - plotInset;
+        const plotTop = 16;
+        const plotBottom = plotHeight - 6;
+        const plotRange = plotBottom - plotTop;
+        const pointRadius = isNarrow ? 3 : 3.5;
+
+        const points = values.map((value, index) => {
+            const x = labels.length === 1
+                ? plotWidth / 2
+                : plotStart + (index / (labels.length - 1)) * (plotEnd - plotStart);
+            const y = plotBottom - (value / trendMaxValue) * plotRange;
+            return {
+                x,
+                y,
+                xPercent: (x / plotWidth) * 100,
+                yPercent: (y / plotHeight) * 100,
+                value,
+                label: labels[index]
+            };
+        });
+
+        const linePath = this.getSmoothPath(points, plotWidth, plotHeight);
+        const firstPoint = points[0];
+        const lastPoint = points[points.length - 1];
+        const areaPath = `M ${firstPoint.x} ${plotBottom} L ${linePath.slice(1)} L ${lastPoint.x} ${plotBottom} Z`;
+        const averageY = plotBottom - (average / trendMaxValue) * plotRange;
+
+        const horizontalGridLines = [5, 4, 3, 2, 1, 0].map(index => {
+            const y = plotTop + (index / 5) * plotRange;
+            return `<line x1="${plotStart}" y1="${y}" x2="${plotEnd}" y2="${y}"/>`;
+        }).join('');
+
+        const verticalGridLines = points.map((point, index) => `
+            <line x1="${point.x}" y1="${plotTop}" x2="${point.x}" y2="${plotBottom}"
+                  class="report-trend-vertical-line"
+                  opacity="${index === 0 || index === points.length - 1 ? 0 : 1}"/>
         `).join('');
 
-        /*
-         * Generate horizontal grid lines
-         */
-        const horizontalGridLines = [5, 4, 3, 2, 1, 0].map(i => {
-            const y = paddingY + (i / 5) * chartHeight;
-            const val = Math.round((i / 5) * trendMax);
-            return `<line x1="${paddingX}" y1="${y}" x2="${paddingX + chartWidth}" y2="${y}"
-                stroke="var(--border-color, #e2e8f0)" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>`;
+        const yLabels = [5, 4, 3, 2, 1, 0].map(index => {
+            const value = trendMaxValue * (1 - index / 5);
+            const y = plotTop + (index / 5) * plotRange;
+            const top = (y / plotHeight) * 100;
+            return `<span style="top: ${top}%">₱${value.toLocaleString('en-PH', { maximumFractionDigits: 0 })}</span>`;
+        }).join('');
+
+        const xLabels = labels.map((label, index) => {
+            const point = points[index];
+            const transform = index === 0
+                ? 'translateX(0)'
+                : index === labels.length - 1
+                    ? 'translateX(-100%)'
+                    : 'translateX(-50%)';
+            return `<span style="left: ${point.xPercent}%; transform: ${transform};">${label}</span>`;
         }).join('');
 
         trendContainer.innerHTML = `
-        <div class="sales-chart trend-chart" style="position: relative;">
-            <!-- Y AXIS LABELS -->
-            <div class="chart-y-axis trend-y-axis" style="position: absolute; left: 0; top: ${paddingY}px; bottom: ${paddingY}px; width: ${paddingX}px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none;">
-                ${[5, 4, 3, 2, 1, 0].map(i => {
-                    const val = Math.round((i / 5) * trendMax);
-                    return `<span style="font-size: 11px; color: var(--text-muted, #64748b); text-align: right; padding-right: 8px;">₱${val.toLocaleString()}</span>`;
-                }).join('')}
-            </div>
+            <div class="report-trend-chart"
+                 style="--report-trend-plot-height: ${plotHeight}px; --report-trend-height: ${plotHeight + 24}px;">
+                <div class="report-trend-y-axis">${yLabels}</div>
 
-            <!-- CHART AREA -->
-            <div class="chart-main" style="margin-left: ${paddingX}px; margin-bottom: ${paddingY}px; position: relative; width: ${chartWidth}px; height: ${chartHeight}px;">
-                <!-- GRID LINES -->
-                <svg class="grid-svg" viewBox="0 0 ${width} ${height}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible;">
-                    ${horizontalGridLines}
-                    ${verticalGridLines}
-                </svg>
+                <div class="report-trend-plot">
+                    <svg class="report-trend-grid" viewBox="0 0 ${plotWidth} ${plotHeight}" preserveAspectRatio="none" aria-hidden="true">
+                        <g class="report-trend-horizontal-lines">${horizontalGridLines}</g>
+                        <g>${verticalGridLines}</g>
+                    </svg>
 
-                <!-- MAIN CHART SVG -->
-                <svg class="trend-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
-                    <defs>
-                        <!-- Gradient for area fill -->
-                        <linearGradient id="trendAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#0284c7" stop-opacity="0.18"/>
-                            <stop offset="100%" stop-color="#0284c7" stop-opacity="0.02"/>
-                        </linearGradient>
-                        <!-- Gradient for line -->
-                        <linearGradient id="trendLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#0284c7"/>
-                            <stop offset="50%" stop-color="#06b6d4"/>
-                            <stop offset="100%" stop-color="#22d3ee"/>
-                        </linearGradient>
-                        <!-- Glow filter for line -->
-                        <filter id="lineGlow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="3" result="blur"/>
-                            <feMerge>
-                                <feMergeNode in="blur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                    </defs>
+                    <div class="report-trend-average" style="top: ${averageY}px;"
+                         title="Average: ₱${average.toLocaleString('en-PH', { minimumFractionDigits: 2 })}"></div>
 
-                    <!-- AREA FILL -->
-                    <path d="${areaPath}" fill="url(#trendAreaGradient)" />
-
-                    <!-- LINE -->
-                    <path d="${linePath}"
-                          stroke="url(#trendLineGradient)"
-                          stroke-width="2.5"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          filter="url(#lineGlow)"
-                          class="trend-line-path" />
-
-                    <!-- INTERACTIVE POINTS -->
-                    <g class="trend-points">
-                        ${points.map((point, i) => `
-                            <g class="trend-point-group" data-index="${i}" style="cursor: pointer;">
-                                <!-- Outer glow ring -->
-                                <circle cx="${point.x}" cy="${point.y}" r="8"
-                                        fill="transparent"
-                                        stroke="#0284c7"
-                                        stroke-width="2"
-                                        opacity="0"
-                                        class="point-hover-ring"
-                                        transition="opacity 0.2s"/>
-                                <!-- Main point -->
-                                <circle cx="${point.x}" cy="${point.y}" r="4.5"
-                                        fill="var(--bg-primary, #fff)"
-                                        stroke="#0284c7"
-                                        stroke-width="2.5"
-                                        class="trend-point-main" />
-                                <!-- Inner dot -->
-                                <circle cx="${point.x}" cy="${point.y}" r="2"
-                                        fill="#0284c7"
-                                        class="trend-point-inner" />
-                            </g>
-                        `).join('')}
-                    </g>
-
-                    <!-- VERTICAL HOVER INDICATOR LINE -->
-                    <line id="hoverLine"
-                          x1="0" y1="${paddingY}"
-                          x2="0" y2="${paddingY + chartHeight}"
-                          stroke="#0284c7"
-                          stroke-width="1"
-                          stroke-dasharray="4,4"
-                          opacity="0"
-                          pointer-events="none"/>
-                </svg>
-
-                <!-- TOOLTIP -->
-                <div id="trendTooltip"
-                     class="trend-tooltip"
-                     style="
-                        position: absolute;
-                        background: var(--bg-card, #1e293b);
-                        color: var(--text-primary, #f8fafc);
-                        padding: 8px 12px;
-                        border-radius: 6px;
-                        font-size: 12px;
-                        pointer-events: none;
-                        opacity: 0;
-                        transition: opacity 0.15s;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                        border: 1px solid var(--border-color, #334155);
-                        white-space: nowrap;
-                        z-index: 10;
-                     ">
-                    <div class="tooltip-date" style="font-weight: 600; margin-bottom: 2px; color: #22d3ee;"></div>
-                    <div class="tooltip-amount" style="color: #22c55e; font-weight: 500;"></div>
+                    <svg class="report-trend-svg" viewBox="0 0 ${plotWidth} ${plotHeight}" preserveAspectRatio="none"
+                         role="img" aria-label="Sales trend chart">
+                        <defs>
+                            <linearGradient id="reportSalesAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="var(--report-chart-area)" stop-opacity="0.24"/>
+                                <stop offset="55%" stop-color="var(--report-chart-area)" stop-opacity="0.1"/>
+                                <stop offset="100%" stop-color="var(--report-chart-area)" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="reportSalesLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="var(--report-chart-line)"/>
+                                <stop offset="50%" stop-color="var(--report-chart-line-soft)"/>
+                                <stop offset="100%" stop-color="var(--report-chart-line)"/>
+                            </linearGradient>
+                            <filter id="reportLineGlow" x="-10%" y="-20%" width="120%" height="140%">
+                                <feGaussianBlur stdDeviation="1.1" result="blur"/>
+                                <feMerge>
+                                    <feMergeNode in="blur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            <filter id="reportPointGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="2.2" result="blur"/>
+                                <feMerge>
+                                    <feMergeNode in="blur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <path class="report-trend-area" d="${areaPath}"/>
+                        <path class="report-trend-line" d="${linePath}"/>
+                        <g class="report-trend-points">
+                            ${points.map(point => `
+                                <g class="report-trend-point-group">
+                                    <circle class="report-trend-point-ring" cx="${point.x}" cy="${point.y}" r="${pointRadius * 2}"/>
+                                    <circle class="report-trend-point-main" data-base-radius="${pointRadius}" cx="${point.x}" cy="${point.y}" r="${pointRadius}"/>
+                                </g>
+                            `).join('')}
+                        </g>
+                    </svg>
                 </div>
 
-                <!-- X AXIS LABELS -->
-                <div class="trend-x-labels" style="display: flex; justify-content: space-between; margin-top: 8px; padding: 0 4px;">
-                    ${trendData.map(item => `<span style="font-size: 11px; color: var(--text-muted, #64748b); white-space: nowrap;">${item.date}</span>`).join('')}
-                </div>
+                <div class="report-trend-x-axis">${xLabels}</div>
             </div>
-        </div>
-    `;
+        `;
 
-        // Add hover interaction
-        this.initTrendChartInteraction(trendContainer, points, trendData);
+        this.initBoundedTrendChartInteraction(trendContainer, points, labels, values);
+
+        // Resize observer for responsiveness
+        if (!this.dashboardTrendResizeObserver && typeof ResizeObserver !== 'undefined') {
+            this.dashboardTrendResizeObserver = new ResizeObserver(entries => {
+                const width = Math.round(entries[0]?.contentRect.width || 0);
+                if (!width || width === this.dashboardTrendWidth) return;
+                this.dashboardTrendWidth = width;
+                this.renderSalesTrendChart(this.dashboardTrendData);
+            });
+            this.dashboardTrendResizeObserver.observe(trendContainer);
+        }
+        this.dashboardTrendWidth = Math.round(trendContainer.getBoundingClientRect().width);
     }
 
-    initTrendChartInteraction(container, points, trendData) {
-        const svg = container.querySelector('.trend-svg');
-        const hoverLine = container.querySelector('#hoverLine');
-        const tooltip = container.querySelector('#trendTooltip');
-        const pointGroups = container.querySelectorAll('.trend-point-group');
+    // Smooth curve using Catmull-Rom spline converted to cubic bezier (with clamping)
+    getSmoothPath(points, maxX = 100, maxY = 100) {
+        if (points.length < 2) return `M ${points[0]?.x || 0} ${points[0]?.y || 0}`;
+        if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
 
-        if (!svg || !hoverLine || !tooltip) return;
+        let path = `M ${points[0].x} ${points[0].y}`;
 
-        const chartMain = container.querySelector('.chart-main');
-        const mainRect = chartMain?.getBoundingClientRect();
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[i > 0 ? i - 1 : i];
+            const p1 = points[i];
+            const p2 = points[i + 1];
+            const p3 = points[i + 2 < points.length ? i + 2 : i + 1];
 
-        function showTooltip(point, index) {
-            const data = trendData[index];
-            const amount = data.amount || 0;
+            // Catmull-Rom to cubic Bezier. Clamp control points to the
+            // current SVG viewport so the curve cannot escape the chart.
+            const clampX = value => Math.max(0, Math.min(maxX, value));
+            const clampY = value => Math.max(0, Math.min(maxY, value));
+            const cp1x = clampX(p1.x + (p2.x - p0.x) / 6);
+            const cp1y = clampY(p1.y + (p2.y - p0.y) / 6);
+            const cp2x = clampX(p2.x - (p3.x - p1.x) / 6);
+            const cp2y = clampY(p2.y - (p3.y - p1.y) / 6);
 
-            tooltip.querySelector('.tooltip-date').textContent = data.date;
-            tooltip.querySelector('.tooltip-amount').textContent = '₱' + amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-            // Position tooltip above the point
-            const tooltipX = point.x - (mainRect?.left || 0) - tooltip.offsetWidth / 2;
-            const tooltipY = point.y - (mainRect?.top || 0) - tooltip.offsetHeight - 12;
-
-            tooltip.style.left = Math.max(4, Math.min((mainRect?.width || 500) - tooltip.offsetWidth - 4, tooltipX)) + 'px';
-            tooltip.style.top = Math.max(4, tooltipY) + 'px';
-            tooltip.style.opacity = '1';
+            path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
         }
+        return path;
+    }
 
-        function hideTooltip() {
+    roundNice(num) {
+        if (num === 0) return 0;
+        const magnitude = Math.pow(10, Math.floor(Math.log10(Math.abs(num))));
+        const normalized = num / magnitude;
+        let nice;
+        if (normalized <= 1) nice = 1;
+        else if (normalized <= 2) nice = 2;
+        else if (normalized <= 2.5) nice = 2.5;
+        else if (normalized <= 5) nice = 5;
+        else nice = 10;
+        return nice * magnitude;
+    }
+
+    initBoundedTrendChartInteraction(container, points, labels, values) {
+        const chartArea = container.querySelector('.report-trend-plot');
+        const svg = container.querySelector('.report-trend-svg');
+        const pointGroups = container.querySelectorAll('.report-trend-point-group');
+        if (!chartArea || !svg) return;
+
+        const tooltip = document.createElement('div');
+        tooltip.className = 'report-trend-tooltip';
+        tooltip.setAttribute('role', 'status');
+        tooltip.setAttribute('aria-live', 'polite');
+        chartArea.appendChild(tooltip);
+
+        const getPointRadius = main => Number(main?.dataset.baseRadius) || 3;
+        const getViewBoxWidth = () => svg.viewBox.baseVal.width || svg.getBoundingClientRect().width;
+        const getViewBoxHeight = () => svg.viewBox.baseVal.height || svg.getBoundingClientRect().height;
+
+        const hideTooltip = () => {
             tooltip.style.opacity = '0';
-            hoverLine.style.opacity = '0';
-        }
-
-        // Mouse move on chart area
-        if (chartMain) {
-            chartMain.addEventListener('mousemove', (e) => {
-                const rect = chartMain.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-
-                // Find closest point
-                let closestIndex = 0;
-                let minDist = Infinity;
-                points.forEach((p, i) => {
-                    const dist = Math.abs(p.x - mouseX);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closestIndex = i;
-                    }
-                });
-
-                const closestPoint = points[closestIndex];
-
-                // Show hover line
-                hoverLine.setAttribute('x1', closestPoint.x);
-                hoverLine.setAttribute('x2', closestPoint.x);
-                hoverLine.style.opacity = '0.6';
-
-                // Show tooltip
-                showTooltip(closestPoint, closestIndex);
-
-                // Highlight closest point
-                pointGroups.forEach((g, i) => {
-                    const ring = g.querySelector('.point-hover-ring');
-                    const mainPoint = g.querySelector('.trend-point-main');
-                    if (i === closestIndex) {
-                        if (ring) ring.style.opacity = '1';
-                        if (mainPoint) mainPoint.setAttribute('r', '6');
-                    } else {
-                        if (ring) ring.style.opacity = '0';
-                        if (mainPoint) mainPoint.setAttribute('r', '4.5');
-                    }
-                });
+            pointGroups.forEach(group => {
+                group.querySelector('.report-trend-point-ring')?.style.setProperty('opacity', '0');
+                const main = group.querySelector('.report-trend-point-main');
+                main?.setAttribute('r', getPointRadius(main));
             });
+        };
 
-            chartMain.addEventListener('mouseleave', () => {
-                hideTooltip();
-                pointGroups.forEach(g => {
-                    const ring = g.querySelector('.point-hover-ring');
-                    const mainPoint = g.querySelector('.trend-point-main');
-                    if (ring) ring.style.opacity = '0';
-                    if (mainPoint) mainPoint.setAttribute('r', '4.5');
-                });
+        const showTooltip = (point, index) => {
+            const plotRect = svg.getBoundingClientRect();
+            const areaRect = chartArea.getBoundingClientRect();
+            const pointX = (point.x / getViewBoxWidth()) * plotRect.width;
+            const pointY = (point.y / getViewBoxHeight()) * plotRect.height;
+
+            tooltip.innerHTML = `<strong>${labels[index]}</strong><br>₱${values[index].toLocaleString('en-PH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+            tooltip.style.left = `${Math.max(4, Math.min(areaRect.width - tooltip.offsetWidth - 4, pointX - tooltip.offsetWidth / 2))}px`;
+            tooltip.style.top = `${Math.max(4, pointY - tooltip.offsetHeight - 12)}px`;
+            tooltip.style.opacity = '1';
+
+            pointGroups.forEach((group, groupIndex) => {
+                const ring = group.querySelector('.report-trend-point-ring');
+                const main = group.querySelector('.report-trend-point-main');
+                const baseRadius = getPointRadius(main);
+                if (groupIndex === index) {
+                    ring?.style.setProperty('opacity', '1');
+                    main?.setAttribute('r', baseRadius + 1.5);
+                } else {
+                    ring?.style.setProperty('opacity', '0');
+                    main?.setAttribute('r', baseRadius);
+                }
             });
-        }
+        };
+
+        chartArea.addEventListener('mousemove', event => {
+            const plotRect = svg.getBoundingClientRect();
+            if (!plotRect.width) return;
+
+            const mouseX = ((event.clientX - plotRect.left) / plotRect.width) * getViewBoxWidth();
+            const closestIndex = points.reduce((bestIndex, point, index) => {
+                const bestDistance = Math.abs(points[bestIndex].x - mouseX);
+                const distance = Math.abs(point.x - mouseX);
+                return distance < bestDistance ? index : bestIndex;
+            }, 0);
+
+            showTooltip(points[closestIndex], closestIndex);
+        });
+
+        chartArea.addEventListener('mouseleave', hideTooltip);
     }
 
     generateGridValues(maxValue) {
