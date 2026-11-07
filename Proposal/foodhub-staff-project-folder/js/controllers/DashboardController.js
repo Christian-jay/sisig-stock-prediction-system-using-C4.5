@@ -268,7 +268,9 @@ class DashboardController {
         if (tbody) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="empty-row">${message}</td>
+                    <td colspan="5">
+                        <div class="empty-state">${message}</div>
+                    </td>
                 </tr>
             `;
         }

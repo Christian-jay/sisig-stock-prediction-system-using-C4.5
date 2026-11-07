@@ -619,6 +619,17 @@ class DashboardController {
         // Limit to 5 most recent orders
         const recentOrders = orders.slice(0, 5);
 
+        if (!recentOrders || recentOrders.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">No orders today</div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
         tbody.innerHTML = recentOrders.map(order => `
             <tr>
                 <td><strong>${order.orderId}</strong></td>

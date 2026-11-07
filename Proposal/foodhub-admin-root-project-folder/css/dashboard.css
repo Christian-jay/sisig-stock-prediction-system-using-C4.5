@@ -1544,6 +1544,16 @@ body {
     color: var(--danger-text);
 }
 
+/* Empty State */
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: var(--slate-muted);
+    font-size: 13px;
+}
+
 .order-detail-footer {
     display: flex;
     justify-content: space-between;
